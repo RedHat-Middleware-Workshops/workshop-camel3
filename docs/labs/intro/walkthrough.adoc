@@ -102,3 +102,190 @@ Under such solution, The _Service Agent_ would be abstracted from all external p
 {empty} +
 
 
+[time=2]
+[id='dev-environment']
+== Development environment
+
+The following instructions introduce you to your development environment, and the cluster where you'll deploy your applications throughout this workshop.
+
+=== Overview
+
+Built on the open Eclipse Che project, Red Hat OpenShift Dev Spaces uses Kubernetes and containers to provide any member of the development or IT team with a consistent, secure, and zero-configuration development environment. The experience is as fast and familiar as an integrated development environment on your laptop.
+
+OpenShift Dev Spaces is included with your OpenShift subscription and is available in the Operator Hub. It provides development teams a faster and more reliable foundation on which to work, and it gives operations centralized control and peace of mind.
+
+
+// [type=walkthroughResource,serviceName=codeready]
+// .Red Hat OpenShift Dev Spaces
+// ****
+// * link:{codeready-url}[Console, window="_blank", , id="resources-codeready-url"]
+// ****
+// [type=walkthroughResource]
+// .Red Hat OpenShift Developer Console
+// ****
+// * link:{openshift-host}/topology/ns/{namespace}[Topology View, window="_blank"]
+// ****
+// [type=walkthroughResource]
+// .Credentials
+// ****
+// * *username:* `{user-username}`
+// * *password:* `{user-password}`
+// ****
+
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{codeready-url}[Console, window="_blank", , id="resources-codeready-url"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{openshift-host}/topology/ns/{namespace}[Topology View, window="_blank"]
+****
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+
+// :sectnums:
+{empty} +
+
+=== Accessing a Development Environment
+
+The development environment you use throughout the workshop is a web-hosted IDE known as link:https://developers.redhat.com/products/codeready-workspaces/overview[Red Hat OpenShift Dev Spaces, window="_blank"].
+
+{empty} +
+
+=== Login to OpenShift Dev Spaces
+
+To access your development environment:
+
+. Click the link:{codeready-url}[Console, window="_blank"] link under the *Red Hat OpenShift Dev Spaces* in the *Resources* panel on the right.
+. Log in using your username (`{user-username}`) and password (`{user-password}`)
++
+image:images/000-codeready-login.png[OpenShift Dev Spaces Login, role="integr8ly-img-responsive"]
++
+{empty} +
++
+Once you are logged in, you'll see the CodeReady dashboard. This lists available workspaces.
++
+image::images/00-crw-dashboard.png[CodeReady Dashboard, role="integr8ly-img-responsive"]
+
+{empty} +
+
+=== Accessing your CodeReady Workspace
+
+This workshop provides a single, pre-configured workspace with plugins, source code, and even container images that have various Command-Line Interface (CLI) tools installed.
+
+{empty} +
+
+. Click the *Open* link for the workspace named `camel3-workshop-{user-username}`.
++
+image::images/001-open-workspace.png[Open CodeReady Workspace, role="integr8ly-img-responsive"]
++
+{blank}
++
+This will start an instance of the workspace. Please wait a few moments while it downloads the required container images and configuration setup.
++
+{empty} +
+
+. When the IDE appears:
++
+--
+* ensure you click `Yes, I trust` when the following message shows on the bottom right corner:
++
+image::images/crw-trust-project.png[Trust Workshop Project, role="integr8ly-img-responsive", align="left", width=50%]
++
+{blank}
++
+* Ensure you close the following options:
++
+image::images/crw-close-options.png[Close other suggestions, role="integr8ly-img-responsive", align="left", width=50%]
+--
++
+{empty} +
+
+. Close the welcome and README tab and the other open dialogs by clicking the *x*, then click on the Explorer (file) icon on the left side bar. The Explorer shows you the *MessageHub* folder with the required projects and lab files.
++
+image::images/01-crw-welcome.png[CodeReady Welcome screen, role="integr8ly-img-responsive"]
++
+[NOTE]
+====
+This IDE is based on *CodeReady*, which is in turn is based on Microsoft VSCode. It will look familiar if you have already used it.
+
+You can close the _Problems_ and _Output_ views to clear space.
+====
+
+=== Accessing a Terminal
+
+During the workshop you will use the OpenShift CLI along with other developer-focused Command Line Interface (CLI) tools.
+These CLI tools are available directly inside your Workspace via tools containers.
+
+Access the tools container(s) like so:
+
+. Click on the _My Workspace_ (cube) icon on the right side panel.
+. Click on *User Runtimes* -> *tools* -> *>_ New terminal*.
++
+{blank}
++
+image::images/02-crw-tools-container.png[Open Terminal, role="integr8ly-img-responsive"]
+
+{blank}
+
+A terminal window should be open at the bottom of the screen. This terminal is attached to the running CodeReady container and is also running on OpenShift. This is the place where you will issue most of the commands from this workshop.
+
+{empty} +
+
+=== Login into OpenShift using the CLI
+
+. Open a terminal using the instructions from the previous section.
+. In the terminal tab, issue the following command:
++
+[source,bash,subs="attributes+"]
+----
+oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+----
++
+{blank}
++
+[NOTE]
+====
+You can use the right copy button to copy this type of commands along all the lab instructions.
+====
+. You should see something like the following (the project names may be different):
++
+[subs="attributes+"]
+----
+Login successful.
+
+You have access to the following projects and can switch between them with 'oc project <projectname>':
+
+  * {user-username}
+    {user-username}-che
+    {user-username}-shared-475f
+    {user-username}-workshop-a14c
+
+Using project "user1".
+Welcome! See 'oc help' to get started.
+----
++
+{blank}
++
+image:images/002-terminal-cli-login.png[OC Login Command, role="integr8ly-img-responsive"]
++
+{empty} +
+
+. Most of the work will be deploy to your own `{namespace}` project namespace. +
+Be sure to have it as a _working_ project by executing the following command:
++
+[source,bash,subs="attributes+"]
+----
+oc project {namespace}
+----
+
+{empty} +
+
+Now you are ready to start working !
+
