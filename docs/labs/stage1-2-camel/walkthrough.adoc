@@ -1,4 +1,5 @@
 :walkthrough: Gitter to Slack bridge ()
+:namespace: {user-username}
 
 ifdef::env-github[]
 endif::[]
@@ -46,6 +47,7 @@ mkdir lab1
 cd lab1
 touch g2s.yaml
 touch stage1.properties
+:
 ```
 +
 NOTE: The commands above also create the file sources you need for the exercise.
@@ -54,6 +56,16 @@ NOTE: The commands above also create the file sources you need for the exercise.
 
 . Create the definitions
 +
+.. Open the `g2s.yaml` file in your editor.
++
+Select from your project tree:
++
+* MessageHub -> Lab1 -> g2s.yaml
++
+image::images/crw-open-yaml.png[align="left", width=50%]
++
+{empty} +
+
 .. To start with, we will simply consume Gitter messages and log them. We select the following 2 Kamelets to bind:
 +
 --
@@ -119,25 +131,32 @@ IMPORTANT: You will notice the presence of the property `streamCachingEnabled` t
 Use the following command to run locally your Kamelet Binding:
 +
 ```bash
-camel run g2s.yaml \
---local-kamelet-dir=$PWD/../kamelets \
---properties=stage1.properties
+camel run * --local-kamelet-dir=../support/deploy/kamelets
 ```
 +
-{empty} +
+NOTE: Observe the simplicity of the command `camel run \*`. The wildcard `*` allows _Camel JBang_ to automatically scan the folder and recognise the type of each file found (code, properties, resource, etc.).
 +
-Camel JBang will build a local runnable and start Camel. +
-In the output logs you should see Camel connecting to Gitter, similar to the following:
+NOTE: The command includes a flag to find custom kamelets. The _Gitter_ kamelet has been created for this workshop and does not come out-of-the-box from the default _Camel_ catalog.
++
+{blank}
++
+_Camel JBang_ will build a local runnable and start it. +
+In the output logs you should see _Camel_ connecting to _Gitter_, similar to the following:
 +
 ----
-... : Apache Camel 3.18.0 (CamelJBang) started in 2s124ms (build:170ms init:1s738ms start:216ms JVM-uptime:4s)
+... : Apache Camel 3.19.0 (g2s) started in 1s658ms (build:118ms init:1s323ms start:217ms JVM-uptime:3s)
 ... : Opening connection to Gitter...
 ----
 +
 {empty} +
 +
-Now, from Gitter's chat room, send a message, for example "Hello Camel". +
-Your terminal should show the arrival of a Gitter event similar to the following JSON payload:
+Now, from the _Gitter_ chat room, send a message, for example `Hello Camel`.
++
+image::images/gitter-send-message.png[align="left", width=60%]
++
+{blank}
++
+Your terminal should show the arrival of a _Gitter_ event similar to the following JSON payload:
 +
 ----
 {"id":"6318848405ad4a3701dccfb4","text":"Hello Camel","html":"Hello Camel","sent":"2022-09-07T11:46:12.825Z","readBy":0,"urls":[],"mentions":[],"issues":[],"meta":[],"v":1,"fromUser":{"id":"xxxxxxxxxxxxxxxx","username":"demo-user"         }}
@@ -145,29 +164,37 @@ Your terminal should show the arrival of a Gitter event similar to the following
 +
 {empty} +
 +
-Hopefully you've been successful in capturing Gitter messages with Camel. +
-Press `Ctrl`+`C` to stop Camel.
+Hopefully you've been successful in capturing _Gitter_ messages with _Camel_. +
+Press `Ctrl`+`C` to stop _Camel_.
 +
 {empty} +
 
-. Now we need to extend the Kamelet Binding definition to include data transformation that matches the JSON structure the target system (Slack) expects.
+. Now we need to extend the _Kamelet Binding_ definition to include data transformation that matches the JSON structure the target system (_Slack_) expects.
 +
 We choose from the Kamelet Catalog the JSLT action to transform the body.
 +
-TIP: JSLT is a very convenient transformer to manipulate JSON payloads. It's inspired by XSLT (XML Transformation) to define stylesheets containing transformation rules for JSON.
+TIP: JSLT is a very convenient transformer to manipulate JSON payloads. It's inspired in XSLT (XML Transformation) to define stylesheets containing transformation rules for JSON.
 +
-Create the JSLT file `g2s.jslt` containing the following definition:
+Create the JSLT file `g2s.jslt` with the command:
 +
-----
+```bash
+touch g2s.jslt
+```
++
+{blank}
++
+Open the new file in your editor and copy/paste the following definition:
++
+```
 {
     "channel":"TO_BE_DEFINED",
     "text":"*"+.fromUser.username+"@gitter*: "+.text
 }
-----
+```
 +
 [NOTE]
 ====
-* The field `channel` denotes the target room in Slack where messages will be pushed. For now we use a temporary value. +
+* The field `channel` denotes the target room in _Slack_ where messages will be pushed. For now we use a temporary value. +
 * The field `text` includes JsonPath rules extracting values from the input Gitter event.
 ====
 {empty} +
@@ -216,18 +243,16 @@ spec:
 . Run Camel JBang again ensuring you include your JSLT file. It should look as follows:
 +
 ```bash
-camel run g2s.yaml g2s.jslt \
---local-kamelet-dir=$PWD/../kamelets \
---properties=stage1.properties
+camel run * --local-kamelet-dir=../support/deploy/kamelets
 ```
 {empty} +
 
 . From Gitter send another chat message and inspect your terminal output. +
 You should see an incoming event now transformed and looking similar to this:
 +
-```json
+----
 {"channel":"TO_BE_DEFINED","text":"*demo-user@gitter*: Hello Camel"}
-```
+----
 +
 {empty} +
 +
@@ -324,7 +349,8 @@ gitter.room=6317569e6da03739849c519a
 ----
 +
 ```properties
-# Slack credentials
+# Slack
+# credentials
 slack.token=YOUR_TOKEN
 ```
 +
@@ -338,9 +364,7 @@ slack.token=YOUR_TOKEN
 . Run Camel JBang from your terminal as follows:
 +
 ```bash
-camel run g2s.yaml g2s.jslt \
---local-kamelet-dir=$PWD/../kamelets \
---properties=stage1.properties
+camel run * --local-kamelet-dir=../support/deploy/kamelets
 ```
 {empty} +
 
