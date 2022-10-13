@@ -1,0 +1,824 @@
+:walkthrough: Gitter to Slack bridge ()
+
+ifdef::env-github[]
+endif::[]
+
+[id='lab3-gitter-kafka-slack']
+// = Lab 3 - Gitter ⇔ Kafka ⇔ Slack (via streams)
+= Lab 3 - Decoupled Re-Architecture
+
+// = [[kubernetes-user]] The Kubernetes user deployment flow
+
+Open the architecture by decoupling the chat systems using streaming capabilities with AMQ Streams.
+
+{empty} + 
+
+*Overview*
+
+Lab 1 and 2 enabled _Gitter_/_Slack_ conversations. However their connectivity was tightly coupled with dedicated data translations between both platforms. On this third lab we want to break them away to open up the architecture in order to welcome additional systems and services.
+
+
+{empty} +
+
+Target persona: +
+--
+* *Kubernetes User* +
+{empty} +
+--
+Difficulty level: +
+--
+* *EASY* +
+{empty} +
+--
+Estimated time: +
+--
+* *20 mn* +
+{empty} +
+--
+
+{empty} +
+
+Technical goals and milestones:
+
+* Evolve and mature the architecture.
+* Adopt a standard interface
+* Switch bindings to platform resources.
+
+{empty} +
+
+The picture billow illustrates an asynchronous decoupled architecture, via a streaming platform (_Kafka_). This approach increases the number of data flows from two to four.
+
+TIP: At first it seems unnecessary to double the number of data flows, but the benefits outweighs complexity, we gain an easily extensible architecture. In later labs you'll see new additions to the architecture.
+
+{empty} +
+
+// image::images/processing-flow.png[title="Data flow",align="center",title-align=center, width=80%]
+image::images/data-flow.png[align="center", width=90%]
+
+{empty} +
+
+In terms of implementation effort for this lab, your main task is to split each of your current data flows (from Lab-2) in two different parts:
+
+- The _Gitter_ to _Slack_ process into:
+. _Gitter_ to _Kafka_
+. _Kafka_ to _Slack_
+- The _Slack_ to _Gitter_ process into:
+. _Slack_ to _Kafka_
+. _Kafka_ to _Gitter_
+
+{empty} +
+
+One fundamental architecture consideration is that if we want an easy to plugin platform where other communication systems or services need to plugin with ease, we should adopt a standard data model. It would establish a common interface for systems willing to integrate with the platform.
+
+This implies that instead of applying platform specific data transformations (eg. _Gitter_ data model to _Slack_ data model), we apply the following data transformations:
+
+- System specific to standard data model (e.g. _Gitter_/_Slack_ to _Kafka_)
+- Standard data model to system specific (e.g. _Kafka_ to _Gitter_/_Slack_)
+
+{empty} +
+
+The illustration below describes data exchanges via _Kafka_:
+
+image::images/standard-data-model.png[align="center", width=90%]
+
+{empty} +
+
+
+[time=2]
+[id="setup"]
+== Setup the Lab working folder
+
+First of all, ensure you undeploy Lab2's _Kamelet_ bindings, otherwise they will enter in conflict with the ones we're about to create:
+```bash
+oc delete klb g2s
+oc delete klb s2g
+:
+```
+{empty} +
+
+Now, we go back where we left it to continue growing our solution. +
+We use Lab-2 as the base for this next stage.
+
+The following set of instructions prepare the set of files you will be working with: 
+
+. Prepare Lab 3 folder
++
+* **Linux**
++
+```bash
+cd /projects/MessageHub
+cp -r lab2 lab3
+cd lab3
+mv stage2.properties stage3.properties
+grep -rl stage2 . | xargs sed -i 's/stage2/stage3/g'
+: 
+```
++
+* **MacOS**
++
+```bash
+cd /projects/MessageHub
+cp -r lab2 lab3
+cd lab3
+mv stage2.properties stage3.properties
+grep -rl stage2 . | xargs sed -i '' 's/stage2/stage3/g'
+: 
+```
++
+{empty} +
+
+. Split each YAML file in two:
++
+```bash
+mv g2s.yaml g2k.yaml
+cp g2k.yaml k2s.yaml
+mv s2g.yaml s2k.yaml
+cp s2k.yaml k2g.yaml
+mkdir flows
+mv *.yaml flows/
+:
+```
++
+{empty} +
+
+. Rename the bindings:
++
+* **Linux**
++
+```bash
+sed -i 's/g2s/g2k/g' flows/g2k.yaml
+sed -i 's/g2s/k2s/g' flows/k2s.yaml
+sed -i 's/s2g/s2k/g' flows/s2k.yaml
+sed -i 's/s2g/k2g/g' flows/k2g.yaml
+:
+```
++
+* **MacOS**
++
+```bash
+sed -i '' 's/g2s/g2k/g' flows/g2k.yaml
+sed -i '' 's/g2s/k2s/g' flows/k2s.yaml
+sed -i '' 's/s2g/s2k/g' flows/s2k.yaml
+sed -i '' 's/s2g/k2g/g' flows/k2g.yaml
+:
+```
++
+{empty} +
+
+. Prepare JSLTs:
++
+```bash
+rm *.jslt
+mkdir maps
+touch maps/g2k.jslt
+touch maps/k2s.jslt
+touch maps/s2k.jslt
+touch maps/k2g.jslt
+:
+```
+{empty} +
+
+
+[type=verification]
+Are you located in the lab3 directory? did the commands above execute successfully?
+
+[type=verificationSuccess]
+You're ready to continue.
+
+[type=verificationFail]
+Make sure the syntax of the commands are compatible with with your environment.
+
+
+{empty} +
+
+
+[time=5]
+[id="gitter-slack-to-kafka"]
+== Gitter/Slack to Kafka
+
+The two data flows we have created in previous labs are almost identical in terms of processing steps, those are:
+
+. Receive events
+. Filter events
+. Transform events
+. Push events
+
+{empty} +
+
+For the processes from _Gitter_/_Slack_ to _Kafka_, the steps remain the same, we just need to switch to the standard data model (step 3) and target _Kafka_ instead (step 4).
+
+{empty} +
+
+=== Process overview
+
+The diagram below applies to the data flows (2 of them) from _Gitter_/_Slack_ respectively to _Kafka_:
+
+image::images/processing-flow-chat2kafka.png[align="center", width=90%]
+
+{empty} +
+
+There are 4 Kamelets in use:
+
+====
+* *A source* +
+Consumes events from _Gitter/Slack_.
+
+* *Two actions* +
+One filters messages to prevent death loops. +
+One transforms _Gitter/Slack_ events to the standard data model.
+
+* *A sink* +
+Produces events to _Kafka_.
+====
+
+{empty} +
+
+[NOTE]
+As in lab 1 & 2, this one also fits the _Kubernetes_ user. We compose the definitions using Kamelets to enable the data flows between the different platforms.
+
+{empty} +
+
+=== Gitter to Kafka
+
+. Replace the sink to target _Kafka_
++
+Open and edit your `g2k.yaml` file.
++
+The original definition remains intact except for the sink to be replaced by a _Kafka_ destination. +
+Copy the sink snippet down below and paste it in your _Kamelet Binding_:
++
+----
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: g2k
+  annotations:
+    trait.camel.apache.org/mount.configs: "secret:stage3"
+    trait.camel.apache.org/mount.resources: "configmap:stage3-transform"
+spec:
+
+  source:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: gitter-source
+    properties:
+      token: "{{gitter.token}}"
+      room:  "{{gitter.room}}"
+
+  steps:
+    
+  # Filter action to prevent death loops
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: predicate-filter-action
+    properties:
+      expression: $.text =~ /(?!\*\*.*@.*\*\*:).*/
+
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: jslt-action
+    properties:
+      template: g2k.jslt
+
+----
++
+```yaml
+  sink:
+    ref:
+      kind: KafkaTopic
+      apiVersion: kafka.strimzi.io/v1beta1
+      name: YOUR_ROOM_NAME
+```
++
+{empty} +
++
+[IMPORTANT]
+====
+Ensure you configure the sink's `name` (Kafka topic) by replacing `YOUR_ROOM_NAME` with your chat's room name.
+====
++
+[TIP]
+====
+* The sink definition in a _Kamelet Binding_ can either be a _Kamelet_ sink from the catalog, or a platform resource (_Kafka_ or _KNative_).
+* _Kafka_ definitions only require the name of the topic. The _Camel K_ operator automatically wires the connectivity to the _Kafka_ platform available in the environment.
+====
+{empty} +
+
+. Define the JSLT transformation to the new standard data model.
++
+Copy the snippet below and paste it into your new `g2k.jslt` file:
++
+```
+{
+	"timestamp": string(round(parse-time(.sent, "yyyy-MM-dd'T'HH:mm:ss.SSSX"))),
+	"source":"gitter", 
+	"user": .fromUser.displayName, 
+	"text": .text
+}
+```
++
+[NOTE]
+====
+* We include various fields to provide context.
+* We apply a format on the timestamp to match those from other sources.
+====
+{empty} +
+
+And that's all it takes for this first data flow between _Gitter_ and _Kafka_.
+
+{empty} +
+
+
+
+=== Slack to Kafka
+
+Very similar changes apply for the _Slack_ -> _Kafka_ flow.
+
+. Replace the sink to target _Kafka_
++
+Open and edit your `s2k.yaml` file.
++
+The original definition remains intact except for the sink to be replaced by a _Kafka_ destination. +
+Copy the sink snippet down below and paste it in your _Kamelet Binding_:
++
+----
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: s2k
+  annotations:
+    trait.camel.apache.org/mount.configs: "secret:stage3"
+    trait.camel.apache.org/mount.resources: "configmap:stage3-transform"
+spec:
+
+  source:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: slack-source
+    properties:
+      token:   "{{slack.token}}"
+      channel: "{{slack.channel.name}}"
+      delay: 2000
+
+
+  steps:
+
+  # Filter action to prevent death loops
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: predicate-filter-action
+    properties:
+      expression: "!$.botId || $.botId == null"
+
+  # JSON Transformation
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: jslt-action
+    properties:
+      template: "{{transform.path:s2k.jslt}}"
+----
++
+```yaml
+  sink:
+    ref:
+      kind: KafkaTopic
+      apiVersion: kafka.strimzi.io/v1beta1
+      name: YOUR_ROOM_NAME
+```
++
+{empty} +
++
+[IMPORTANT]
+====
+In the sink definition, use the same `name` (Kafka topic) than on your _Gitter_ to _Kafka_ flow.
+====
++
+{empty} +
+
+. Define the JSLT transformation to the new standard data model.
++
+Copy the snippet below and paste it into your new `s2k.jslt` file:
++
+```
+{
+	"timestamp": .ts,
+	"source":"slack", 
+	"user": .user, 
+	"text": .text
+}
+```
++
+[NOTE]
+====
+We define the same common fields complying with our standard data model.
+====
+{empty} +
+
+Very straightforward, nothing else to be done here. 
+
+{empty} +
+
+
+
+[time=5]
+[id="kafka-to-gitter-slack"]
+== Kafka to Gitter/Slack
+
+The processing steps still remain essentially the same:
+
+. Receive events
+. Filter events
+. Transform events
+. Push events
+
+{empty} +
+
+The main differences are that we are consuming events from _Kafka_ (step 1) and that we have to translate events (step 3) from the standard data model to the target specific model (e.g. _Gitter_, _Slack_, other)
+
+{empty} +
+
+=== Process overview
+
+The diagram below applies to the data flows (2 of them) from _Kafka_ to Gitter/Slack respectively:
+
+image::images/processing-flow-kafka2chat.png[align="center", width=90%]
+
+{empty} +
+
+There are 4 Kamelets in use:
+
+====
+* *A source* +
+Consumes events from _Kafka_.
+
+* *Two actions* +
+One filters messages to prevent death loops. +
+One transforms events from the standard data model to _Gitter/Slack_.
+
+* *A sink* +
+Produces events to _Gitter/Slack_.
+====
+
+{empty} +
+
+
+
+=== Kafka to Gitter
+
+. Modify the Kamelet Binding
++
+Open and edit your `k2g.yaml` file.
++
+Two modifications are required:
++
+--
+* The source is now _Kafka_
+* The filter should blocks self-events
+--
++
+{empty} +
++
+Copy the corresponding snippets and replace in your _Kamelet Binding_:
++
+----
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: k2g
+  annotations:
+    trait.camel.apache.org/mount.configs: "secret:stage3"
+    trait.camel.apache.org/mount.resources: "configmap:stage3-transform"
+spec:
+----
++
+```yaml
+  source:
+    ref:
+      kind: KafkaTopic
+      apiVersion: kafka.strimzi.io/v1beta1
+      name: YOUR_ROOM_NAME
+```
++
+----
+  steps:
+
+  # Filter action to prevent death loops
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: predicate-filter-action
+    properties:
+----
++
+```yaml
+      expression: $.source != "gitter"
+```
++
+----
+  # JSON Transformation
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: jslt-action
+    properties:
+      template: "{{transform.path:k2g.jslt}}"
+
+
+  sink:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: gitter-sink
+    properties:
+      token: "{{gitter.token}}"
+      room: "{{gitter.room}}"
+----
++
+{empty} +
++
+[IMPORTANT]
+====
+Ensure you configure the source's `name` (_Kafka_ topic) by replacing `YOUR_ROOM_NAME` with your chat's room name.
+====
++
+[NOTE]
+====
+The filter definition is specifically blocking events coming from _Gitter_ itself. As now _Kafka_ sits in the middle, we are simultaneously producing and consuming _Kafka_ events from/to _Gitter_, which can cause event loops. 
+====
++
+[TIP]
+====
+The source definition in a _Kamelet Binding_ can either be a _Kamelet_ source from the catalog, or a platform resource (_Kafka_ or _KNative_). The operator auto-wires the connectivity to _Kafka_ for us.
+====
+{empty} +
+
+. Define the JSLT transformation (Standard -> Gitter).
++
+Copy the snippet below and paste it into your new `k2g.jslt` file:
++
+```
+{
+    "text":"**"+.user+"@"+.source+"**: "+.text
+}
+```
++
+[NOTE]
+====
+We're mapping values from the Standard data model
+====
+{empty} +
+
+Again, very simple updates, nothing else required for the _Kafka_ -> _Gitter_ process.
+
+{empty} +
+
+
+
+=== Kafka to Slack
+
+Very similar changes apply for the _Kafka_ -> _Slack_ flow.
+
+
+. Modify the Kamelet Binding
++
+Open and edit your `k2s.yaml` file.
++
+Two modifications are required:
++
+--
+* The source is now _Kafka_
+* The filter should blocks self-events
+--
++
+{empty} +
++
+Copy the corresponding snippets and replace in your _Kamelet Binding_:
++
+----
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: k2s
+  annotations:
+    trait.camel.apache.org/mount.configs: "secret:stage3"
+    trait.camel.apache.org/mount.resources: "configmap:stage3-transform"
+spec:
+----
++
+```yaml
+  source:
+    ref:
+      kind: KafkaTopic
+      apiVersion: kafka.strimzi.io/v1beta1
+      name: YOUR_ROOM_NAME
+```
++
+----
+  steps:
+    
+  # Filter action to prevent death loops
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: predicate-filter-action
+    properties:
+----
++
+```yaml
+      expression: $.source != "slack"
+```
++
+----
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: jslt-action
+    properties:
+      template: k2s.jslt
+
+  sink:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: slack-sink
+    properties:
+      token: "{{slack.token}}"
+----
++
+{empty} +
++
+[IMPORTANT]
+====
+Ensure you configure the source's `name` (_Kafka_ topic) by replacing `YOUR_ROOM_NAME` with your chat's room name.
+====
++
+[NOTE]
+====
+The filter definition is specifically blocking events coming from _Slack_ itself. As now _Kafka_ sits in the middle, we are simultaneously producing and consuming _Kafka_ events from/to _Slack_, which can cause event loops. 
+====
++
+{empty} +
+
+. Define the JSLT transformation (Standard -> _Slack_).
++
+Copy the snippet below and paste it into your new `k2s.jslt` file:
++
+```
+{
+    "channel":"YOUR_ROOM_ID",
+    "text":"*"+.user+"@"+.source+"*: "+.text
+}
+```
++
+[IMPORTANT]
+====
+Ensure you configure the _Slack_ `channel` by replacing `YOUR_ROOM_ID` with your chat's room identifier.
+====
++
+[NOTE]
+====
+* The field `channel` denotes the target room in _Slack_ where messages will be pushed. Use your room ID in _Slack_. +
+* The field `text` includes JsonPath rules extracting values from the input Standard data model.
+====
+{empty} +
+
+And you're done with the _Kafka_ -> _Slack_ changes.
+
+
+{empty} +
+
+
+[time=8]
+[id="deploy-test"]
+== Deploy and test
+
+We've covered a lot of ground. It would be normal to make mistakes. Hopefully the helper guide kept those to a minimum and, once deployed, you can see your integrations working in healthy state and delivering the expected outcome.
+
+
+. Push the configuration to _OpenShift_
++
+Recreate the _Secret_ and _ConfigMap_ to include both JSLTs. +
+Run the following `oc` command:
++
+```bash
+oc create secret generic stage3 --from-file=stage3.properties
+oc create cm stage3-transform --from-file=maps
+:
+```
+{empty} +
+
+. Create the _Kafka_ topic
++ 
+Run the following command:
++
+```bash
+mkdir kafka
+touch kafka/room_x.yaml
+:
+```
++
+{empty} +
++
+Edit your `room_x.yaml` file under the `kafka` directory. Add the following definition
++
+```yaml
+kind: KafkaTopic
+apiVersion: kafka.strimzi.io/v1beta2
+metadata:
+  name: YOUR_ROOM_NAME
+  labels:
+    strimzi.io/cluster: my-cluster
+```
++
+[IMPORTANT]
+====
+Ensure you configure the topic's `name` by replacing `YOUR_ROOM_NAME` with your chat's room name.
+====
++
+Push the definition to OpenShift with the following command:
++
+```bash
+oc apply -f kafka/room_x.yaml
+```
+{empty} +
+
+. Deploy the YAML definition containing your new _Kamelet Binding_
+.. Run the following `oc` command to deploy the integration:
++
+```bash
+oc apply -f flows/g2k.yaml
+oc apply -f flows/k2s.yaml
+oc apply -f flows/s2k.yaml
+oc apply -f flows/k2g.yaml
+:
+```
++
+NOTE: Be patient, this action will take some time to complete as the operator needs to download all related dependencies, build the applications and create the images before the integrations can be deployed.
+
+.. Wait for readyness
++
+Check the deployment of all pods and their logs to ensure all is in healthy state.
++
+You can run the following command to check their state:
++
+```bash
+oc get klb
+```
++
+{empty} +
++
+When the pods are ready, the command should return:
++
+----
+NAME   PHASE   REPLICAS
+g2k    Ready   1
+k2g    Ready   1
+k2s    Ready   1
+s2k    Ready   1
+----
++
+{empty} +
+
+. Send messages to test the system.
++
+.. Go to you _Gitter_'s room and send a message, for example `Hello from Gitter`.
+
+.. Then go to you _Slack_'s room and send a message, for example `Hello from Slack`.
++
+If all goes well you should see something similar to the picture below:
++
+image::images/stage3-msg-chat-test.png[align="left", width=90%]
++
+{empty} +
+
++
+{empty} +
+
+[type=verification]
+Did you see the message going from _Gitter_ to _Slack_?
+
+[type=verificationSuccess]
+Very good !
+
+[type=verificationFail]
+Inspect in the pod logs to troubleshoot.
+
+
+[type=verification]
+Did you see the message going from _Slack_ to _Gitter_?
+
+[type=verificationSuccess]
+Very good !
+
+[type=verificationFail]
+Inspect in the pod logs to troubleshoot.
+
+
+
+// Bravo! You've completed Stage 3 !!

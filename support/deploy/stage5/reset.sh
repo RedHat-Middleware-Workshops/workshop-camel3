@@ -1,0 +1,1 @@
+kamel delete store

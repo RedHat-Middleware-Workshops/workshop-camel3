@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- camel-k: language=xml dependency=camel-kafka dependency=camel-jackson dependency=camel-csv  -->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://camel.apache.org/schema/spring"
+        xsi:schemaLocation="
+            http://camel.apache.org/schema/spring
+            https://camel.apache.org/schema/spring/camel-spring.xsd">
+
+
+
+    <!-- Simulate Kafka consumer -->
+    <route id="kafka-consumer">
+                <!-- <from uri="platform-http:/kafka"> -->
+        <from uri="kafka:room1?brokers=my-cluster-kafka-bootstrap:9092&amp;clientId=test&amp;groupId=test&amp;allowManualCommit=true&amp;autoCommitEnable=false"/>
+
+        <!-- The controller helps keeping the instance alive while the aggregation is undergoing -->
+        <bean ref="controller" method="newMessage"/>
+
+        <when>
+            <simple>${bean:controller?method=stopProcessing}</simple>
+            <log message="processing time out, ignoring event: ${body}"/>
+            <stop/>
+        </when>
+
+        <log message="got new message"/>
+        <log message="payload: ${body}"/>
+
+        <unmarshal>
+            <json/>
+        </unmarshal>
+
+        <marshal>
+            <csv/>
+        </marshal>
+
+        <!-- <aggregate aggregationStrategy="msgStrategy" completionTimeout="{{message.aggregator.timeout}}"> -->
+        <aggregate strategyRef="msgStrategy" completionTimeout="{{message.aggregator.timeout}}">
+        <!-- <aggregate strategyRef="msgStrategy" completionTimeout="20000"> -->
+            <correlationExpression>
+              <constant>true</constant>
+            </correlationExpression>
+            <to uri="direct:backup-data"/>
+        </aggregate>
+
+    </route>
+
+
+<!-- This route is triggered by the aggregator.
+     Its goal is to keep 1 exchange alive. This ensures
+     Cron doesn't shutdown the instance before the aggregation is completed -->
+    <route>
+        <from uri="direct:wait-until-done"/>
+        <log message="waiting for aggregation to finish..."/>
+        <bean ref="controller" method="waitUntilJobDone"/>
+        <log message="end of execution"/>
+    </route>
+
+
+    <!-- Store data somewhere -->
+    <route id="backup-data">
+      <from uri="direct:backup-data"/>
+      <bean ref="controller" method="jobDone"/>
+      <log message="store aggregated data:\n${body}"/>
+      <convertBodyTo type="byte[]"/>
+
+      <setHeader name="CamelAwsS3Key">
+        <simple>room1/${date:now:yyyy-MM-dd_HH-mm-ssZ}.csv</simple>
+      </setHeader>
+
+      <!-- <to uri="kamelet:aws-s3-sink?{{camel.uri.s3.parameters}}"/> -->
+      <to uri="aws2-s3:chatrooms.bucket?{{camel.uri.s3.parameters}}"/>
+
+
+      <log message="done."/>
+
+    </route>
+
+
+</routes>

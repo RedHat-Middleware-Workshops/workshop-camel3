@@ -1,0 +1,6 @@
+kind: KafkaTopic
+apiVersion: kafka.strimzi.io/v1beta2
+metadata:
+  name: room1
+  labels:
+    strimzi.io/cluster: my-cluster

@@ -1,0 +1,6 @@
+{
+	"timestamp": .ts,
+	"source":"slack", 
+	"user": .user, 
+	"text": .text
+}

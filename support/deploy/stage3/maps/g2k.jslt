@@ -1,0 +1,6 @@
+{
+	"timestamp": string(round(parse-time(.sent, "yyyy-MM-dd'T'HH:mm:ss.SSSX"))),
+	"source":"gitter", 
+	"user": .fromUser.displayName, 
+	"text": .text
+}

@@ -1,0 +1,4 @@
+{
+    "channel":"C03QNKMN6DN",
+    "text":"*"+.fromUser.username+"@gitter*: "+.text
+}

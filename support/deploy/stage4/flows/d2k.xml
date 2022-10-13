@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- camel-k: language=xml -->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://camel.apache.org/schema/spring"
+        xsi:schemaLocation="
+            http://camel.apache.org/schema/spring
+            https://camel.apache.org/schema/spring/camel-spring.xsd">
+
+            
+    <!-- 
+    As per Discord's API operation codes, we define accordingly actions to send/receive messages.
+    ref: https://discord.com/developers/docs/topics/opcodes-and-status-codes
+    -->
+    <route>
+        <from uri="direct:identify"/>
+        <setBody>
+            <simple>{
+                "op": 2,
+                "d": {
+                  "token": "{{discord.token}}",
+                  "intents": 513,
+                  "properties": {
+                    "os": "linux",
+                    "browser": "my_library",
+                    "device": "my_library"
+                  }
+                }
+              }
+            </simple>
+        </setBody>
+        <to uri="ahc-wss://gateway.discord.gg/?v=9&amp;encoding=json&amp;clientConfig=#myconfig"/>
+    </route>
+
+    <route id="heartbeat">
+        <from uri="timer:heartbeat?delay=10000&amp;period={{time:30000}}"/>
+        <setBody>
+            <simple>{"op": 1,"d": 251}</simple>
+        </setBody>
+        <to uri="ahc-wss://gateway.discord.gg/?v=9&amp;encoding=json&amp;clientConfig=#myconfig"/>
+    </route>
+
+    <route>
+        <from uri="ahc-wss://gateway.discord.gg/?v=9&amp;encoding=json&amp;clientConfig=#myconfig"/>
+        <log message="from DISCORD: ${body}"/>
+        <choice>
+            <when>
+                <jsonpath>$[?(@.op == 11)]</jsonpath>
+                <log message="Heartbeat ACK received."/>
+            </when>
+            <when>
+                <jsonpath>$[?(@.op == 7)]</jsonpath>
+                <log message="Reconnect requested. Server will disconnect."/>
+            </when>
+            <when>
+                <jsonpath>$[?(@.op == 10)]</jsonpath>
+                <log message="Hello received. Sending identification..."/>
+                <to uri="direct:identify"/>
+            </when>
+            <when>
+                <!-- <jq>.t == "MESSAGE_CREATE" and .d.author.username != "BrunoApp"</jq> -->
+                <jsonpath>$[?(@.t == "MESSAGE_CREATE" &amp;&amp; @.d.author.username != "BrunoApp")]</jsonpath>
+
+                <!-- The property below allows running the JSLT locally with JBang,
+                     and remotely with Camel K -->
+                <to uri="jslt:{{camel.jbang.classpathFiles:d2k.jslt}}"/>
+
+                <to uri="direct:kafka-push"/>
+            </when>
+        </choice>
+    </route>
+
+
+
+
+    <route>
+        <from uri="direct:kafka-push"/>
+        <log message="message to push: ${body}"/>
+        <choice>
+            <when>
+                <simple>"{{camel.main.name:not-jbang}}" == "CamelJBang"</simple>
+                <log message="JBang instance, bypassing kafka push"/>
+            </when>
+            <otherwise>
+                <log message="Camel K instance, pushing to kafka"/>
+                <toD uri="kafka:room1?brokers=my-cluster-kafka-bootstrap:9092"/>
+            </otherwise>
+        </choice>
+    </route>
+
+
+
+</routes>

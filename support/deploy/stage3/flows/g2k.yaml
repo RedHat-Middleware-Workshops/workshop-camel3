@@ -1,0 +1,53 @@
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: g2k
+  annotations:
+    trait.camel.apache.org/mount.configs: "secret:stage3"
+    trait.camel.apache.org/mount.resources: "configmap:stage3-transform"
+spec:
+
+  source:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: gitter-source
+    properties:
+      token: "{{gitter.token}}"
+      room:  "{{gitter.room}}"
+
+
+  steps:
+
+  # Filter BOT messages
+  # Bot message pattern is: [username@source: message text] -->
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: predicate-filter-action
+    properties:
+      expression: $.text =~ /(?!\*\*.*@.*\*\*:).*/
+
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: jslt-action
+    properties:
+      template: g2k.jslt
+
+  # - ref:
+  #     kind: Kamelet
+  #     apiVersion: camel.apache.org/v1
+  #     name: log-sink
+
+  sink:
+    ref:
+      kind: KafkaTopic
+      apiVersion: kafka.strimzi.io/v1beta1
+      name: room1
+
+  # sink:
+  #   ref:
+  #     kind: Kamelet
+  #     apiVersion: camel.apache.org/v1
+  #     name: log-sink    

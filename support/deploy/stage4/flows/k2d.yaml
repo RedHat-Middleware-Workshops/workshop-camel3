@@ -1,0 +1,52 @@
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: k2d
+spec:
+  integration:
+    configuration:
+     - type: "secret"
+       value: "stage4"
+     - type: "configmap"
+       value: "stage4-transform"
+
+  source:
+    ref:
+      kind: KafkaTopic
+      apiVersion: kafka.strimzi.io/v1beta1
+      name: room1
+
+  steps:
+
+  # Prevent consuming own messages
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: predicate-filter-action
+    properties:
+      expression: $.source != "discord"
+
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: jslt-action
+    properties:
+      template: k2d.jslt
+
+
+  sink:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: discord-sink
+    properties:
+      token:     "{{secret:stage4/discord.token}}"
+      channelid: "{{secret:stage4/discord.channel.id}}"
+      # token: "{{slack.token}}"
+
+
+  # sink:
+  #   ref:
+  #     kind: Kamelet
+  #     apiVersion: camel.apache.org/v1
+  #     name: log-sink
