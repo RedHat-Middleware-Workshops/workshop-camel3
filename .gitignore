@@ -1,5 +1,4 @@
 **/*/.camel-jbang
 test*
-lab*
-walkthroughs/webapp.db
+docs/labs/webapp.db
 .vscode/*
