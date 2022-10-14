@@ -393,7 +393,7 @@ Did you see the message in _Gitter_ showing up in _Slack_?
 
 The definitions that you have implemented can practically be taken 'as-is' into _OpenShift_. 
 
-The only amendments really to be done are:
+The only additional actions really to do are:
 --
 * Ensure we keep tokens secured with Secrets
 * Ensure the Kamelet Binding can load the JSLT file as a resource. 
@@ -406,18 +406,9 @@ If it is still running, press `Ctrl`+`C` to stop it.
 +
 {empty} +
 
-. Apply configuration changes.
+. Include annotations
 +
-Copy from below the portions of YAML to be modified in your definition, and include/replace them in your Kamelet Binding.
-+
-[NOTE]
-====
-There are 3 pieces to include/replace:
-
-. secret/configmap configuration
-. kamelet source properties
-. kamelet sink properties
-====
+Copy from below the `annotations` snippet and include it in your _Kamelet Binding_.
 +
 ----
 apiVersion: camel.apache.org/v1alpha1
@@ -466,18 +457,22 @@ spec:
 
 . Push configuration and resources to _OpenShift_
 +
-.. Be sure your _working_ project in _OpenShift_ is selected by executing the following command:
+.. Be sure the _working_ project in _OpenShift_ is selected by executing the following command:
 +
 [source,bash,subs="attributes+"]
 ----
 oc project {namespace}
 ----
 +
+{blank}
++
 .. Create a _Secret_ containing your configuration. Run the following `oc` command:
 +
 ```bash
 oc create secret generic stage1 --from-file=stage1.properties
 ```
++
+{blank}
 +
 .. Create a _ConfigMap_ containing your JSLT mapping. Run the following `oc` command:
 +

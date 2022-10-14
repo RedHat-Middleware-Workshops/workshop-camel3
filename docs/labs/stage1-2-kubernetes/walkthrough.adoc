@@ -121,7 +121,7 @@ IMPORTANT: You will notice the presence of the property `streamCachingEnabled` t
 
 . Push the configuration to _OpenShift_
 +
-Be sure your _working_ project in _OpenShift_ is selected by executing the following command:
+Be sure the _working_ project in _OpenShift_ is selected by executing the following command:
 +
 [source,bash,subs="attributes+"]
 ----
@@ -259,7 +259,7 @@ Include the following pieces of definitions:
 +
 {empty} +
 +
-The resulting YAML file should look as follows (you can copy the middle snippet into your code):
+The resulting YAML file should look as follows (copy the snippets into your code):
 +
 ----
 apiVersion: camel.apache.org/v1alpha1
@@ -329,7 +329,7 @@ You should see an incoming event now transformed and looking similar to this:
 +
 {empty} +
 +
-At this stage you're ready to replace the Log sink Kamelet by the real one, the Slack sink Kamelet.
+At this stage you're ready to replace the `log-sink` kamelet by the real one, the `slack-sink` kamelet.
 +
 {empty} +
 
