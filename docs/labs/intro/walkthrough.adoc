@@ -1,6 +1,9 @@
 :walkthrough: Lab Introduction
 :namespace: {user-username}
 
+// URLs
+:codeready-url: http://codeready-che.{openshift-app-host}/
+
 ifdef::env-github[]
 endif::[]
 
