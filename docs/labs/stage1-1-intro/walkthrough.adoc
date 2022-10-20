@@ -205,7 +205,9 @@ This above cURL command should return something like:
 {"access_token":"2d482bdf092e0e2299832b1f38d9560243083894","token_type":"Bearer"}
 ----
 +
-CAUTION: Keep the returned token safely as you'll need it later to configure _Camel_.
+{empty} +
++
+IMPORTANT: Keep the returned `access_token` safely as you'll need it later to configure _Camel_.
 +
 {empty} +
 
@@ -267,7 +269,7 @@ Running the cURL command again to obtain the rooms should return the identifier 
 [{"id":"6317569e6da03739849c519a"         }]
 ----
 +
-CAUTION: Keep the returned room ID safely as you'll need it later to configure _Camel_.
+IMPORTANT: Keep the returned room ID safely as you'll need it later to configure _Camel_.
 +
 {empty} +
 +
@@ -280,7 +282,7 @@ At this stage, you should have available all the configuration identifiers requi
 Were you able to join a Gitter room successfully?
 
 [type=verification]
-Did you obtain the room ID?
+Did you take note of your access token and room ID?
 
 {empty} +
 

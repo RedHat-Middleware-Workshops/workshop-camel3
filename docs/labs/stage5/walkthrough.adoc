@@ -147,6 +147,12 @@ Review the notes above and study the sequence diagram again.
 
 The first step is to create a little prototype that will validate our _Camel_ route implementation.
 
+. Close tabs
++
+Before you start this lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
++
+{empty} +
+
 . Setup your lab folder
 .. Create your working folder:
 +
@@ -154,7 +160,7 @@ The first step is to create a little prototype that will validate our _Camel_ ro
 cd /projects/MessageHub
 mkdir lab5
 cd lab5
-cp ../support/stage5/HelperStage5.java .
+cp ../support/labs/stage5/HelperStage5.java .
 :
 ```
 +
@@ -634,7 +640,7 @@ In the logs above:
 --
 +
 If your execution behaved as above, you are progressing well, but you would still want to validate how the system reacts on late event arrivals. 
-
++
 {empty} +
 
 . Test your system with late arrivals.
@@ -828,7 +834,7 @@ Copy the snippet below, and paste into your `store-data` Camel route:
 * We indicate the payload type `text/csv`.
 * The default pattern used above to name the _S3_ bucket is as follows:
 +
-** `chatrooms-{username}.bucket`
+** `chatrooms-{user-username}.bucket`
 +
 {blank}
 +

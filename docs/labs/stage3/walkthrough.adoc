@@ -96,10 +96,16 @@ oc delete klb s2g
 ```
 {empty} +
 
+Also, before you start this second lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
+
+{empty} +
+
+
 Now, we go back where we left it to continue growing our solution. +
 We use Lab-2 as the base for this next stage.
 
 The following set of instructions prepare the set of files you will be working with: 
+
 
 . Prepare Lab 3 folder
 +
@@ -128,6 +134,8 @@ grep -rl stage2 . | xargs sed -i '' 's/stage2/stage3/g'
 {empty} +
 
 . Split each YAML file in two:
++
+(The split allows to place Kafka in between)
 +
 ```bash
 mv g2s.yaml g2k.yaml
@@ -290,20 +298,15 @@ spec:
     ref:
       kind: KafkaTopic
       apiVersion: kafka.strimzi.io/v1beta1
-      name: YOUR_ROOM_NAME
+      name: roomx
 ```
 +
 {empty} +
 +
-[IMPORTANT]
-====
-Ensure you configure the sink's `name` (Kafka topic) by replacing `YOUR_ROOM_NAME` with your chat's room name.
-====
-+
 [TIP]
 ====
 * The sink definition in a _Kamelet Binding_ can either be a _Kamelet_ sink from the catalog, or a platform resource (_Kafka_ or _KNative_).
-* _Kafka_ definitions only require the name of the topic. The _Camel K_ operator automatically wires the connectivity to the _Kafka_ platform available in the environment.
+* _Kafka_ definitions only require the name of the topic, in the above definition `roomx`. The _Camel K_ operator automatically wires the connectivity to the _Kafka_ platform available in the environment.
 ====
 {empty} +
 
@@ -389,15 +392,8 @@ spec:
     ref:
       kind: KafkaTopic
       apiVersion: kafka.strimzi.io/v1beta1
-      name: YOUR_ROOM_NAME
+      name: roomx
 ```
-+
-{empty} +
-+
-[IMPORTANT]
-====
-In the sink definition, use the same `name` (Kafka topic) than on your _Gitter_ to _Kafka_ flow.
-====
 +
 {empty} +
 
@@ -502,7 +498,7 @@ spec:
     ref:
       kind: KafkaTopic
       apiVersion: kafka.strimzi.io/v1beta1
-      name: YOUR_ROOM_NAME
+      name: roomx
 ```
 +
 ----
@@ -541,11 +537,6 @@ spec:
 ----
 +
 {empty} +
-+
-[IMPORTANT]
-====
-Ensure you configure the source's `name` (_Kafka_ topic) by replacing `YOUR_ROOM_NAME` with your chat's room name.
-====
 +
 [NOTE]
 ====
@@ -616,7 +607,7 @@ spec:
     ref:
       kind: KafkaTopic
       apiVersion: kafka.strimzi.io/v1beta1
-      name: YOUR_ROOM_NAME
+      name: roomx
 ```
 +
 ----
@@ -652,11 +643,6 @@ spec:
 ----
 +
 {empty} +
-+
-[IMPORTANT]
-====
-Ensure you configure the source's `name` (_Kafka_ topic) by replacing `YOUR_ROOM_NAME` with your chat's room name.
-====
 +
 [NOTE]
 ====
@@ -731,17 +717,19 @@ Edit your `room_x.yaml` file under the `kafka` directory. Add the following defi
 kind: KafkaTopic
 apiVersion: kafka.strimzi.io/v1beta2
 metadata:
-  name: YOUR_ROOM_NAME
+  name: roomx
   labels:
     strimzi.io/cluster: my-cluster
 ```
 +
-[IMPORTANT]
+[NOTE]
 ====
-Ensure you configure the topic's `name` by replacing `YOUR_ROOM_NAME` with your chat's room name.
+The YAML source above defines a new _Kafka_ topic with name `roomx`. This is the topic all _Camel_ producers and consumers will use.
 ====
 +
-Push the definition to OpenShift with the following command:
+{empty} +
++
+Push the definition to _OpenShift_ with the following command:
 +
 ```bash
 oc apply -f kafka/room_x.yaml

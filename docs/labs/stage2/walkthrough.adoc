@@ -112,6 +112,12 @@ You can tell from the list above that this second lab suits very well the _Kuber
 
 === Process definition
 
+. Close tabs
++
+Before you start this second lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
++
+{empty} +
+
 . Create the skeleton
 +
 .. Using the sources of _Stage1_ as a base, make a copy of your previous exercise, for example:

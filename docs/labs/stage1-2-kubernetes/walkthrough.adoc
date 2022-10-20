@@ -27,7 +27,26 @@ Technical goals and milestones:
 [id="main"]
 == Bridge definition and deployment 
 
-The instructions below will make you progress one Camel step at a time rather than providing a complete _Kamelet Binding_ of the full data flow. This will allow you to play with different _Kamelets_ and understand better the mechanics of _Kamelet Bindings_.
+For reference, here's again the processing flow to inplement:
+
+image::images/processing-flow.png[align="center", width=80%]
+
+You will include 3 Kamelets:
+
+====
+* *A source* +
+Consumes events from _Gitter_.
+
+* *An action* +
+Transforms _Gitter_ events to _Slack_ events (in JSON format).
+
+* *A sink* +
+Produces events to _Slack_.
+====
+
+{empty} +
+
+The instructions below will make you progress one _Camel_ step at a time rather than providing a complete _Kamelet Binding_ of the full data flow. This will allow you to play with different _Kamelets_ and understand better the mechanics of _Kamelet Bindings_.
 
 . Create a folder and resources where you will work
 +
@@ -111,7 +130,10 @@ gitter.room=YOUR_ROOM_ID
 +
 {empty} +
 +
-Ensure you configure your settings using your _Gitter_ details accordingly
+[IMPORTANT]
+====
+Ensure you replace `YOUR_ACCESS_TOKEN` and `YOUR_ROOM_ID` with the values you obtained from the _Gitter_ onboarding process.
+====
 +
 NOTE: The `gitter-source` kamelet is implemented following the specification of Gitter's Streaming API to consume events from the server. To know more, read its API documentation here: https://developer.gitter.im/docs/streaming-api
 +
@@ -171,7 +193,7 @@ g2s    Creating
 
 .. Check your deployment
 +
-Inspect in your OpenShift Developer view your pod is in healthy state and running:
+Inspect in your link:{openshift-host}/topology/ns/{namespace}[OpenShift Developer view, window="_blank"] your pod is in healthy state and running:
 +
 image::images/ocp-dev-pod-healthy.png[align="left", width=80%]
 +
@@ -318,6 +340,8 @@ oc apply -f g2s.yaml
 +
 The Camel K operator needs again to download dependencies (JSLT), but after some time it will replace the pod with a new instance containing the data transformation.
 +
+IMPORTANT: The old version will keep running until Camel K finishes building and deploying the new version. Make sure you wait until the new version has been rolled out.
++
 {empty} +
 
 . From Gitter send another chat message and inspect your terminal output. +
@@ -402,6 +426,8 @@ image::images/slack-room-details-channel-id.png[align="left", width=30%]
 }
 ```
 +
+IMPORTANT: The above `channel` is an example, make sure you replace `C041XMH9M41` with your _Channel ID_.
++
 {empty} +
 +
 Slack will read the `channel` field (target room), from the JSON payload we send, to know where to place the message. +
@@ -458,7 +484,9 @@ oc apply -f g2s.yaml
 +
 {empty} +
 +
-Once more the Camel K operator will rebuild the integration and replace the pod with a new instance that points to Slack.
+Once more the _Camel K_ operator will rebuild the integration and replace the pod with a new instance that points to _Slack_.
++
+IMPORTANT: The old version will keep running until _Camel K_ finishes building and deploying the new version. Make sure you wait until the new version has been rolled out.
 +
 {empty} +
 

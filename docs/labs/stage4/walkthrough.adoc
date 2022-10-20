@@ -371,6 +371,13 @@ image::images/camel-jbang.png[align="left", width=40%]
 
 The first step is to create a little prototype that will validate our _Camel_ route implementation.
 
+
+. Close tabs
++
+Before you start this lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
++
+{empty} +
+
 . Setup your lab folder
 .. Create your working folder:
 +
@@ -1020,6 +1027,13 @@ The _Camel_ developer needs to open a websocket connection and ensure the follow
 
 === Process definition
 
+
+. Close tabs
++
+Before you start this lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
++
+{empty} +
+
 . Setup your lab folder
 +
 Execute the following commands to create your working folder and configuration:
@@ -1191,12 +1205,12 @@ Inlcude in your `d2k.xml` the following _Camel_ route:
         <log message="message to push: ${body}"/>
         <choice>
             <when>
-                <simple>"{{camel.main.name:not-jbang}}" == "CamelJBang"</simple>
+                <simple>"{{camel.jbang.classpathFiles:not-jbang}}" != "not-jbang"</simple>
                 <log message="JBang instance, bypassing kafka push"/>
             </when>
             <otherwise>
                 <log message="Camel K instance, pushing to kafka"/>
-                <toD uri="kafka:room1?brokers=my-cluster-kafka-bootstrap:9092"/>
+                <toD uri="kafka:roomx?brokers=my-cluster-kafka-bootstrap:9092"/>
             </otherwise>
         </choice>
     </route>
@@ -1204,7 +1218,7 @@ Inlcude in your `d2k.xml` the following _Camel_ route:
 +
 [NOTE] 
 --
-* The `from` element defines a `direct` _Camel_ component permitting other _Camel_ routes to publish events to _Kafka_.
+* The `from` element defines a `direct` _Camel_ component permitting other _Camel_ routes invoking this route to publish events to _Kafka_.
 
 * A `choice` EIP defines two different behaviours:
 ** Executions with _Camel JBang_, for local testing (bypassing pushes to _Kafka_).
@@ -1264,7 +1278,7 @@ touch wsConfig.java
 .. Inlcude in your `wsConfig.java` file the following code:
 +
 ```java
-// camel-k: language=java dependency=camel-ahc-ws
+// camel-k: language=java
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
@@ -1300,8 +1314,6 @@ public class wsConfig extends RouteBuilder {
 +
 [NOTE] 
 --
-* The head of the Java file includes a Camel K directive to indicate the dependency that is required (`dependency=camel-ahc-ws`).
-
 * The class needs to extend `RouteBuilder` as _Camel K_ only accepts route builder definitions. In our case we define an empty `configure` method because our routes are defined in a separate XML file.
 
 * A filter method defines an instruction that adds the `Origin` header.
@@ -1319,8 +1331,13 @@ Save changes.
 .. Start your local instance with _Camel JBang_:
 +
 ```bash
-camel run *
+camel run * --dep=org.apache.camel:camel-ahc-ws:3.18.2
 ```
++
+[NOTE] 
+--
+As a temporary workaround, the _Camel_ websocket dependency `camel-ahc-ws` needs to be manually indicated. This component needs to be replaced in the future by a newer websocket component.
+--
 +
 {empty} +
 +
@@ -1372,11 +1389,17 @@ d2k.xml \
 wsConfig.java \
 -p file:stage4.properties \
 --resource file:d2k.jslt \
--d camel-jslt
+-d camel-jslt \
+-d camel-ahc-ws
 :
 ```
 +
 NOTE: Be patient, this action will take some time to complete as the operator needs to download all related dependencies, build the applications and create the image before the integration can be deployed.
++
+[NOTE] 
+--
+As a temporary workaround, the _Camel_ websocket dependency `camel-ahc-ws` needs to be manually indicated. This component needs to be replaced in the future by a newer websocket component.
+--
 +
 {empty} +
 
