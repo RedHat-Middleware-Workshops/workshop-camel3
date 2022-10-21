@@ -243,7 +243,29 @@ If successful, the command above will probably return an empty list if you have 
 
 === Join a Gitter room.
 
-. A number of public rooms were made available for this workshop (roomX). Choose a room number that nobody uses to avoid noisy conversations. Use the invite URL below to join the lab room:
+. Choose your room
++ 
+A number of public rooms were made available for this workshop (roomX). 
++
+To choose a room number that nobody uses and avoid noisy conversations, select one with the same number as your workshop username. +
+For example, if your username is:
++
+--
+* `user1` -> then select `room1`
+* `user2` -> then select `room2`
+* `userN` -> then select `roomN`
+--
++
+{blank}
++
+[TIP]
+--
+You might still have no luck and find your room is noisy because someone else is running the same workshop somewhere else. In that case, add to your room number +10, or +20, and so on.
+--
++
+{empty} +
+
+. Use the invite URL below to join the lab room:
 +
 CAUTION: ensure you replace `YOUR_ROOM`
 +
