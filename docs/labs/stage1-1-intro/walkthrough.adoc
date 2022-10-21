@@ -12,9 +12,9 @@ endif::[]
 
 [id='lab1-part1-intro']
 // = Lab 1 - Gitter to Slack bridge (part-1, Introduction)
-= Lab 1.intro - MessageHub - Scenario and Environment
+= Lab 1.intro - MessageHub - Scenario and Onboarding
 
-Part 1 (out of 2) introduces the first integration flow to implement, helps you to onboard onto the chat platforms, and presents your development environment.
+Part 1 (out of 2) introduces the first integration flow to implement and helps you to onboard onto the chat platforms.
 
 {empty} +
 
