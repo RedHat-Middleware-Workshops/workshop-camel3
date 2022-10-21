@@ -248,7 +248,7 @@ If successful, the command above will probably return an empty list if you have 
 CAUTION: ensure you replace `YOUR_ROOM`
 +
 ```http
-https://gitter.im/test-lab-camel/YOUR_ROOM?utm_source=share-link&utm_medium=link&utm_campaign=share-link
+https://gitter.im/CamelWorkshop/YOUR_ROOM?utm_source=share-link&utm_medium=link&utm_campaign=share-link
 ```
 +
 {empty} +
@@ -256,7 +256,7 @@ https://gitter.im/test-lab-camel/YOUR_ROOM?utm_source=share-link&utm_medium=link
 For example, if choosing `room1`, use the following invite URL
 +
 ----
-https://gitter.im/test-lab-camel/room1?utm_source=share-link&utm_medium=link&utm_campaign=share-link
+https://gitter.im/CamelWorkshop/room1?utm_source=share-link&utm_medium=link&utm_campaign=share-link
 ----
 +
 {empty} +
