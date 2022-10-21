@@ -42,7 +42,7 @@ Technical goals and milestones:
 
 * Evolve and mature the architecture.
 * Adopt a standard interface
-* Switch bindings to platform resources.
+* Switch bindings to plug platform resources.
 
 {empty} +
 

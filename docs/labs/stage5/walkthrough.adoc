@@ -39,6 +39,19 @@ Estimated time: +
 {empty} +
 --
 
+{empty} +
+
+Technical goals and milestones:
+
+* Use of _Camel DSL_ and _Java_ for more advanced use cases.
+* Coordination of multiple Camel routes
+* Use of various  EIPs (_Enterprise Integration Patterns_)
+* Use of _Camel JBang_ for fast prototyping
+* Local execution and testing
+* Resources optimisation in _OpenShift_
+* Integration with _OpenShift's_ storage layer (_OpenShift Data Foundation_)
+
+{empty} +
 
 [time=5]
 [id="daily-storage"]

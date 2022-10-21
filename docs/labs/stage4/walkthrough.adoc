@@ -37,11 +37,13 @@ Estimated time: +
 {empty} +
 --
 
+{empty} +
+
 Technical goals and milestones:
 
 * Prototype custom _Kamelets_ to extend catalogue.
 * Integrate new platforms with new _Kamelets_.
-* _Camel DSL_ for more advanced use cases.
+* Use of _Camel DSL_ for more advanced use cases.
 
 {empty} +
 
