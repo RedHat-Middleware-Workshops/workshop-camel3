@@ -716,6 +716,19 @@ In the logs above:
 +
 You can consider your code to be validated if your execution behaved as above.
 
+{empty} +
+
+
+[type=verification]
+Did you see in your executions the same behaviour?
+
+[type=verificationSuccess]
+Excellent !
+
+[type=verificationFail]
+Review the steps and try again.
+
+
 
 [time=2]
 [id="deploy-openshift"]
@@ -915,6 +928,65 @@ accessKey=YOUR_ACCESS_KEY\
 NOTE: Make sure your secret key is defined inside the `RAW()` statement.
 +
 {empty} +
++
+If you're running the workshop on your own and you have admin access in _OpenShift_, follow the instructions below to obtain the S3 access credentials:
++
+--
+. Extract admin user credentials
++
+To login to the storage console, run the following commands to extract the admin's credentials:
++
+```
+oc get secret noobaa-admin \
+-n openshift-storage \
+--template={{.data.email}} | base64 -d
+```
++
+{blank}
++
+The command above will obtain the `email`. 
++
+```
+oc get secret noobaa-admin \
+-n openshift-storage \
+--template={{.data.password}} | base64 -d
+```
++
+{blank}
++
+The command above will obtain the `password`.
++
+{empty} +
++
+. Login to the storage console
++
+Open the storage UI from the link below:
++
+* link:https://noobaa-mgmt-openshift-storage.{openshift-app-host}/fe?skip-oauth[Storage admin console, window="_blank"]
++
+{blank}
++
+Enter the admin credentials (obtained above). +
+Click `Login`.
++
+image::images/noobaa-login.png[align="left", width=40%]
++
+{empty} +
++
+. Obtain the Connection details
++
+In the presented dashboard, click on `Connect Application`, as per the image below:
++
+image::images/noobaa-connect-application.png[align="left", width=20%]
++
+{blank}
++
+Then, copy the `Access Key` and `Secret Key`:
++
+image::images/noobaa-connect-application-tokens.png[align="left", width=40%]
+--
++
+{empty} +
 
 . Run it
 +
@@ -1000,3 +1072,14 @@ image::images/noobaa-objects.png[align="left", width=90%]
 You should then see (enclosed in red) the list of objects _Camel_ has uploaded, as many as runs where Kafka events where available.
 +
 NOTE: When no new Kafka messages are available, no aggregation occurs and therefore no upload to S3 takes place.
+
+{empty} +
+
+[type=verification]
+Did you see objects created in your S3 bucket?
+
+[type=verificationSuccess]
+Excellent !
+
+[type=verificationFail]
+Review the steps and try again.
