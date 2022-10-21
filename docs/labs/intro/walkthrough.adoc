@@ -1,4 +1,5 @@
 :walkthrough: Lab Introduction
+:user-password: openshift
 :namespace: {user-username}
 
 // URLs

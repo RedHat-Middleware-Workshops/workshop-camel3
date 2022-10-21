@@ -186,15 +186,22 @@ touch maps/k2g.jslt
 ```
 {empty} +
 
+. Check your lab folder
++
+After executing the commands above, have a look in your editor's tree view to confirm it looks healthy. It should be similar to:
++
+image::images/lab-setup.png[align="left", width=20%]
++
+{empty} +
 
 [type=verification]
-Are you located in the lab3 directory? did the commands above execute successfully?
+Do you see the same folder structure and files?
 
 [type=verificationSuccess]
 You're ready to continue.
 
 [type=verificationFail]
-Make sure the syntax of the commands are compatible with with your environment.
+Make sure the syntax of the commands are compatible with with your environment and try again.
 
 
 {empty} +
@@ -770,6 +777,12 @@ k2g    Ready   1
 k2s    Ready   1
 s2k    Ready   1
 ----
++
+{empty} +
++
+Looking from your console's topology view, you should see something similar to:
++
+image::images/topology-view.png[align="left", width=80%]
 +
 {empty} +
 

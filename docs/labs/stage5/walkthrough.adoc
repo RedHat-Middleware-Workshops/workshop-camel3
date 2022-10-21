@@ -967,7 +967,7 @@ When _Camel_ completes a run you should be able to see in the UI console the S3 
 Open the storage UI from the link below:
 +
 --
-* https://noobaa-mgmt-openshift-storage.{openshift-app-host}/fe?skip-oauth
+* link:https://noobaa-mgmt-openshift-storage.{openshift-app-host}/fe?skip-oauth[Storage admin console, window="_blank"]
 --
 +
 {blank}

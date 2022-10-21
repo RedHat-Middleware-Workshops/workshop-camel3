@@ -177,17 +177,24 @@ NOTE: Be patient, this action will take some time to complete as the operator ne
 You can monitor the state of the resource with the following command:
 +
 ```bash
-oc get klb
+oc get klb -w
 ```
 +
 TIP: the argument `klb` stands for _Kamelet Binding_.
 +
-While Camel K builds the integration, the command above shows:
+During the time you see _Camel K_ building and deploying the integration, the output for the command above should show something similar to:
 +
 ----
 NAME   PHASE      REPLICAS
 g2s    Creating   
+g2s    Ready      0
+g2s    Ready      1
+g2s    Ready      1
 ----
++
+{blank}
++
+The last entry indicates the pod is ready.
 +
 {empty} +
 
@@ -197,9 +204,29 @@ Inspect in your link:{openshift-host}/topology/ns/{namespace}[OpenShift Develope
 +
 image::images/ocp-dev-pod-healthy.png[align="left", width=80%]
 +
+TIP: You can zoom in/out the canvas by using your mouse scrolling function, and move it around by clicking and dragging the background.
++
+{empty} +
++
+NOTE: You will observe your project also includes a pre-deployed _AMQ Streams (Kafka)_ cluster. Later in the workshop, you will use this dedicated _Kafka_ cluster to stream data in and out.
++
 {empty} +
 
 .. Check the logs.
++
+You can open the logs of the _Camel_ instance by:
++
+--
+. Clicking in the pod's icon
+. From the right pane, click `Resources`
+. Click `View logs`
+--
++
+{blank}
++
+image::images/ocp-dev-pod-logs.png[align="left", width=90%]
++
+{blank}
 +
 You should see Camel connecting to Gitter and wait for the stream to start:
 +
@@ -340,11 +367,39 @@ oc apply -f g2s.yaml
 +
 The Camel K operator needs again to download dependencies (JSLT), but after some time it will replace the pod with a new instance containing the data transformation.
 +
-IMPORTANT: The old version will keep running until Camel K finishes building and deploying the new version. Make sure you wait until the new version has been rolled out.
+IMPORTANT: The old version will keep running until _Camel K_ finishes building and deploying the new version. Make sure you wait until the new version has been rolled out.
++
+As per the picture below, in your console's topology view you will see a new pod being rolled out:
++
+image::images/ocp-dev-pod-new-version.png[align="left", width=40%]
++
+{empty} +
++
+You can also monitor the state of the deployment with the following command:
++
+```bash
+oc get klb -w
+```
++
+{blank}
++
+During the time you see _Camel K_ building and deploying the new version, the output for the command above should show something similar to:
++
+----
+NAME   PHASE      REPLICAS
+g2s    Ready      2
+g2s    Ready      1
+----
++
+{blank}
++
+The first entry indicates the new version is being rollet out (while the previous version still is running) and the second entry indicates the roll out has concluded.
 +
 {empty} +
 
-. From Gitter send another chat message and inspect your terminal output. +
+. Send test message
++
+When the new pod is ready, from _Gitter_ send another chat message and inspect your terminal output. +
 You should see an incoming event now transformed and looking similar to this:
 +
 ----
