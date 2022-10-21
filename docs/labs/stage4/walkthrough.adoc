@@ -473,10 +473,10 @@ Use instead the parameter `repeatCount` (copy/replace from the snippet below):
 . Run your test route with:
 +
 ```bash
-camel run * --reload
+camel run * --dev
 ```
 +
-TIP: the flag `reload` indicates to _Camel JBang_ to hot reload new definitions whenever file changes are detected allowing fast prototyping.
+TIP: the flag `dev` indicates to _Camel JBang_ to hot reload new definitions whenever file changes are detected allowing fast prototyping.
 +
 The output in your terminal should show, only once, the following:
 +
@@ -572,6 +572,14 @@ Verify the snippet copy/paste actions were well followed.
 {empty} +
 
 Press `ctrl`+`c` to stop _Camel JBang_.
+
+[TIP]
+--
+_Camel JBang_ also implements the following very handy commands when running multiple _Camel_ integrations:
+
+* `camel ps` to list running _Camel_ integrations.
+* `camel stop <instance_name>` to shut down a running _Camel_ integration.  
+--
 
 {empty} +
 
