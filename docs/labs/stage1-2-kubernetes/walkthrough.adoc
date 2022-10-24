@@ -369,13 +369,7 @@ The Camel K operator needs again to download dependencies (JSLT), but after some
 +
 IMPORTANT: The old version will keep running until _Camel K_ finishes building and deploying the new version. Make sure you wait until the new version has been rolled out.
 +
-As per the picture below, in your console's topology view you will see a new pod being rolled out:
-+
-image::images/ocp-dev-pod-new-version.png[align="left", width=40%]
-+
-{empty} +
-+
-You can also monitor the state of the deployment with the following command:
+You can monitor the state of the deployment with the following command:
 +
 ```bash
 oc get klb -w
@@ -387,6 +381,7 @@ During the time you see _Camel K_ building and deploying the new version, the ou
 +
 ----
 NAME   PHASE      REPLICAS
+g2s    Creating 
 g2s    Ready      2
 g2s    Ready      1
 ----
@@ -395,7 +390,12 @@ g2s    Ready      1
 +
 The first entry indicates the new version is being rollet out (while the previous version still is running) and the second entry indicates the roll out has concluded.
 +
+As per the picture below, in your console's topology view you will see a new pod being rolled out:
++
+image::images/ocp-dev-pod-new-version.png[align="left", width=40%]
++
 {empty} +
++
 
 . Send test message
 +

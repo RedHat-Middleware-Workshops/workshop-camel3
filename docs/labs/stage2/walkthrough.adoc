@@ -154,6 +154,8 @@ sed -i '' 's/stage1/stage2/g' g2s.yaml
 ```
 --
 +
+{blank}
++
 The commands above will:
 +
 --
@@ -296,6 +298,7 @@ During the time you see _Camel K_ building and deploying the new version, the ou
 +
 ----
 NAME   PHASE      REPLICAS
+g2s    Creating 
 g2s    Ready      2
 g2s    Ready      1
 ----
@@ -558,13 +561,7 @@ NOTE: Be patient, this action will take some time to complete as the operator ne
 
 .. Wait for readyness
 +
-Check the pod's deployment and logs to ensure all is in healthy state.
-+
-image::images/ocp-dev-pod-healthy-s2g.png[align="left", width=80%]
-+
-{empty} +
-+
-You can also monitor the state of the new flow with the following command:
+You can monitor the state of the new flow with the following command:
 +
 ```bash
 oc get klb -w
@@ -576,6 +573,7 @@ During the time you see _Camel K_ building and deploying the integration, the ou
 +
 ----
 NAME   PHASE      REPLICAS
+g2s    Ready      1
 s2g    Creating   
 s2g    Ready      0
 s2g    Ready      1
@@ -585,6 +583,10 @@ s2g    Ready      1
 {blank}
 +
 The last entry indicates the pod is ready.
++
+Check the pod's deployment and logs to ensure all is in healthy state.
++
+image::images/ocp-dev-pod-healthy-s2g.png[align="left", width=80%]
 +
 {empty} +
 
