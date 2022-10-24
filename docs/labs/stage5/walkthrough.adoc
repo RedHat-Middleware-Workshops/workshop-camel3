@@ -206,6 +206,7 @@ camel.uri.kafka.parameters=\
 brokers=my-cluster-kafka-bootstrap:9092\
 &clientId=lab\
 &groupId=lab\
+&autoOffsetReset=earliest\
 &autoCommitEnable=false\
 &allowManualCommit=true
 
