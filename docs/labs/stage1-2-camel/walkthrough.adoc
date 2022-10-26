@@ -164,7 +164,7 @@ NOTE: The command includes a flag to find custom kamelets. The _Gitter_ kamelet 
 +
 [WARNING]
 --
-If the command above failed with the message `camel not found`, you may have instantiated the wrong terminal, Make sure you open the *Tools* terminal as per the picture below:
+If the command above failed with the message `camel not found`, you may have instantiated the wrong terminal. Make sure you open the *Tools* terminal as per the picture below:
 
 image::images/tools-terminal.png[align="left", width=15%]
 
