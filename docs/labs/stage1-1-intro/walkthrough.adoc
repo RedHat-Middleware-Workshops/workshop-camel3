@@ -326,6 +326,8 @@ Follow the invite link to join the workshop's workspace in Slack:
 +
 CAUTION: The workspace is open to the public, please be mindful of your actions, don't abuse the space.
 +
+TIP: If during the login process in _Slack_ you have problems with the SSO server, try again from an incognito window in your browser.
++
 NOTE: if you were unsuccessful joining the public workspace provided, feel free to create you own Slack workspace, you should be able to complete the workshop in the same manner.
 
 {empty} +
@@ -351,6 +353,10 @@ To connect from Camel to the chat platform, an App needs to be registered in Sla
 * If you're part of a workshop group, an App has been made available for all students to share. You can skip the next section and directly jump to the section with instructions to add the shared App to your selected room.
 
 ** link:#adding-an-app-to-a-room[Adding an App to a room]
+
+{empty} +
+
+TIP: Some browsers misbehave, if any of the links above fail, simply scroll down to the section they're pointing to.
 
 {empty} +
 

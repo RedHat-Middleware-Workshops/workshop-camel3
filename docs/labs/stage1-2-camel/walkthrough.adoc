@@ -162,6 +162,14 @@ NOTE: Observe the simplicity of the command `camel run \*`. The wildcard `*` all
 +
 NOTE: The command includes a flag to find custom kamelets. The _Gitter_ kamelet has been created for this workshop and does not come out-of-the-box from the default _Camel_ catalog.
 +
+[WARNING]
+--
+If the command above failed with the message `camel not found`, you may have instantiated the wrong terminal, Make sure you open the *Tools* terminal as per the picture below:
+
+image::images/tools-terminal.png[align="left", width=15%]
+
+--
++
 {blank}
 +
 _Camel JBang_ will build a local runnable and start it. +

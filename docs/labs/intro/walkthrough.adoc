@@ -244,7 +244,9 @@ You can close the _Problems_ and _Output_ views to clear space.
 During the workshop you will use the OpenShift CLI along with other developer-focused Command Line Interface (CLI) tools.
 These CLI tools are available directly inside your Workspace via tools containers.
 
-Access the tools container(s) like so:
+Access the *tools* container(s) like so:
+
+CAUTION: There are *TWO* terminal options available, make sure you select the one indicated in the picture below (*number 2 in red*).
 
 . Click on the _My Workspace_ (cube) icon on the right side panel.
 . Click on *User Runtimes* -> *tools* -> *>_ New terminal*.
