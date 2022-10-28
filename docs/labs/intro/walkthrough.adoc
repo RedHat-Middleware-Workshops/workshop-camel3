@@ -311,5 +311,13 @@ oc project {namespace}
 
 {empty} +
 
-Now you are ready to start working !
 
+
+[type=verification]
+Did your terminal show you are connected to _OpenShift_ and pointing to the project `{namespace}`?
+
+[type=verificationFail]
+Make sure you follow the commands above. Try again.
+
+[type=verificationSuccess]
+You are now ready to start working !
