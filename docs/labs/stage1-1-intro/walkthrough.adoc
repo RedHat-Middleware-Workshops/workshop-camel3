@@ -283,25 +283,37 @@ https://gitter.im/CamelWorkshop/room1?utm_source=share-link&utm_medium=link&utm_
 +
 {empty} +
 +
-Click `JOIN ROOM` at the bottom of the chat room. At this point you see your avatar included in the room on the right hand side of the room.
+Click `JOIN ROOM` at the bottom of the chat room. +
+At this point you see your avatar included in the room on the right hand side of the room.
 +
-Running the cURL command again to obtain the rooms should return the identifier of the room you just joined, something similar to:
-+
-----
-[{"id":"6317569e6da03739849c519a"         }]
-----
-+
-IMPORTANT: Keep the returned room ID safely as you'll need it later to configure _Camel_.
+image::images/gitter-room-members.png[align="left", width=40%]
 +
 {empty} +
-+
-At this stage, you should have available all the configuration identifiers required to configure your data flows later in the lab.
-+
 
-{empty} +
 
 [type=verification]
 Were you able to join a Gitter room successfully?
+
+=== Obtain the room ID.
+
+Running the cURL command again to obtain the rooms should return the identifier of the room you just joined, something similar to:
+
+----
+[{"id":"6317569e6da03739849c519a"         }]
+----
+
+IMPORTANT: Keep the returned room ID safely as you'll need it later to configure _Camel_.
+
+{empty} +
+
+At this stage, you should have available all the configuration identifiers required to configure your data flows later in the lab.
+
+
+{empty} +
+
+
+// [type=verification]
+// Were you able to join a Gitter room successfully?
 
 [type=verification]
 Did you take note of your access token and room ID?
