@@ -332,7 +332,7 @@ To accelerate the onboarding process in Slack, we've created a public workspace 
 
 Follow the invite link to join the workshop's workspace in Slack:
 
-* https://join.slack.com/t/camelworkshop/shared_invite/zt-1fvfhatch-HQKSJyob_YIY3nRGhJ7tWA
+* link:https://join.slack.com/t/camelworkshop/shared_invite/zt-1fvfhatch-HQKSJyob_YIY3nRGhJ7tWA[window="_blank"]
 +
 {empty} +
 +
@@ -377,7 +377,7 @@ TIP: Some browsers misbehave, if any of the links above fail, simply scroll down
 
 . Connect to the following URL
 +
-* https://api.slack.com/apps
+* link:https://api.slack.com/apps[window="_blank"]
 +
 {empty} +
 
@@ -385,9 +385,11 @@ TIP: Some browsers misbehave, if any of the links above fail, simply scroll down
 +
 image::images/slack-create-app.png[align="left", width=20%]
 +
+{blank}
++
 Select `From scratch`, then
 +
-.. Give it a name, for example `MyCamelApp`.
+.. Give it a unique name to prevent naming clashes, for example `MyUniqueNameApp`.
 .. Select `CamelWorkshop` (or your own workspace if you created one)
 .. Click `Create App`
 +
