@@ -28,7 +28,7 @@ Technical goals and milestones:
 [id="main"]
 == Bridge definition and deployment 
 
-For reference, here's again the processing flow to inplement:
+For reference, here's again the processing flow to implement:
 
 image::images/processing-flow.png[align="center", width=80%]
 

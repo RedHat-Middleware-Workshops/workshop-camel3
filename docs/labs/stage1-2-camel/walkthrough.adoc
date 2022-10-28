@@ -31,7 +31,7 @@ The instructions below are divided in two segments:
 [id="local"]
 == Local development 
 
-For reference, here's again the processing flow to inplement:
+For reference, here's again the processing flow to implement:
 
 image::images/processing-flow.png[align="center", width=80%]
 
