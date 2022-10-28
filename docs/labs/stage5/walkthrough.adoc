@@ -1124,6 +1124,11 @@ accessKey=YOUR_ACCESS_KEY\
 &deleteAfterRead=false
 ```
 +
+[WARNING]
+====
+Make sure you configure the `accessKey` and `secretKey` in the new property above.
+====
++
 NOTE: The above property is the same as the S3 consumer, but adds a new flag `deleteAfterRead=false` to ensure the S3 object stays intact in the bucket.
 +
 {empty} +
