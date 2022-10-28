@@ -1,4 +1,5 @@
 :walkthrough: Gitter to Slack bridge ()
+:user-password: openshift
 :namespace: {user-username}
 
 ifdef::env-github[]
@@ -143,7 +144,14 @@ IMPORTANT: You will notice the presence of the property `streamCachingEnabled` t
 
 . Push the configuration to _OpenShift_
 +
-Be sure the _working_ project in _OpenShift_ is selected by executing the following command:
+If you didn't log in yet to _OpenShift_, run the following command:
++
+[source,bash,subs="attributes+"]
+----
+oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+----
++
+Make sure the _working_ project in _OpenShift_ is selected by executing the following command:
 +
 [source,bash,subs="attributes+"]
 ----
@@ -170,7 +178,7 @@ oc apply -f g2s.yaml
 +
 The Camel K operator will immediately react. It will start building the integration and deploy it.
 +
-NOTE: Be patient, this action will take some time to complete as the operator needs to download all the maven dependencies, build the application and create the image before the integration can be deployed.
+NOTE: Be patient, this action will take some time to complete as the operator needs to download all the maven dependencies, build the application and create the image before the integration can be deployed (could take up to 10mn the first time).
 +
 {empty} +
 +
