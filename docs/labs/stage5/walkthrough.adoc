@@ -1089,6 +1089,112 @@ NOTE: When no new Kafka messages are available, no aggregation occurs and theref
 
 {empty} +
 
+=== Viewing S3 object contents
+
+From the admin console above we can't visualise the contents of the S3 objects created.
+
+You can however use an online web based S3 browser to visualise the data, for example:
+
+* link:https://www.filestash.app/s3-browser.html[https://www.filestash.app/s3-browser.html, window="_blank"]
++
+Provide your `Access Key`, `Secret Access Key` and the following `Endpoint`:
++
+[source,bash,subs="attributes+"]
+----
+https://s3-openshift-storage.{openshift-app-host}/
+----
++
+image::images/s3-browser.png[align="left", width=40%]
++
+{empty} +
+
+Alternatively, you can very quickly create a Camel consumer to visually confirm the data was correctly uploaded. Here's how:
+
+. Add a new `.view` property in `stage5.properties`
++
+```properties
+camel.uri.s3.parameters.view=\
+accessKey=YOUR_ACCESS_KEY\
+&secretKey=RAW(YOUR_SECRET_KEY)\
+&region=us-east-1\
+&uriEndpointOverride=http://s3.openshift-storage.svc:80\
+&overrideEndpoint=true\
+&useDefaultCredentialsProvider=false\
+&autoCreateBucket=true\
+&deleteAfterRead=false
+```
++
+NOTE: The above property is the same as the S3 consumer, but adds a new flag `deleteAfterRead=false` to ensure the S3 object stays intact in the bucket.
++
+{empty} +
+
+. Initialise a new Camel source file:
++
+Execute the following _Camel JBang_ command:
++
+```bash
+camel init view.xml
+```
++
+{empty} +
+
+. Include the S3 consumer route
++
+Replace in your `view.xml` the existing _Camel_ route, by the following one:
++
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- camel-k: language=xml -->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://camel.apache.org/schema/spring"
+        xsi:schemaLocation="
+            http://camel.apache.org/schema/spring
+            https://camel.apache.org/schema/spring/camel-spring.xsd">
+----
++
+
+[source, xml, subs="verbatim,attributes"]
+----
+    <route id="view-data">
+      <from uri="aws2-s3:chatrooms-{user-username}.bucket?{{camel.uri.s3.parameters.view}}"/>
+      <log message="${header.CamelAwsS3Key}:\n${body}"/>
+    </route>
+----
++
+----
+</routes>
+----
++
+{empty} +
++
+[NOTE] 
+--
+In the Camel route above:
+
+* The S3 consumer is configured with the new `.view` parameter
+
+* A log activity prints the S3 key, and its data.
+--
++
+{empty} +
+
+. Execute the new Camel route:
++
+Execute the following _Camel JBang_ command:
++
+```bash
+camel run view.xml stage5.properties
+```
++
+{empty} +
++
+The execution should output (endlessly until you stop it with `Ctrl`+`c`) the bucket's S3 objects.
++
+{empty} +
+
+{empty} +
+
 [type=verification]
 Did you see objects created in your S3 bucket?
 
