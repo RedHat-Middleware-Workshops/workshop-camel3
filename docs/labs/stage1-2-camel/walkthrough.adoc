@@ -542,7 +542,7 @@ oc apply -f g2s.yaml
 +
 The Camel K operator will immediately react. It will start building the integration and deploy it.
 +
-NOTE: Be patient, this action will take some time to complete as the operator needs to download all the maven dependencies, build the application and create the image before the integration can be deployed (could take up to 10mn the first time).
+NOTE: Be patient, this action may take some time to complete. If the flow was previously built by other students, it will only take a minute. If not, the operator needs to download all the maven dependencies, build the application and create the image before the integration can be deployed (could take up to 10mn the first time).
 +
 {empty} +
 +

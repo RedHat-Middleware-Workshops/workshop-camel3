@@ -362,7 +362,11 @@ To connect from Camel to the chat platform, an App needs to be registered in Sla
 
 ** link:#creating-your-own-app-for-slack[Creating your own App for Slack]
 
-* If you're part of a workshop group, an App has been made available for all students to share. You can skip the next section and directly jump to the section with instructions to add the shared App to your selected room.
+* If you're part of a workshop group, an App has been made available for all students to share.
++
+TIP: Ask your classroom administrator for the shared App's credentials.
++
+You can skip the next section and directly jump to the section with instructions to add the shared App to your selected room.
 
 ** link:#adding-an-app-to-a-room[Adding an App to a room]
 

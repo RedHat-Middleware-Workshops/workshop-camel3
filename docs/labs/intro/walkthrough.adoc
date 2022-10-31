@@ -100,7 +100,7 @@ image::images/camel-abstraction-levels.png[align="center", width=80%]
 [id="scenario-intro"]
 == Scenario introduction
 
-As internet evolves and technologies and trends emerge, so does the way people and organisations connect. Not only digitalisation is transforming and automating processes, but also social changes and events are making an impact that is shaping how we interact.
+As the internet evolves and technologies and trends emerge, so does the way people and organisations connect. Not only is digitalization transforming and automating processes, but also social changes and events are making an impact that is shaping how we interact.
 
 Email and SMSs started to replace direct phone conversations, and soon instant messaging platforms gained popularity over them. Today we have a big landscape of messaging platforms and often we feel divided on which one to use to communicate with family and friends.
 
