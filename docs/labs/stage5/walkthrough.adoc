@@ -1,4 +1,6 @@
 :walkthrough: Storage
+:user-password: openshift
+:namespace: {user-username}
 
 ifdef::env-github[]
 endif::[]
@@ -759,6 +761,17 @@ As _Camel JBang_ is an upstream tool (not Red Hat supported), it runs on a sligh
 Now we intend to run the code with _Red Hat Camel K_ which is a version behind. Generally the syntax is the same, but from time to time you might bump into the occasional difference.
 --
 
+{empty} +
+
+. Login to _OpenShift_ 
++
+For those resuming work from a previous day, ensure you reconnect your `oc` client with _OpenShift_ by running the following login command:
++
+[source,bash,subs="attributes+"]
+----
+oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+----
++
 {empty} +
 
 . Include explicit Camel K declarations

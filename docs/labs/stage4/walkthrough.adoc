@@ -1,5 +1,7 @@
 :walkthrough: Discord Integration
 :checkedbox: pass:normal[{startsb}&#10004;{endsb}]
+:user-password: openshift
+:namespace: {user-username}
 
 ifdef::env-github[]
 endif::[]
@@ -873,6 +875,17 @@ And that's it, ready to be deployed.
 
 === Deploy and test
 
+. Login to _OpenShift_ 
++
+For those resuming work from a previous day, ensure you reconnect your `oc` client with _OpenShift_ by running the following login command:
++
+[source,bash,subs="attributes+"]
+----
+oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+----
++
+{empty} +
+
 . Deploy the _Kamelet_
 +
 To allow _Kubernetes_ users to consume (use in a binding) the _Discord_ _Kamelet_, we need to push the its definition to _OpenShift_ to become part of the Kamelet catalog.
@@ -1386,6 +1399,17 @@ Press `ctrl`+`c` to stop _Camel JBang_.
 === Deploy in OpenShift
 
 You have successfully tested your integration locally. It is time to deploy it in _OpenShift_.
+
+. Login to _OpenShift_ 
++
+For those resuming work from a previous day, ensure you reconnect your `oc` client with _OpenShift_ by running the following login command:
++
+[source,bash,subs="attributes+"]
+----
+oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+----
++
+{empty} +
 
 . Deploy the integration
 +

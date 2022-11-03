@@ -1,4 +1,5 @@
 :walkthrough: Gitter to Slack bridge ()
+:user-password: openshift
 :namespace: {user-username}
 
 ifdef::env-github[]
@@ -116,6 +117,17 @@ You can tell from the list above that this second lab suits very well the _Kuber
 . Close tabs
 +
 Before you start this second lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
++
+{empty} +
+
+. Login to _OpenShift_ 
++
+For those resuming work from a previous day, ensure you reconnect your `oc` client with _OpenShift_ by running the following login command:
++
+[source,bash,subs="attributes+"]
+----
+oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+----
 +
 {empty} +
 

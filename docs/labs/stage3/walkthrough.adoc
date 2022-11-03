@@ -1,4 +1,6 @@
 :walkthrough: Gitter to Slack bridge ()
+:user-password: openshift
+:namespace: {user-username}
 
 ifdef::env-github[]
 endif::[]
@@ -87,6 +89,15 @@ image::images/standard-data-model.png[align="center", width=90%]
 [time=2]
 [id="setup"]
 == Setup the Lab working folder
+
+For those resuming work from a previous day, ensure you reconnect your `oc` client with _OpenShift_ by running the following login command:
+
+[source,bash,subs="attributes+"]
+----
+oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+----
+
+{empty} +
 
 First of all, ensure you undeploy Lab2's _Kamelet_ bindings, otherwise they will enter in conflict with the ones we're about to create:
 ```bash
@@ -693,6 +704,16 @@ And you're done with the _Kafka_ -> _Slack_ changes.
 
 We've covered a lot of ground. It would be normal to make mistakes. Hopefully the helper guide kept those to a minimum and, once deployed, you can see your integrations working in healthy state and delivering the expected outcome.
 
+. Login to _OpenShift_ 
++
+For those resuming work from a previous day, ensure you reconnect your `oc` client with _OpenShift_ by running the following login command:
++
+[source,bash,subs="attributes+"]
+----
+oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+----
++
+{empty} +
 
 . Push the configuration to _OpenShift_
 +
