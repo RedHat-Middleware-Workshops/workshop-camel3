@@ -518,6 +518,38 @@ You should see the following in the log output:
 ----
 + 
 {empty} +
++
+[TIP]
++
+--
+- **Troubleshooting with _Camel JBang_**
++
+Let's pretend for a moment you did something wrong in your code to understand how _Camel JBang_ helps the developer to quickly fix problems before deploying code in _Kubernetes_.
++
+In your previous line of code, let's say you forgot to close the quote at the end of the `constant` expression, like so:
++
+```yaml
+          constant: '{"content": "Hello from Camel"}
+```
++
+{blank}
++
+When saving changes (automatic by default in _DevSpaces_), _Camel JBang_ quickly loads the new faulty definition and throws an error. Of course, errors are always ugly and have long stack traces, but if you inspect the output carefully you'll find something similar to:
++
+----
+Caused by: while scanning a quoted scalar
+ in file:test-discord.yaml, line 10, column 21:
+              constant: '{"content": "Hello from Camel"}
+----
++
+{blank}
++
+Pretend you fix the bug by rolling back your changes to restore normality. _Camel JBang_ will immediately reload the code and execute bug free.
++
+Fast code iterations with _Camel JBang_ allows developers to accelerate the project development in a more friendly and productive manner.
+--
++
+{empty} +
 
 . Post to _Discord_
 +
