@@ -242,7 +242,16 @@ Open the new file in your editor and copy/paste the following definition:
 
 . Modify your YAML definition to include the JSLT action between your Kamelet source and sink.
 +
-The resulting YAML file should look as follows (you can copy the middle snippet into your code):
+NOTE: The JSLT action is defined as a step in a _KameletBinding_ definition. `steps` are a high-level block in the same column as the `source` and `sink`.
++
+[TIP]
+--
+For clarity, the picture below illustrates how copy/paste actions  should be performed all along the lab exercises.
+
+image::images/crw-copy-paste.png[align="left", width=100%]
+--
++
+Following the above illustration, copy and paste the snippet from below into your code:
 +
 ----
 apiVersion: camel.apache.org/v1alpha1
@@ -279,7 +288,7 @@ spec:
       name: log-sink 
 ----
 {empty} +
-
++
 
 . Run Camel JBang again ensuring you include your JSLT file. It should look as follows:
 +
