@@ -67,7 +67,6 @@ mkdir lab1
 cd lab1
 touch g2s.yaml
 touch stage1.properties
-:
 ```
 +
 NOTE: The commands above also create the file sources you need for the exercise.
