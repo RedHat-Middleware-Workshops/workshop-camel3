@@ -321,6 +321,11 @@ spec:
 +
 {empty} +
 +
+[IMPORTANT]
+====
+Keep the name `roomx` for your _KafkaTopic_, do not change its value, it simplifies the copy/paste actions all along the lab exercises.
+====
++
 [TIP]
 ====
 * The sink definition in a _Kamelet Binding_ can either be a _Kamelet_ sink from the catalog, or a platform resource (_Kafka_ or _KNative_).
@@ -412,6 +417,13 @@ spec:
       apiVersion: kafka.strimzi.io/v1beta1
       name: roomx
 ```
++
+{blank}
++
+[IMPORTANT]
+====
+Keep the name `roomx` for your _KafkaTopic_, do not change its value, it simplifies the copy/paste actions all along the lab exercises.
+====
 +
 {empty} +
 
@@ -749,6 +761,11 @@ metadata:
   labels:
     strimzi.io/cluster: my-cluster
 ```
++
+[IMPORTANT]
+====
+Keep the name `roomx` for your _KafkaTopic_, do not change its value, it simplifies the copy/paste actions all along the lab exercises.
+====
 +
 [NOTE]
 ====
