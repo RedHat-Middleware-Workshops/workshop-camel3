@@ -472,6 +472,20 @@ spec:
       token: "{{slack.token}}"
 ```
 +
+{blank}
++
+[TIP]
+--
+If you want to keep the `log-sink` activity, you can move it to the `steps` group as an action using the following definition:
+
+----
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: log-sink   
+----
+--
++
 {empty} +
 
 . Configure your target Slack `channel`
