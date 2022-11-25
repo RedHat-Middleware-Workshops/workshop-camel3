@@ -139,7 +139,6 @@ oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:
 cd /projects/MessageHub
 cp -r lab1 lab2
 cd lab2
-: 
 ```
 +
 {empty} +
@@ -154,7 +153,6 @@ Run the commands below in your terminal:
 ```bash
 mv stage1.properties stage2.properties
 sed -i 's/stage1/stage2/g' g2s.yaml 
-: 
 ```
 +
 * **MacOS**
@@ -162,7 +160,6 @@ sed -i 's/stage1/stage2/g' g2s.yaml
 ```bash
 mv stage1.properties stage2.properties
 sed -i '' 's/stage1/stage2/g' g2s.yaml 
-: 
 ```
 --
 +
@@ -557,7 +554,6 @@ oc create secret generic stage2 --from-file=stage2.properties
 
 oc delete cm stage2-transform
 oc create cm stage2-transform --from-file=g2s.jslt --from-file=s2g.jslt
-:
 ```
 {empty} +
 
@@ -566,7 +562,6 @@ oc create cm stage2-transform --from-file=g2s.jslt --from-file=s2g.jslt
 +
 ```bash
 oc apply -f s2g.yaml
-
 ```
 +
 NOTE: Be patient, this action will take some time to complete as the operator needs to download all the filter's maven dependencies, build the application and create the image before the integration can be deployed.
