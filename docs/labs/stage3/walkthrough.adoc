@@ -103,7 +103,6 @@ First of all, ensure you undeploy Lab2's _Kamelet_ bindings, otherwise they will
 ```bash
 oc delete klb g2s
 oc delete klb s2g
-:
 ```
 {empty} +
 
@@ -128,7 +127,6 @@ cp -r lab2 lab3
 cd lab3
 mv stage2.properties stage3.properties
 grep -rl stage2 . | xargs sed -i 's/stage2/stage3/g'
-: 
 ```
 +
 * **MacOS**
@@ -139,7 +137,6 @@ cp -r lab2 lab3
 cd lab3
 mv stage2.properties stage3.properties
 grep -rl stage2 . | xargs sed -i '' 's/stage2/stage3/g'
-: 
 ```
 +
 {empty} +
@@ -155,7 +152,6 @@ mv s2g.yaml s2k.yaml
 cp s2k.yaml k2g.yaml
 mkdir flows
 mv *.yaml flows/
-:
 ```
 +
 {empty} +
@@ -169,7 +165,6 @@ sed -i 's/g2s/g2k/g' flows/g2k.yaml
 sed -i 's/g2s/k2s/g' flows/k2s.yaml
 sed -i 's/s2g/s2k/g' flows/s2k.yaml
 sed -i 's/s2g/k2g/g' flows/k2g.yaml
-:
 ```
 +
 * **MacOS**
@@ -179,7 +174,6 @@ sed -i '' 's/g2s/g2k/g' flows/g2k.yaml
 sed -i '' 's/g2s/k2s/g' flows/k2s.yaml
 sed -i '' 's/s2g/s2k/g' flows/s2k.yaml
 sed -i '' 's/s2g/k2g/g' flows/k2g.yaml
-:
 ```
 +
 {empty} +
@@ -193,7 +187,6 @@ touch maps/g2k.jslt
 touch maps/k2s.jslt
 touch maps/s2k.jslt
 touch maps/k2g.jslt
-:
 ```
 {empty} +
 
@@ -735,7 +728,6 @@ Run the following `oc` command:
 ```bash
 oc create secret generic stage3 --from-file=stage3.properties
 oc create cm stage3-transform --from-file=maps
-:
 ```
 {empty} +
 
@@ -746,7 +738,6 @@ Run the following command:
 ```bash
 mkdir kafka
 touch kafka/room_x.yaml
-:
 ```
 +
 {empty} +
@@ -789,7 +780,6 @@ oc apply -f flows/g2k.yaml
 oc apply -f flows/k2s.yaml
 oc apply -f flows/s2k.yaml
 oc apply -f flows/k2g.yaml
-:
 ```
 +
 NOTE: Be patient, this action will take some time to complete as the operator needs to download all related dependencies, build the applications and create the images before the integrations can be deployed.
