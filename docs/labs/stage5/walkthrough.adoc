@@ -557,7 +557,7 @@ Append in your `store.xml` the following _Camel_ route. +
 Copy the snippet below and paste it below the previously defined route.
 +
 ```xml
-    <route>
+    <route id="keep-alive">
         <from uri="direct:wait-until-aggregation-done"/>
         <log message="waiting for aggregation to finish..."/>
         <bean ref="controller" method="waitUntilAggregationDone"/>
