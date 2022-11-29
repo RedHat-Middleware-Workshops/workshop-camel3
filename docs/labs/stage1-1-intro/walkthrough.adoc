@@ -373,7 +373,13 @@ WARNING: DIL-Camel admins will periodically perform a clean-up of old workspace 
 
 * If you're part of a workshop group, an App has been made available for all students to share.
 +
-TIP: Ask your classroom administrator for the shared App's credentials.
+[TIP]
+--
+Ask your classroom administrator for the shared App's credentials. +
+The workshop slides should contain the token values valid for today's session:
+
+image::images/apps-tokens.png[align="left", width=80%]
+--
 +
 You can skip the next section and directly jump to the section with instructions to add the shared App to your selected room.
 

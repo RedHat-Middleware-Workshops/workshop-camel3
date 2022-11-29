@@ -135,6 +135,13 @@ To connect from _Camel_ to the chat platform, an App needs to be registered in _
 
 * If you're part of a workshop group, an App has been made available for all students to share. Ask your workshop's admin for the App's credentials to configure your Camel instance.
 +
+[TIP]
+--
+The workshop slides should contain the token values valid today's session:
+
+image::images/apps-tokens.png[align="left", width=80%]
+--
++
 You can skip the next section (app creation) and directly jump to the end of this task.
 
 ** link:#completion-checks[Skip and go to end of task]
