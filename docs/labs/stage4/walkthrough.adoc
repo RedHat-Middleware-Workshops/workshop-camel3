@@ -127,13 +127,7 @@ Alternatively, you can also create your own room (channel), use the prefix `room
 
 To connect from _Camel_ to the chat platform, an App needs to be registered in _Discord_. Apps in _Discord_ are automatically member of all channels in the server.
 
-* If you are running the workshop on your own, you'll have to create an App in _Discord_. Click the link below to follow instructions on how to create your own App.
-
-** link:#creating-your-own-app-for-discord[Creating your own App for Discord]
-
-{empty} +
-
-* If you're part of a workshop group, an App has been made available for all students to share. Ask your workshop's admin for the App's credentials to configure your Camel instance.
+* An App has been made available for all students to share. Ask your workshop's admin for the App's credentials to configure your Camel instance.
 +
 [TIP]
 --
@@ -143,11 +137,21 @@ image::images/apps-tokens.png[align="left", width=80%]
 --
 +
 You can skip the next section (app creation) and directly jump to the end of this task.
-
++
+TIP: Some browsers misbehave, if the link below fails, simply scroll down to the section they're pointing to.
++
 ** link:#completion-checks[Skip and go to end of task]
 
 {empty} +
 
+
+* If you are running the workshop on your own, you'll have to create an App in _Discord_. Click the link below to follow instructions on how to create your own App.
++
+TIP: Some browsers misbehave, if the link below fails, simply scroll down to the section they're pointing to.
++
+** link:#creating-your-own-app-for-discord[Creating your own App for Discord]
+
+{empty} +
 
 ==== [[creating-your-own-app-for-discord]]Creating your own App for Discord
 

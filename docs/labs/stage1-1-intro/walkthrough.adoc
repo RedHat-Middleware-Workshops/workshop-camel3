@@ -358,20 +358,9 @@ Alternatively, you can also create your own room, use the prefix `room_`, for ex
 
 To connect from _Camel_ to the chat platform, an App needs to be registered in _Slack_. You would just need to add the registered App to a particular room to allow _Camel_ to pick up messages.
 
-* If you are running the workshop on your own, you'll have to create an App in _Slack_. Click the link below to follow instructions on how to create your own App.
-+
---
-** link:#creating-your-own-app-for-slack[Creating your own App for Slack]
-
-WARNING: _Slack_ limits the number of apps in a _Workspace_ to 10 and the workshop's space might already be full. If you can't associate your app, contact the DIL-Camel admins. _Slack_ might take 24h to completely process the deletion of old apps to make room to yours. +
-Instead of creating your own app, we recommend the option below to use the shared App already available, contact the DIL-Camel admins.
-
-WARNING: DIL-Camel admins will periodically perform a clean-up of old workspace apps. If you create a new app and add it to the workspace, it might get deleted after a few days/weeks. 
---
-+
 {blank}
 
-* If you're part of a workshop group, an App has been made available for all students to share.
+* An App has been made available for all students to share.
 +
 [TIP]
 --
@@ -381,15 +370,32 @@ The workshop slides should contain the token values valid for today's session:
 image::images/apps-tokens.png[align="left", width=80%]
 --
 +
-You can skip the next section and directly jump to the section with instructions to add the shared App to your selected room.
-
+You can skip the next part (app creation) and directly jump to the section with instructions to add the shared App to your selected room.
++
+TIP: Some browsers misbehave, if the link below fails, simply scroll down to the section they're pointing to.
++
 ** link:#adding-an-app-to-a-room[Adding an App to a room]
 
 {empty} +
 
-TIP: Some browsers misbehave, if any of the links above fail, simply scroll down to the section they're pointing to.
+* If you are running the workshop on your own, you'll have to create an App in _Slack_. Click the link below to follow instructions on how to create your own App.
++
+--
+TIP: Some browsers misbehave, if the link below fails, simply scroll down to the section they're pointing to.
 
+** link:#creating-your-own-app-for-slack[Creating your own App for Slack]
+
+WARNING: Instead of creating your own app, we recommend the option above to use the shared App already available, contact the DIL-Camel admins. +
+_Slack_ limits the number of apps in a _Workspace_ to 10 and the workshop's space might already be full. If you can't associate your app, contact the DIL-Camel admins. _Slack_ might take 24h to completely process the deletion of old apps to make room to yours.
+
+WARNING: DIL-Camel admins will periodically perform a clean-up of old workspace apps. If you create a new app and add it to the workspace, it might get deleted after a few days/weeks. 
+--
++
 {empty} +
+
+
+
+
 
 ==== [[creating-your-own-app-for-slack]] Creating your own App for Slack
 
