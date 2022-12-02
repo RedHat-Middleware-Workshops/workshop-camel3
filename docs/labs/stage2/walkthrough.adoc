@@ -135,11 +135,11 @@ oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:
 +
 .. Using the sources of _Stage1_ as a base, make a copy of your previous exercise, for example:
 +
+[subs=]
 ```bash
 cd /projects/MessageHub
 cp -r lab1 lab2
-cd lab2
-: 
+cd lab2<br>
 ```
 +
 {empty} +
@@ -151,18 +151,20 @@ Run the commands below in your terminal:
 --
 * **Linux**
 +
+[subs=]
 ```bash
 mv stage1.properties stage2.properties
-sed -i 's/stage1/stage2/g' g2s.yaml 
-: 
+sed -i 's/stage1/stage2/g' g2s.yaml
+<br> 
 ```
 +
 * **MacOS**
 +
+[subs=]
 ```bash
 mv stage1.properties stage2.properties
-sed -i '' 's/stage1/stage2/g' g2s.yaml 
-: 
+sed -i '' 's/stage1/stage2/g' g2s.yaml
+<br> 
 ```
 --
 +
@@ -278,11 +280,12 @@ In the filter above you'll notice the expression picks the `$.text` JSON field a
 Create the corresponding _ConfigMap_ and _Secret_ for _Stage2_. +
 Run the following `oc` command:
 +
-```bash
+[source, subs=]
+----
 oc create cm stage2-transform --from-file=g2s.jslt
 oc create secret generic stage2 --from-file=stage2.properties
-:
-```
+<br>
+----
 {empty} +
 
 . Deploy the YAML definition containing your new _Kamelet Binding_
@@ -551,14 +554,14 @@ Copy the snippet below and paste it into your new `s2g.jslt` file:
 Recreate the _Secret_ and _ConfigMap_ to include both JSLTs. +
 Run the following `oc` command:
 +
-```bash
+[source, subs=]
+----
 oc delete secret stage2
 oc create secret generic stage2 --from-file=stage2.properties
 
 oc delete cm stage2-transform
-oc create cm stage2-transform --from-file=g2s.jslt --from-file=s2g.jslt
-:
-```
+oc create cm stage2-transform --from-file=g2s.jslt --from-file=s2g.jslt<br>
+----
 {empty} +
 
 . Deploy the YAML definition containing your new Kamelet Binding

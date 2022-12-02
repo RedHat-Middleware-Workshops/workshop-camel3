@@ -171,12 +171,12 @@ Before you start this lab, make sure you close in your editor all the tabs (sour
 . Setup your lab folder
 .. Create your working folder:
 +
+[subs=]
 ```bash
 cd /projects/MessageHub
 mkdir lab5
 cd lab5
-cp ../support/labs/stage5/HelperStage5.java .
-:
+cp ../support/labs/stage5/HelperStage5.java .<br>
 ```
 +
 {empty} +

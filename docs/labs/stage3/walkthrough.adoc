@@ -100,10 +100,11 @@ oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:
 {empty} +
 
 First of all, ensure you undeploy Lab2's _Kamelet_ bindings, otherwise they will enter in conflict with the ones we're about to create:
+[subs=]
 ```bash
 oc delete klb g2s
 oc delete klb s2g
-:
+<br>
 ```
 {empty} +
 
@@ -122,24 +123,24 @@ The following set of instructions prepare the set of files you will be working w
 +
 * **Linux**
 +
+[subs=]
 ```bash
 cd /projects/MessageHub
 cp -r lab2 lab3
 cd lab3
 mv stage2.properties stage3.properties
-grep -rl stage2 . | xargs sed -i 's/stage2/stage3/g'
-: 
+grep -rl stage2 . | xargs sed -i 's/stage2/stage3/g'<br>
 ```
 +
 * **MacOS**
 +
+[subs=]
 ```bash
 cd /projects/MessageHub
 cp -r lab2 lab3
 cd lab3
 mv stage2.properties stage3.properties
-grep -rl stage2 . | xargs sed -i '' 's/stage2/stage3/g'
-: 
+grep -rl stage2 . | xargs sed -i '' 's/stage2/stage3/g'<br>
 ```
 +
 {empty} +
@@ -148,14 +149,14 @@ grep -rl stage2 . | xargs sed -i '' 's/stage2/stage3/g'
 +
 (The split allows to place Kafka in between)
 +
+[subs=]
 ```bash
 mv g2s.yaml g2k.yaml
 cp g2k.yaml k2s.yaml
 mv s2g.yaml s2k.yaml
 cp s2k.yaml k2g.yaml
 mkdir flows
-mv *.yaml flows/
-:
+mv *.yaml flows/<br>
 ```
 +
 {empty} +
@@ -164,36 +165,36 @@ mv *.yaml flows/
 +
 * **Linux**
 +
+[subs=]
 ```bash
 sed -i 's/g2s/g2k/g' flows/g2k.yaml
 sed -i 's/g2s/k2s/g' flows/k2s.yaml
 sed -i 's/s2g/s2k/g' flows/s2k.yaml
-sed -i 's/s2g/k2g/g' flows/k2g.yaml
-:
+sed -i 's/s2g/k2g/g' flows/k2g.yaml<br>
 ```
 +
 * **MacOS**
 +
+[subs=]
 ```bash
 sed -i '' 's/g2s/g2k/g' flows/g2k.yaml
 sed -i '' 's/g2s/k2s/g' flows/k2s.yaml
 sed -i '' 's/s2g/s2k/g' flows/s2k.yaml
-sed -i '' 's/s2g/k2g/g' flows/k2g.yaml
-:
+sed -i '' 's/s2g/k2g/g' flows/k2g.yaml<br>
 ```
 +
 {empty} +
 
 . Prepare JSLTs:
 +
+[subs=]
 ```bash
 rm *.jslt
 mkdir maps
 touch maps/g2k.jslt
 touch maps/k2s.jslt
 touch maps/s2k.jslt
-touch maps/k2g.jslt
-:
+touch maps/k2g.jslt<br>
 ```
 {empty} +
 
@@ -732,22 +733,24 @@ oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:
 Recreate the _Secret_ and _ConfigMap_ to include both JSLTs. +
 Run the following `oc` command:
 +
-```bash
+[source, subs=]
+----
 oc create secret generic stage3 --from-file=stage3.properties
 oc create cm stage3-transform --from-file=maps
-:
-```
+<br>
+----
 {empty} +
 
 . Create the _Kafka_ topic
 + 
 Run the following command:
 +
-```bash
+[source, subs=]
+----
 mkdir kafka
 touch kafka/room_x.yaml
-:
-```
+<br>
+----
 +
 {empty} +
 +
@@ -784,13 +787,13 @@ oc apply -f kafka/room_x.yaml
 . Deploy the YAML definition containing your new _Kamelet Binding_
 .. Run the following `oc` command to deploy the integration:
 +
-```bash
+[source, subs=]
+----
 oc apply -f flows/g2k.yaml
 oc apply -f flows/k2s.yaml
 oc apply -f flows/s2k.yaml
-oc apply -f flows/k2g.yaml
-:
-```
+oc apply -f flows/k2g.yaml<br>
+----
 +
 NOTE: Be patient, this action will take some time to complete as the operator needs to download all related dependencies, build the applications and create the images before the integrations can be deployed.
 

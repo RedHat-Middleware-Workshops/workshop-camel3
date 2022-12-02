@@ -53,13 +53,13 @@ The instructions below will make you progress one _Camel_ step at a time rather 
 +
 For example:
 +
-```bash
+[source, subs=]
+----
 mkdir lab1
 cd lab1
 touch g2s.yaml
-touch stage1.properties
-:
-```
+touch stage1.properties<br>
+----
 +
 NOTE: The commands above also create the file sources you need for the exercise.
 +
@@ -522,11 +522,12 @@ Slack will read the `channel` field (target room), from the JSON payload we send
 {empty} +
 .. Update your _ConfigMap_ by running:
 +
-```bash
+[source, subs=]
+----
 oc delete cm stage1-transform
 oc create cm stage1-transform --from-file=g2s.jslt
-:
-```
+<br>
+----
 {empty} +
 
 . Include your _Slack_ token in your configuration file.
@@ -556,11 +557,12 @@ slack.token=YOUR_TOKEN
 {empty} +
 .. Update your _Secret_ by running:
 +
-```bash
+[source, subs=]
+----
 oc delete secret stage1
 oc create secret generic stage1 --from-file=stage1.properties
-:
-```
+<br>
+----
 {empty} +
 
 . Redeploy your Kamelet Binding:

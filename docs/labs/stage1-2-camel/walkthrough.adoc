@@ -62,13 +62,13 @@ TIP: Camel JBang is an upstream tool for _Camel_. It is not supported yet by Red
 +
 For example:
 +
-```bash
+[source, subs=]
+----
 mkdir lab1
 cd lab1
 touch g2s.yaml
-touch stage1.properties
-:
-```
+touch stage1.properties<br>
+----
 +
 NOTE: The commands above also create the file sources you need for the exercise.
 +
