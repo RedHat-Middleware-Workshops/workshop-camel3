@@ -86,7 +86,7 @@ TIP: If you're unfamiliar with _Discord_, it is a well known chat platform, very
 --
 If you have never used _Discord_ before, it's easy to register by using your email address (no phone numbers required).
 
-* https://discord.com/register
+* link:https://discord.com/register[window="_blank"]
 --
 
 {empty} +
@@ -97,7 +97,7 @@ To accelerate the onboarding process in _Discord_, we've created a shared server
 
 Follow the invite link to join the workshop's server in _Discord_:
 
-* https://discord.gg/4PyTjzjJJz
+* link:https://discord.gg/4PyTjzjJJz[window="_blank"]
 
 CAUTION: The server is open to the public, please be mindful of your actions, don't abuse the space.
 
@@ -158,7 +158,7 @@ TIP: Some browsers misbehave, if the link below fails, simply scroll down to the
 . Connect to the following URL
 +
 --
-* https://discord.com/developers
+* link:https://discord.com/developers[window="_blank"]
 +
 If you have never used _Discord_ before, register by using your email address (no phone numbers required).
 --
@@ -340,7 +340,7 @@ The _Kamelet_ to create involves defining a Camel route that targets _Discord_ a
 
 To integrate with _Discord_ we need to understand well its API, but don't worry, we got you covered. For reference, here's _Discord_'s documentation on how to post messages:
 
-* https://discord.com/developers/docs/resources/channel#create-message
+* link:https://discord.com/developers/docs/resources/channel#create-message[window="_blank"]
 
 {empty} +
 
@@ -1074,8 +1074,8 @@ Produces events to _Kafka_.
 
 Due to the nature of _Discord's_ communication channel, the developer is also responsible to manage the lifecycle of the websocket connection following _Discord's_ specification.
 
-NOTE: For reference, here's _Discord's Gateway API_ specification covering the details on how websocket exchanges need to happen:
-https://discord.com/developers/docs/topics/gateway
+NOTE: For reference, here's _Discord's Gateway API_ specification covering the details on how websocket exchanges need to happen: link:https://discord.com/developers/docs/topics/gateway[window="_blank"]
+
 
 {empty} +
 

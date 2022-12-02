@@ -97,7 +97,7 @@ You can use one of the following accounts to join Gitter:
 {empty} +
 +
 Login to Gitter's developer portal following the URL below: + 
-https://developer.gitter.im/login
+link:https://developer.gitter.im/login[window="_blank"]
 +
 Once logged in, you'll be presented with your personal access token and an empty list of apps (if never created one before).
 +
@@ -135,7 +135,7 @@ image::images/gitter-dev-new-app.png[align="left", width=40%,border-color="green
 --
 For reference, here's the specification describing the authentication flow:
 
-* https://www.rfc-editor.org/rfc/rfc6749#section-4.1 
+* link:https://www.rfc-editor.org/rfc/rfc6749#section-4.1[window="_blank"]
 --
 +
 .. Compose the following URL call:
