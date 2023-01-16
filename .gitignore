@@ -2,3 +2,4 @@
 test*
 docs/labs/webapp.db
 .vscode/*
+**/webapp.db

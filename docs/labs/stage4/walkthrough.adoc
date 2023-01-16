@@ -1241,7 +1241,7 @@ Inlcude in your `d2k.xml` the following _Camel_ route:
                 <to uri="direct:identify"/>
             </when>
             <when>
-                <jsonpath>$[?(@.t == "MESSAGE_CREATE" &amp;&amp; @.d.author.username != "BrunoApp")]</jsonpath>
+                <jsonpath>$[?(@.t == "MESSAGE_CREATE" &amp;&amp; @.d.author.username != "camelbot")]</jsonpath>
                 <to uri="jslt:d2k.jslt"/>
                 <to uri="direct:kafka-push"/>
             </when>
@@ -1258,7 +1258,17 @@ Inlcude in your `d2k.xml` the following _Camel_ route:
 * Events with `op == 10` require responding to _Discord_ with an identification event (triggers internal call to `direct:identify`).
 
 * Events of type `MESSAGE_CREATE` identify _Discord_ chat messages to be routed to Kafka. The expression includes a condition (filter) to block BOT messages.
+** *ATTENTION:* Make sure the field `.d.author.username` is evaluated against the bot name you're using. The code defines `camelbot` by default.
 ** Chat messages are transformed with a JSLT mapping.
+--
++
+{blank}
++
+[WARNING]
+--
+In the filter expression for events of type `MESSAGE_CREATE`, make sure the field `.d.author.username` is evaluated against the bot name you're using. The code defines `camelbot` by default.
+
+Not Using the correct bot name will cause feedback loops.
 --
 +
 {empty} +
