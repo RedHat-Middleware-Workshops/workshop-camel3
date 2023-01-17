@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- camel-k: language=xml dependency=camel-kafka dependency=camel-jackson dependency=camel-csv  -->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://camel.apache.org/schema/spring"
+        xsi:schemaLocation="
+            http://camel.apache.org/schema/spring
+            https://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<!-- Write your routes here, for example: -->
+    <route id="kafka-consumer">
+        <from uri="kafka:roomx?{{camel.uri.kafka.parameters}}"/>
+        <to uri="direct:main-processor"/>
+    </route>
+
+    <route id="main-processor">
+        <from uri="direct:main-processor"/>
+
+        <!-- The controller helps keeping the instance alive while the aggregation is undergoing -->
+        <bean ref="controller" method="newMessage"/>
+
+        <when>
+            <simple>${bean:controller?method=isTimeWindowExpired}</simple>
+            <log message="time window closed, ignoring event: ${body}"/>
+            <stop/>
+        </when>
+
+        <log message="got new message: ${body}"/>
+
+        <unmarshal>
+            <json/>
+        </unmarshal>
+
+        <marshal>
+            <csv/>
+        </marshal>
+
+        <aggregate strategyRef="msgStrategy" completionTimeout="{{message.aggregator.timeout}}">
+            <correlationExpression>
+              <constant>true</constant>
+            </correlationExpression>
+            <bean ref="controller" method="aggregationDone"/>
+            <to uri="direct:store-data"/>
+        </aggregate>
+
+    </route>
+
+    <route id="keep-alive">
+        <from uri="direct:wait-until-aggregation-done"/>
+        <log message="waiting for aggregation to finish..."/>
+        <bean ref="controller" method="waitUntilAggregationDone"/>
+        <log message="Aggregation has completed."/>
+    </route>
+
+    <route id="store-data">
+        <from uri="direct:store-data"/>
+        <log message="ready to store aggregated data:\n${body}"/>
+  
+        <!-- placeholder for the S3 integration logic -->
+        <setHeader name="CamelAwsS3Key">
+            <simple>roomx/${date:now:yyyy-MM-dd_HH-mm-ssZ}.csv</simple>
+          </setHeader>
+    
+          <setHeader name="CamelAwsS3ContentType">
+            <simple>text/csv</simple>
+          </setHeader>
+    
+          <to uri="aws2-s3:chatrooms-user1.bucket?{{camel.uri.s3.parameters}}"/>
+
+        <log message="storage done."/>
+      </route>    
+
+</routes>
