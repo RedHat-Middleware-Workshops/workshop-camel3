@@ -32,6 +32,9 @@ do
 	oc delete cm stage4-transform
 	oc delete secret stage4
 
+	# clear storage integration
+	kamel delete store
+
 	# clear kafka topic
 	# Needs to happen after all instances are down
 	oc delete kt roomx

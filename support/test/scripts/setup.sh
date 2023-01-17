@@ -14,6 +14,9 @@ do
 	# Delete test kamelet if exists
 	oc delete kl test-action
 
+	# clear storage integration
+	kamel delete store
+
 	# Reset DISCORD
 	cd ../lab4-k2d
 
