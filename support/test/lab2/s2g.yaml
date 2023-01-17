@@ -1,0 +1,47 @@
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: s2g
+  annotations:
+    trait.camel.apache.org/mount.configs: "secret:stage2"
+    trait.camel.apache.org/mount.resources: "configmap:stage2-transform"
+spec:
+
+  source:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: slack-source
+    properties:
+      token:   "{{slack.token}}"
+      channel: "{{slack.channel.name}}"
+      delay: 2000
+
+
+  steps:
+
+  # Filter action to prevent death loops
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: predicate-filter-action
+    properties:
+      expression: "!$.botId || $.botId == null"
+
+  # JSON Transformation
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: jslt-action
+    properties:
+      template: "{{transform.path:s2g.jslt}}"
+
+
+  sink:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: gitter-sink
+    properties:
+      token: "{{gitter.token}}"
+      room: "{{gitter.room}}"

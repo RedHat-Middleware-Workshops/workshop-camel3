@@ -1,4 +1,0 @@
-{
-    "channel": "C03QNKMN6DN",
-    "text":"*"+.user+"@"+.source+"*: "+.text
-}

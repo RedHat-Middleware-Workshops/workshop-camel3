@@ -1,0 +1,16 @@
+# camel-k: language=yaml
+
+# Write your routes here, for example:
+- from:
+    uri: "timer:yaml"
+    parameters:
+      repeatCount: "1"
+    steps:
+      - setBody:
+          constant: '{"content": "Hello from Camel"}'
+      - log: "${body}"
+      - to:
+          uri: "kamelet:discord-sink"
+          parameters:
+            token:   "{{discord.token}}"
+            channel: "{{discord.channel}}"

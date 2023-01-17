@@ -1,6 +1,0 @@
-{
-	"timestamp": string(round(now())),
-	"source":"discord", 
-	"user": .d.author.username, 
-	"text": .d.content
-}

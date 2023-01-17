@@ -1,1 +1,0 @@
-oc apply -f flows/g2s.yaml

@@ -1,0 +1,41 @@
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: k2d
+  annotations:
+    trait.camel.apache.org/mount.resources: "configmap:stage4-transform"
+    trait.camel.apache.org/mount.configs: "secret:stage4"
+
+spec:
+  source:
+    ref:
+      kind: KafkaTopic
+      apiVersion: kafka.strimzi.io/v1beta1
+      name: roomx
+
+  steps:
+
+  # Filter action to prevent death loops
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: predicate-filter-action
+    properties:
+      expression: $.source != "discord"
+
+
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: jslt-action
+    properties:
+      template: k2d.jslt
+
+  sink:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: discord-sink
+    properties:
+      token: "{{discord.token}}"
+      channel: "{{discord.channel}}"
