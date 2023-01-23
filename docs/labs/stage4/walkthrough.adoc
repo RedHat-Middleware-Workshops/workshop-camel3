@@ -1041,7 +1041,7 @@ These are encapsulated _Camel_ routes that can be used in _Kamalet_ bindings and
 No code definitions where Kamelets are bound together or to a platform resource (_Kafka/Knative_). _Camel K_ deploys them as a running integration instance as per their definition.
 
 * *Camel DSL* +
-The _Camel_ language to define integration processes (routes). Using the DSL's EIPs (_Enterprise Integration Patterns_), the _Camel_ components (connectors) and _DataFormats_ (translators) the developer defines instegrations with a very high level of control.
+The _Camel_ language to define integration processes (routes). Using the DSL's EIPs (_Enterprise Integration Patterns_), the _Camel_ components (connectors) and _DataFormats_ (translators) the developer defines integrations with a very high level of control.
 ====
 
 {empty} +
