@@ -78,169 +78,6 @@ TIP: If you're unfamiliar with Gitter, it is an open-source chat platform design
 
 {empty} +
 
-=== Create an App in Gitter.
-
-
-
-
-
-. Login in Gitter
-+
-You can use one of the following accounts to join Gitter:
-+
---
-* GitHub
-* GitLab
-* Twitter
---
-+
-{empty} +
-+
-Login to Gitter's developer portal following the URL below: + 
-link:https://developer.gitter.im/login[window="_blank"]
-+
-Once logged in, you'll be presented with your personal access token and an empty list of apps (if never created one before).
-+
-image::images/gitter-dev-token.png[align="left", width=30%,border-color="green", border-width="2"]
-+
-{empty} +
-
-. Create a new App that will communicate with Gitter:
-
-1. Click `Your Apps -> New app`
-+
-1. Give it a new name and set `\http://localhost:8080` as `Redirect URL`. +
-For example:
-+
---
-* *Name*: +
-`camelbot`
-* *Redirect URL*: +
-`\http://localhost:8080`
---
-+
-{empty} +
-+
-Gitter will generate your App's access credentials, for example:
-+
-image::images/gitter-dev-new-app.png[align="left", width=40%,border-color="green", border-width="3"]
-+
-{empty} +
-
-=== Authorise your App.
-
-. We need to complete the OAuth web authentication flow.
-+
-[NOTE]
---
-For reference, here's the specification describing the authentication flow:
-
-* link:https://www.rfc-editor.org/rfc/rfc6749#section-4.1[window="_blank"]
---
-+
-.. Compose the following URL call:
-+
-CAUTION: ensure you replace `YOUR_APP_OAUTH_KEY`
-+
-```http
-https://gitter.im/login/oauth/authorize?client_id=YOUR_APP_OAUTH_KEY&response_type=code&redirect_uri=http://localhost:8080
-```
-+
-{empty} +
-+
-For example:
-+
-* `\https://gitter.im/login/oauth/authorize?client_id=4b03ca9d94d128f1a219027b776722059cc89bba&response_type=code&redirect_uri=http://localhost:8080`
-+
-{empty} +
-
-.. Open a browser tab, enter your URL in the address bar and press enter. The browser will load an authorization page as per the picture below:
-+
-image::images/gitter-dev-new-app-approve.png[align="left", width=30%,border-color="green", border-width="3"]
-+
-{empty} +
-+
-Click `ALLOW`.
-+
-The approval action will trigger a redirect that will cause a browser connection error since we we're not running a listening app on 8080, but it allows us to obtain the returned authorisation code from the address bar that should be similar to the following:
-+
-- \http://localhost:8080/?code=`0119b1eb4d69eb1c2bcf3c9a0570a711cd4b038b`
-+
-{empty} +
-
-.. Take note of the code, now we have to exchange it to obtain an access token. +
-Use the following cURL base command:
-+
-CAUTION: ensure you replace `YOUR_APP_OAUTH_KEY` / `YOUR_APP_OAUTH_SECRET` / `YOUR_REDIRECT_CODE`
-+
-```curl
-CLIENT_ID=YOUR_APP_OAUTH_KEY \
-CLIENT_SECRET=YOUR_APP_OAUTH_SECRET \
-CODE=YOUR_REDIRECT_CODE \
-&& \
-curl -v https://gitter.im/login/oauth/token \
--H "accept: application/json" \
--d "client_id="$CLIENT_ID"&client_secret="$CLIENT_SECRET"&redirect_uri=http://localhost:8080&grant_type=authorization_code&code="$CODE
-```
-+
-{empty} +
-+
-For example:
-+
-----
-CLIENT_ID=4b03ca9d94d128f1a219027b776722059cc89bba \
-CLIENT_SECRET=8306c0803f4c15319ed20e436870515b8660bad4 \
-CODE=0119b1eb4d69eb1c2bcf3c9a0570a711cd4b038b \
-&& \
-curl -v https://gitter.im/login/oauth/token \
--H "accept: application/json" \
--d "client_id="$CLIENT_ID"&client_secret="$CLIENT_SECRET"&redirect_uri=http://localhost:8080&grant_type=authorization_code&code="$CODE
-----
-+
-{empty} +
-+
-This above cURL command should return something like:
-+
-----
-{"access_token":"2d482bdf092e0e2299832b1f38d9560243083894","token_type":"Bearer"}
-----
-+
-{empty} +
-+
-IMPORTANT: Keep the returned `access_token` safely as you'll need it later to configure _Camel_.
-+
-{empty} +
-
-.. Now, use the returned token to discover available Room IDs. Use the following base command:
-+
-CAUTION: ensure you replace `YOUR_ACCESS_TOKEN`
-+
-```curl
-TOKEN=YOUR_ACCESS_TOKEN \
-&& \
-curl -v https://api.gitter.im/v1/rooms \
--H "Accept: application/json" \
--H "Authorization: Bearer "$TOKEN
-```
-+
-{empty} +
-+
-For example:
-+
-----
-TOKEN=2d482bdf092e0e2299832b1f38d9560243083894 \
-&& \
-curl -v https://api.gitter.im/v1/rooms \
--H "Accept: application/json" \
--H "Authorization: Bearer "$TOKEN
-----
-+
-{empty} +
-+
-If successful, the command above will probably return an empty list if you have not yet joined any _Gitter_ room.
-
-{empty} +
-
 === Join a Gitter room.
 
 . Choose your room
@@ -256,21 +93,14 @@ For example, if your username is:
 * `userN` -> then select `roomN`
 --
 +
-{blank}
-+
-[TIP]
---
-You might still have no luck and find your room is noisy because someone else is running the same workshop somewhere else. In that case, add to your room number +10, or +20, and so on.
---
-+
 {empty} +
 
-. Use the invite URL below to join the lab room:
+. From your browser, use the invite URL below to join the lab room:
 +
 CAUTION: ensure you replace `YOUR_ROOM`
 +
 ```http
-https://gitter.im/CamelWorkshop/YOUR_ROOM?utm_source=share-link&utm_medium=link&utm_campaign=share-link
+https://matrix.to/#/#CamelWorkshop_YOUR_ROOM:gitter.im
 ```
 +
 {empty} +
@@ -278,29 +108,70 @@ https://gitter.im/CamelWorkshop/YOUR_ROOM?utm_source=share-link&utm_medium=link&
 For example, if choosing `room1`, use the following invite URL
 +
 ----
-https://gitter.im/CamelWorkshop/room1?utm_source=share-link&utm_medium=link&utm_campaign=share-link
+https://matrix.to/#/#CamelWorkshop_room1:gitter.im
 ----
 +
 {empty} +
 +
-Click `JOIN ROOM` at the bottom of the chat room. +
-At this point you see your avatar included in the room on the right hand side of the room.
+To continue, you'll be presented on screen with a series of apps to choose from. +
+As per the image below, select _Element_ which has a browser based client.
 +
-image::images/gitter-room-members.png[align="left", width=40%]
+image::images/matrix-join-1.png[align="left", width=40%]
++
+{blank}
++
+The select `Continue in your browser`, as per the image below.
++
+image::images/matrix-join-2.png[align="left", width=40%]
++
+{blank} 
++
+Next, click `Sign In`:
++
+image::images/matrix-join-3.png[align="left", width=30%]
++
+{blank}
++
+To sign in, choose any of the single sign on options in the region highlighted in the image below:
++
+image::images/matrix-join-4.png[align="left", width=50%]
++
+{blank}
++
+In your next step, choose you _Gitter_ (_Matrix_) username, and click `Continue`:
++
+image::images/matrix-join-5.png[align="left", width=40%]
++
+{blank}
++
+Finally, click `Join the discussion` to join the room:
++
+image::images/matrix-join-6.png[align="left", width=30%]
 +
 {empty} +
 
 
 [type=verification]
-Were you able to join a Gitter room successfully?
+Were you able to join the Gitter room successfully?
 
 === Obtain the room ID.
 
-Running the cURL command again to obtain the rooms should return the identifier of the room you just joined, something similar to:
+Your _Camel_ definitions need to be configured using Gitter's internal Room ID.
 
-----
-[{"id":"6317569e6da03739849c519a"         }]
-----
+To find the room's ID you'll, follow the steps indicated below:
+
+. Expand the options by clicking in your room details and select `Settings`, as shown below:
++
+image::images/matrix-roomid-1.png[align="left", width=40%]
++
+{blank}
++
+. Select `Advanced` and copy the `Internal room ID`, as per the illustration below:
++
+image::images/matrix-roomid-2.png[align="left", width=40%]
++
+{empty} +
+
 
 IMPORTANT: Keep the returned room ID safely as you'll need it later to configure _Camel_.
 
@@ -311,12 +182,83 @@ At this stage, you should have available all the configuration identifiers requi
 
 {empty} +
 
+[type=verification]
+Were you able to obtain the internal room ID?
 
-// [type=verification]
-// Were you able to join a Gitter room successfully?
+{empty} +
+
+=== Obtain an authorization token.
+
+You'll need to obtain an _OAuth_ token for _Camel_ to use when consuming or producing events to _Gitter_.
+
+To complete the OAuth flow and obtain a token, follow the instructions below.
+
+{empty} +
+
+1. Initiate the authorisation flow
++
+From your browser, enter the following URL:
++
+```http
+https://gitter.ems.host/_matrix/client/v3/login/sso/redirect?redirectUrl=http://localhost:8080
+```
++
+{blank}
++
+IMPORTANT: The sequence of steps that follows need to happen quickly, as the temporary token's expiry time is very short.
++
+{empty} +
+
+1. Choose any of the given identity providers.
++
+You can use one of the following:
++
+--
+* GitHub
+* GitLab
+* Twitter
+--
++
+{blank}
++
+The approval action triggers a redirect that will cause a browser connection error since we're not running a listening app on 8080, but it allows us to obtain the returned authorisation code from the address bar that should be similar to the following:
++
+- \http://localhost:8080/?loginToken=`syl_GnyBmyaMSUUhRLRVZHCs_4ddppY`
++
+{empty} +
+
+1. Take note of the returned `loginToken`
+
+1. Request the authorization token
++
+Exchange your `loginToken` to obtain an access token. +
+Use the following cURL base command:
++
+CAUTION: ensure you replace `YOUR_LOGIN_TOKEN` in the command below.
++
+```curl
+LOGIN_TOKEN=YOUR_LOGIN_TOKEN \
+&& \
+curl -s -X POST https://gitter.ems.host/_matrix/client/v3/login -d "{\"type\": \"m.login.token\",\"token\": \"$LOGIN_TOKEN\"}" | jq -r .access_token
+```
++
+The above cURL command should return something like:
++
+----
+syt_Ym1lc2VndWUtZGVtby02MzE1ZjBlOTZkYTAzNzM5ODQ5YzQzM2Y_PvFLHTpEUVJNfHXYZkDO_0YDnHx
+----
++
+{empty} +
++
+IMPORTANT: Keep the returned `access_token` safely as you'll need it later to configure _Camel_.
++
+{empty} +
+
 
 [type=verification]
-Did you take note of your access token and room ID?
+Did you take note of your access token?
+
+
 
 {empty} +
 
@@ -467,11 +409,24 @@ Once you have an App available, follow the steps below:
 
 . Join a Slack room (channel)
 +
-A number of public rooms were made available for this workshop (roomX). Choose a room number that nobody uses to avoid noisy conversations.
+A number of public rooms were made available for this workshop (roomX).
 +
-You can also create your own room, use the prefix `room_`, for example:
+To choose a room number that nobody uses and avoid noisy conversations, select one with the same number as your workshop username. +
+For example, if your username is:
++
+--
+* `user1` -> then select `room1`
+* `user2` -> then select `room2`
+* `userN` -> then select `roomN`
+--
++
+{empty} +
 
-* `room_x`
+
++
+You can also create your own room, use the prefix `room`, for example:
+
+* `roomx`
 +
 {empty} +
 
@@ -479,7 +434,7 @@ You can also create your own room, use the prefix `room_`, for example:
 . Open the channel details of the room you joined
 +
 image::images/slack-room-details.png[align="left", width=20%]
-+
++ 
 {empty} +
 
 . Click on the `Integrations` tab, and add an App

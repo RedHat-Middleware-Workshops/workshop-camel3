@@ -499,9 +499,6 @@ The filter is simpler, because _Slack_ includes a `botId` field when messages ar
 Copy from below the parameter definition `slack.channel.name`, paste it into your properties file, and set its value to the _Slack_ room you're using.
 +
 ----
-# Allows HTTP streaming from Gitter
-camel.main.streamCachingEnabled=false
-
 # Gitter credentials
 gitter.token=2d482bdf092e0e2299832b1f38d9560243083894
 gitter.room=6317569e6da03739849c519a
@@ -536,7 +533,7 @@ Copy the snippet below and paste it into your new `s2g.jslt` file:
 +
 ```
 {
-    "text":"**"+.user+"@slack**: "+.text
+    "text":"<b>"+.user+"@slack</b>: "+.text
 }
 ```
 +

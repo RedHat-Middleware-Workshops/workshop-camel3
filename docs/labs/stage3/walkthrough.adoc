@@ -586,7 +586,7 @@ Copy the snippet below and paste it into your new `k2g.jslt` file:
 +
 ```
 {
-    "text":"**"+.user+"@"+.source+"**: "+.text
+    "text":"<b>"+.user+"@"+.source+"</b>: "+.text
 }
 ```
 +

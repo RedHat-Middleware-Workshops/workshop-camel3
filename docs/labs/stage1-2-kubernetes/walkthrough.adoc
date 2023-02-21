@@ -121,9 +121,6 @@ spec:
 .. Now include in your properties file `stage1.properties` the following entries:
 +
 ```properties
-# Allows HTTP streaming from Gitter
-camel.main.streamCachingEnabled=false
-
 # Gitter credentials
 gitter.token=YOUR_ACCESS_TOKEN
 gitter.room=YOUR_ROOM_ID
@@ -136,9 +133,7 @@ gitter.room=YOUR_ROOM_ID
 Ensure you replace `YOUR_ACCESS_TOKEN` and `YOUR_ROOM_ID` with the values you obtained from the _Gitter_ onboarding process.
 ====
 +
-NOTE: The `gitter-source` kamelet is implemented following the specification of Gitter's Streaming API to consume events from the server. To know more, read its API documentation here: https://developer.gitter.im/docs/streaming-api
-+
-IMPORTANT: You will notice the presence of the property `streamCachingEnabled` that requires to be disabled. This allows Camel to process the input as an continuous input stream.
+NOTE: The `gitter-source` kamelet is implemented following the specification of the Matrix Sync API (new Gitter's API) to consume events from the server. To know more, read its API documentation here: https://spec.matrix.org/v1.6/client-server-api/#syncing
 +
 {empty} +
 
@@ -242,6 +237,7 @@ You should see Camel connecting to Gitter and wait for the stream to start:
 ... : Apache Camel 3.14.2.redhat-00047 (camel-1) started in 825ms (build:0ms init:708ms start:117ms)
 ...
 ... : Opening connection to Gitter...
+... : Gitter HTTP Streaming started
 ----
 +
 {empty} +
@@ -257,7 +253,7 @@ image::images/gitter-send-message.png[align="left", width=60%]
 The logs in your pod should show the arrival of a _Gitter_ event similar to the following JSON payload:
 +
 ----
-{"id":"6318848405ad4a3701dccfb4","text":"Hello Camel","html":"Hello Camel","sent":"2022-09-07T11:46:12.825Z","readBy":0,"urls":[],"mentions":[],"issues":[],"meta":[],"v":1,"fromUser":{"id":"xxxxxxxxxxxxxxxx","username":"demo-user"         }}
+{"fromUser":{"username":"bmesegue","displayName":"bmesegue"},"text":"Hello Camel","sent":"2023-02-21T10:15:17.000Z"}
 ----
 +
 {empty} +
@@ -421,7 +417,7 @@ When the new pod is ready, from _Gitter_ send another chat message and inspect y
 You should see an incoming event now transformed and looking similar to this:
 +
 ----
-{"channel":"TO_BE_DEFINED","text":"*demo-user@gitter*: Hello Camel"}
+{"channel":"TO_BE_DEFINED","text":"*bmesegue@gitter*: Hello Camel"}
 ----
 +
 {empty} +
@@ -508,12 +504,12 @@ image::images/slack-room-details-channel-id.png[align="left", width=30%]
 +
 ```
 {
-    "channel":"C041XMH9M41",
+    "channel":"C04QBN33NUW",
     "text":"*"+.fromUser.username+"@gitter*: "+.text
 }
 ```
 +
-IMPORTANT: The above `channel` is an example, make sure you replace `C041XMH9M41` with your _Channel ID_.
+IMPORTANT: The above `channel` is an example, make sure you replace `C04QBN33NUW` with your _Channel ID_.
 +
 {empty} +
 +
@@ -535,9 +531,6 @@ oc create cm stage1-transform --from-file=g2s.jslt
 .. Copy from below the parameter definition `slack.token`, paste it into your properties file, and configure its value with your Slack access token value.
 +
 ----
-# Allows HTTP streaming from Gitter
-camel.main.streamCachingEnabled=false
-
 # Gitter credentials
 gitter.token=2d482bdf092e0e2299832b1f38d9560243083894
 gitter.room=6317569e6da03739849c519a

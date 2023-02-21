@@ -48,19 +48,40 @@ spec:
     out:
       mediaType: application/json
   dependencies:
-  - "camel:kamelet"
+    - "camel:jslt"
+    - "camel:kamelet"
   template:
     from:
       uri: "kamelet:source"
       steps:
+
+      # The Matrix API has replaced the Gitter API.
+      # To minimise the impact in the workshop's code and docs
+      # we transform the Matrix data into simulated Gitter data.
+      # we apply a JSLT to transform the data
+      - setHeader:
+          name: CamelJsltString
+          expression:
+            constant:
+              expression: >-
+                {
+                  "body": .text,
+                  "formatted_body": .text,
+                  "format": "org.matrix.custom.html",
+                  "msgtype": "m.text",
+                }
+      - to: "jslt:dummy?allowTemplateFromHeader=true"
+
       - remove-headers:
           pattern: "*"
+      - set-header:
+          name: CamelHttpMethod
+          simple: PUT
       - set-header:
           name: Content-Type
           simple: application/json
       - set-header:
           name: Authorization
           simple: Bearer {{token}}
-      - to:
-          uri: "https://api.gitter.im/v1/rooms/{{room}}/chatMessages"
-
+      - toD:
+          uri: "https://gitter.ems.host/_matrix/client/v3/rooms/{{room}}/send/m.room.message/${uuid(default)}"

@@ -127,9 +127,6 @@ spec:
 .. Now include in your properties file `stage1.properties` the following entries:
 +
 ```properties
-# Allows HTTP streaming from Gitter
-camel.main.streamCachingEnabled=false
-
 # On shutdown it reduces waiting time when stoping Camel's streaming listener
 camel.main.shutdownTimeout = 5
 
@@ -145,9 +142,7 @@ gitter.room=YOUR_ROOM_ID
 Ensure you replace `YOUR_ACCESS_TOKEN` and `YOUR_ROOM_ID` with the values you obtained from the _Gitter_ onboarding process.
 ====
 +
-NOTE: The `gitter-source` kamelet is implemented following the specification of Gitter's Streaming API to consume events from the server. To know more, read its API documentation here: https://developer.gitter.im/docs/streaming-api
-+
-IMPORTANT: You will notice the presence of the property `streamCachingEnabled` that requires to be disabled. This allows Camel to process the input as an continuous input stream.
+NOTE: The `gitter-source` kamelet is implemented following the specification of the Matrix Sync API (new Gitter's API) to consume events from the server. To know more, read its API documentation here: https://spec.matrix.org/v1.6/client-server-api/#syncing
 +
 {empty} +
 
@@ -179,6 +174,7 @@ In the output logs you should see _Camel_ connecting to _Gitter_, similar to the
 ----
 ... : Apache Camel 3.19.0 (g2s) started in 1s658ms (build:118ms init:1s323ms start:217ms JVM-uptime:3s)
 ... : Opening connection to Gitter...
+... : Gitter HTTP Streaming started
 ----
 +
 {empty} +
@@ -192,7 +188,7 @@ image::images/gitter-send-message.png[align="left", width=60%]
 Your terminal should show the arrival of a _Gitter_ event similar to the following JSON payload:
 +
 ----
-{"id":"6318848405ad4a3701dccfb4","text":"Hello Camel","html":"Hello Camel","sent":"2022-09-07T11:46:12.825Z","readBy":0,"urls":[],"mentions":[],"issues":[],"meta":[],"v":1,"fromUser":{"id":"xxxxxxxxxxxxxxxx","username":"demo-user"         }}
+{"fromUser":{"username":"bmesegue","displayName":"bmesegue"},"text":"Hello Camel","sent":"2023-02-21T10:15:17.000Z"}
 ----
 +
 {empty} +
@@ -301,7 +297,7 @@ camel run * --local-kamelet-dir=../support/deploy/kamelets
 You should see an incoming event now transformed and looking similar to this:
 +
 ----
-{"channel":"TO_BE_DEFINED","text":"*demo-user@gitter*: Hello Camel"}
+{"channel":"TO_BE_DEFINED","text":"*bmesegue@gitter*: Hello Camel"}
 ----
 +
 {empty} +
@@ -385,12 +381,12 @@ image::images/slack-room-details-channel-id.png[align="left", width=30%]
 +
 ```
 {
-    "channel":"C041XMH9M41",
+    "channel":"C04QBN33NUW",
     "text":"*"+.fromUser.username+"@gitter*: "+.text
 }
 ```
 +
-IMPORTANT: The above `channel` is an example, make sure you replace `C041XMH9M41` with your _Channel ID_.
+IMPORTANT: The above `channel` is an example, make sure you replace `C04QBN33NUW` with your _Channel ID_.
 +
 {empty} +
 +
@@ -403,9 +399,6 @@ Slack will read the `channel` field (target room), from the JSON payload we send
 Copy from below the parameter definition `slack.token`, paste it into your properties file, and configure its value with your Slack access token value.
 +
 ----
-# Allows HTTP streaming from Gitter
-camel.main.streamCachingEnabled=false
-
 # On shutdown it reduces waiting time when stoping Camel's streaming listener
 camel.main.shutdownTimeout = 5
 
