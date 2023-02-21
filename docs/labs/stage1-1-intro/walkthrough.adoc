@@ -18,25 +18,11 @@ Part 1 (out of 2) introduces the first integration flow to implement and helps y
 
 {empty} +
 
-Target persona: +
---
-* *Kubernetes User* +
-{empty} +
---
-Difficulty level: +
---
-* *EASY* +
-{empty} +
---
 Estimated time: +
 --
 * *15 mn* +
 {empty} +
 --
-
-{empty} +
-
-No previous Camel experience is required. +
 
 {empty} +
 
@@ -113,6 +99,13 @@ https://matrix.to/#/#CamelWorkshop_room1:gitter.im
 +
 {empty} +
 +
+Your browser might present to you the following screen, prompting you to confirm you use the `gitter.im` server. +
+Click `Continue`.
++
+image::images/matrix-join-0.png[align="left", width=40%]
++
+{blank}
++
 To continue, you'll be presented on screen with a series of apps to choose from. +
 As per the image below, select _Element_ which has a browser based client.
 +
@@ -120,7 +113,7 @@ image::images/matrix-join-1.png[align="left", width=40%]
 +
 {blank}
 +
-The select `Continue in your browser`, as per the image below.
+Then select `Continue in your browser`, as per the image below.
 +
 image::images/matrix-join-2.png[align="left", width=40%]
 +
@@ -132,13 +125,25 @@ image::images/matrix-join-3.png[align="left", width=30%]
 +
 {blank}
 +
-To sign in, choose any of the single sign on options in the region highlighted in the image below:
+To sign in, first click `Edit` where indicated by the red arrow in the image below to switch the homeserver to use:
++
+image::images/matrix-join-4-pre.png[align="left", width=50%]
++
+{blank}
++
+Then choose the option `Other homeserver`, type in `gitter.im` and click `Continue` as illustrated in the caption below:
++
+image::images/matrix-join-4-pre2.png[align="left", width=50%]
++
+{blank}
++
+Now, to sign in, you can choose your preferred identity provider, as shown below:
 +
 image::images/matrix-join-4.png[align="left", width=50%]
 +
 {blank}
 +
-In your next step, choose you _Gitter_ (_Matrix_) username, and click `Continue`:
+If you're asked to confirm your account, click `Continue`:
 +
 image::images/matrix-join-5.png[align="left", width=40%]
 +
@@ -158,7 +163,7 @@ Were you able to join the Gitter room successfully?
 
 Your _Camel_ definitions need to be configured using Gitter's internal Room ID.
 
-To find the room's ID you'll, follow the steps indicated below:
+To find the room's ID, follow the steps indicated below:
 
 . Expand the options by clicking in your room details and select `Settings`, as shown below:
 +
@@ -171,14 +176,8 @@ image::images/matrix-roomid-1.png[align="left", width=40%]
 image::images/matrix-roomid-2.png[align="left", width=40%]
 +
 {empty} +
-
-
++
 IMPORTANT: Keep the returned room ID safely as you'll need it later to configure _Camel_.
-
-{empty} +
-
-At this stage, you should have available all the configuration identifiers required to configure your data flows later in the lab.
-
 
 {empty} +
 
@@ -254,6 +253,8 @@ IMPORTANT: Keep the returned `access_token` safely as you'll need it later to co
 +
 {empty} +
 
+At this stage, you should have now all the configuration values required to configure your data flows in the lab.
+
 
 [type=verification]
 Did you take note of your access token?
@@ -288,12 +289,23 @@ NOTE: if you were unsuccessful joining the public workspace provided, feel free 
 
 
 === Join a Slack room (channel).
-. A number of public rooms were made available in the public workspace for the workshop (room1, room2, ...roomX). Choose a room number that nobody uses to avoid noisy conversations.
+. A number of public rooms were made available in the public workspace for the workshop (room1, room2, ...roomN).
 +
-Alternatively, you can also create your own room, use the prefix `room_`, for example:
+To choose a room number that nobody uses and avoid noisy conversations, select one with the same number as your workshop username. +
+For example, if your username is:
++
+--
+* `user1` -> then select `room1`
+* `user2` -> then select `room2`
+* `userN` -> then select `roomN`
+--
++
+{empty} +
++
+You can also create your own room, use the prefix `room`, for example:
 
-* `room_x`
-
+* `roomx`
++
 {empty} +
 
 === Connect Camel to Slack
@@ -456,9 +468,6 @@ If you are sharing the App with a group, ask your workshop's admin for the App c
 {empty} +
 
 === Completion checks
-
-[type=verification]
-Were you able to add an App to a Slack room?
 
 [type=verification]
 Did you complete Slack's onboarding successfully?
