@@ -49,11 +49,10 @@ Produces events to _Slack_.
 
 [IMPORTANT] 
 --
+You need to already be onboarded into _Gitter_ and _Slack_. +
 Ensure you have previously completed: 
 
 - *_Lab 1.intro - MessageHub - Scenario and Onboarding_*.
-
-which onboards you on _Gitter_ and _Slack_, necessary for this exercise.
 --
 
 {empty} +
