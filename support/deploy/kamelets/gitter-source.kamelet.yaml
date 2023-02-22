@@ -87,6 +87,8 @@ spec:
               - toD:
                   uri: >-
                     https://gitter.ems.host/_matrix/client/v3/sync?timeout=30000&filter={"account_data":{"not_types":["*"]},"room":{"account_data":{"not_types":["*"]},"rooms":["{{room}}"],"timeline":{"limit":1,"types":["m.room.message"]},"state":{"not_types":["*"]} } }&since=${exchangeProperty.next_batch}&disableStreamCache=true
+              - convertBodyTo:
+                  type: String
               - when:
                   expression:
                     jsonpath:
@@ -121,7 +123,10 @@ spec:
                               }
                     - to: "jslt:dummy?allowTemplateFromHeader=true"
 
-                    - to: kamelet:sink
+                    # Invoke kamelet in separate thread to ensure loop's continuity.
+                    # If Kamelet executes a filter or a 'stop' command, it may break the flow
+                    - wire-tap:
+                        uri: kamelet:sink
 
                     # restore data with next batch for next loop
                     - setBody:

@@ -84,4 +84,4 @@ spec:
           name: Authorization
           simple: Bearer {{token}}
       - toD:
-          uri: "https://gitter.ems.host/_matrix/client/v3/rooms/{{room}}/send/m.room.message/${uuid(default)}"
+          uri: "https://gitter.ems.host/_matrix/client/v3/rooms/{{room}}/send/m.room.message/${random(999999)}"
