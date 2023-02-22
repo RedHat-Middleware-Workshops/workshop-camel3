@@ -194,7 +194,26 @@ To complete the OAuth flow and obtain a token, follow the instructions below.
 
 {empty} +
 
-1. Initiate the authorisation flow
+1. Initiate your access token request.
++
+The command below will obtain your access token. +
+It waits for you to paste the `loginToken` value you will obtain in step 2.
++
+Proceed by executing the following command in your terminal:
++
+```curl
+read -p "Paste here your 'loginToken': " LOGIN_TOKEN \
+&& \
+curl -s -X POST https://gitter.ems.host/_matrix/client/v3/login -d "{\"type\": \"m.login.token\",\"token\": \"$LOGIN_TOKEN\"}" | jq -r .access_token
+```
++
+NOTE: Proceed with step 2 to obtain your `loginToken` in order to complete the command's execution.
++
+{empty} +
+
+1. Obtain your `loginToken`
++
+.. Initiate the authorisation flow
 +
 From your browser, enter the following URL:
 +
@@ -208,7 +227,7 @@ IMPORTANT: The sequence of steps that follows need to happen quickly, as the tem
 +
 {empty} +
 
-1. Choose any of the given identity providers.
+.. Choose any of the given identity providers.
 +
 You can use one of the following:
 +
@@ -226,27 +245,13 @@ The approval action triggers a redirect that will cause a browser connection err
 +
 {empty} +
 
-1. Take note of the returned `loginToken`
+1. Take note of the returned `loginToken` (copy the value) 
 
-1. Request the authorization token
-+
-Exchange your `loginToken` to obtain an access token. +
-Use the following cURL base command:
-+
-CAUTION: ensure you replace `YOUR_LOGIN_TOKEN` in the command below.
-+
-```curl
-LOGIN_TOKEN=YOUR_LOGIN_TOKEN \
-&& \
-curl -s -X POST https://gitter.ems.host/_matrix/client/v3/login -d "{\"type\": \"m.login.token\",\"token\": \"$LOGIN_TOKEN\"}" | jq -r .access_token
-```
-+
-{empty} +
-+
-The above cURL command should return something like:
+1. Paste the value in the prompt from step 1. +
+The command will complete its execution and an access token similar to the sample below should be returned:
 +
 ----
-syt_Ym1lc2VndWUtZGVtby02MzE1ZjBlOTZkYTAzNzM5ODQ5YzQzM2Y_PvFLHTpEUVJNfHXYZkDO_0YDnHx
+syt_Ym1lc2VndWUtBGVtby02MzE1ZjBlOTZkYTAzNzM5ODQ5YzQzM2Y_PvFLHTpEUVJNfHXYZkDO_0YDnHx
 ----
 +
 {empty} +
