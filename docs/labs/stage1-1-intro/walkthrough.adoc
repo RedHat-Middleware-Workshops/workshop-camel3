@@ -241,6 +241,8 @@ LOGIN_TOKEN=YOUR_LOGIN_TOKEN \
 curl -s -X POST https://gitter.ems.host/_matrix/client/v3/login -d "{\"type\": \"m.login.token\",\"token\": \"$LOGIN_TOKEN\"}" | jq -r .access_token
 ```
 +
+{empty} +
++
 The above cURL command should return something like:
 +
 ----
@@ -352,6 +354,10 @@ WARNING: DIL-Camel admins will periodically perform a clean-up of old workspace 
 
 
 ==== [[creating-your-own-app-for-slack]] Creating your own App for Slack
+
+
+
+IMPORTANT: You can skip this part if a shared App was made available for the workshop, ask your administrator.
 
 
 . Connect to the following URL
