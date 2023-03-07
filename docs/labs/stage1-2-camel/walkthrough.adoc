@@ -201,7 +201,9 @@ Your terminal should show the arrival of a _Gitter_ event similar to the followi
 {"fromUser":{"username":"bmesegue","displayName":"bmesegue"},"text":"Hello Camel","sent":"2023-02-21T10:15:17.000Z"}
 ----
 +
-{empty} +
+CAUTION: If your terminal does not log JSON events (as above), you might be sending messages from the _Matrix_ server instead of the _Gitter_ server. Ensure you connect to the _Gitter_ server when you login to the platform from your browser. Follow carefully the instructions in the section *Gitter platform onboarding* where the login process is described in detail.
++
+{blank}
 +
 Hopefully you've been successful in capturing _Gitter_ messages with _Camel_. +
 Press `Ctrl`+`C` to stop _Camel_.
