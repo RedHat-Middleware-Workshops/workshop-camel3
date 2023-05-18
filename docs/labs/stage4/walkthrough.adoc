@@ -95,9 +95,23 @@ If you have never used _Discord_ before, it's easy to register by using your ema
 
 To accelerate the onboarding process in _Discord_, we've created a shared server for anyone to freely join and use for the purpose of this enablement workshop. 
 
-Follow the invite link to join the workshop's server in _Discord_:
 
-* link:https://discord.gg/4PyTjzjJJz[window="_blank"]
+. Click on the link below to generate your invitation to _Discord_ (opens a new tab).
++
+--
+- link:{invite-url}/invite/discord[Generate _Discord_ invite,window="_blank"]
+--
++
+{empty} +
+
+. Then, follow the link generated (click on it) to join your _Discord_ server.
++
+image::images/invite-link.png[align="left", width=50%]
+
+. In the new tab, navigate as indicated to join the workshop's server in _Discord_.
+
+{empty} +
+
 
 CAUTION: The server is open to the public, please be mindful of your actions, don't abuse the space.
 

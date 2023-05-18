@@ -282,8 +282,6 @@ Did you take note of your access token?
 
 To accelerate the onboarding process in Slack, we've created a public workspace for anyone to freely join and use for the purpose of this enablement workshop. 
 
-// Follow the invite link to join the workshop's workspace in Slack:
-
 . Click on the link below to generate your invitation to _Slack_ (opens a new tab).
 +
 --
@@ -295,10 +293,8 @@ To accelerate the onboarding process in Slack, we've created a public workspace 
 . Then, follow the link generated (click on it) to join your _Slack_ workspace.
 +
 image::images/invite-link.png[align="left", width=50%]
-+
-{empty} +
 
-. Follow the steps in Slack to complete the invitation process.
+. In the new tab, navigate as indicated to join the workshop's workspace in _Slack_.
 
 {empty} +
 
