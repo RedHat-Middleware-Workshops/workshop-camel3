@@ -99,7 +99,7 @@ NOTE: The generated invitation will automatically assign your room as above expl
 
 .. Then, follow the link generated (click on it) to join your _Gitter_ room.
 +
-image::images/invite-link.png[align="left", width=80%]
+image::images/invite-link.png[align="left", width=40%]
 +
 {empty} +
 
@@ -236,7 +236,16 @@ NOTE: Proceed with step 2 to obtain your `loginToken` in order to complete the c
 
 1. Obtain your `loginToken`
 +
+IMPORTANT: The sequence of steps that follows need to happen quickly, as the temporary token's expiry time is very short.
++
 .. Initiate the authorisation flow
++
+.. Click the link below to initiate the authorization flow:
++
+--
+- link:https://gitter.ems.host/_matrix/client/v3/login/sso/redirect?redirectUrl=http://localhost:8080[Authorization flow,window="_blank"]
+
+--
 +
 From your browser, enter the following URL:
 +
