@@ -89,38 +89,20 @@ For example, if your username is:
 +
 .. Click on the link below to generate your invitation to _Gitter_ (opens a new tab).
 +
+NOTE: The generated invitation will automatically assign your room as above explained (`userN` -> `roomN`)
++
 --
 - link:{invite-url}/invite/gitter?user={user-username}[Generate Gitter invite,window="_blank"]
 --
-+
-NOTE: The generated invitation will automatically assign your room as above explained (`userN` -> `roomN`)
-+
 {empty} +
 
 .. Then, follow the link generated (click on it) to join your _Gitter_ room.
 +
-image::images/invite-link.png[align="left", width=40%]
+image::images/invite-link.png[align="left", width=50%]
 +
 {empty} +
 
 . Follow the steps below to complete the Gitter invitation:
-// . From your browser, use the invite URL below to join the lab room:
-// +
-// CAUTION: ensure you replace `YOUR_ROOM`
-// +
-// ```http
-// https://matrix.to/#/#CamelWorkshop_YOUR_ROOM:gitter.im
-// ```
-// +
-// {empty} +
-// +
-// For example, if choosing `room1`, use the following invite URL
-// +
-// ----
-// https://matrix.to/#/#CamelWorkshop_room1:gitter.im
-// ----
-// +
-// {empty} +
 +
 Your browser might present to you the following screen, prompting you to confirm you use the `gitter.im` server. +
 Click `Continue`.
@@ -238,28 +220,16 @@ NOTE: Proceed with step 2 to obtain your `loginToken` in order to complete the c
 +
 IMPORTANT: The sequence of steps that follows need to happen quickly, as the temporary token's expiry time is very short.
 +
-.. Initiate the authorisation flow
-+
-.. Click the link below to initiate the authorization flow:
+.. Click the link below to initiate the authorization flow: +
+(opens a new tab)
 +
 --
 - link:https://gitter.ems.host/_matrix/client/v3/login/sso/redirect?redirectUrl=http://localhost:8080[Authorization flow,window="_blank"]
-
 --
-+
-From your browser, enter the following URL:
-+
-```http
-https://gitter.ems.host/_matrix/client/v3/login/sso/redirect?redirectUrl=http://localhost:8080
-```
-+
-{blank}
-+
-IMPORTANT: The sequence of steps that follows need to happen quickly, as the temporary token's expiry time is very short.
 +
 {empty} +
 
-.. Choose any of the given identity providers.
+.. In the new tab, choose any of the given identity providers.
 +
 You can use one of the following:
 +
@@ -312,7 +282,24 @@ Did you take note of your access token?
 
 To accelerate the onboarding process in Slack, we've created a public workspace for anyone to freely join and use for the purpose of this enablement workshop. 
 
-Follow the invite link to join the workshop's workspace in Slack:
+// Follow the invite link to join the workshop's workspace in Slack:
+
+. Click on the link below to generate your invitation to _Slack_ (opens a new tab).
++
+--
+- link:{invite-url}/invite/slack[Generate _Slack_ invite,window="_blank"]
+--
++
+{empty} +
+
+. Then, follow the link generated (click on it) to join your _Slack_ workspace.
++
+image::images/invite-link.png[align="left", width=50%]
++
+{empty} +
+
+. Follow the steps below to complete the Gitter invitation:
+
 
 * link:https://join.slack.com/t/camelworkshop/shared_invite/zt-1fvfhatch-HQKSJyob_YIY3nRGhJ7tWA[window="_blank"]
 +
