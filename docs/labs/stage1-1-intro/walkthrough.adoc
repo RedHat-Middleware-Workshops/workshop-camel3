@@ -298,18 +298,15 @@ image::images/invite-link.png[align="left", width=50%]
 +
 {empty} +
 
-. Follow the steps below to complete the Gitter invitation:
+. Follow the steps in Slack to complete the invitation process.
 
-
-* link:https://join.slack.com/t/camelworkshop/shared_invite/zt-1fvfhatch-HQKSJyob_YIY3nRGhJ7tWA[window="_blank"]
-+
 {empty} +
-+
+
 CAUTION: The workspace is open to the public, please be mindful of your actions, don't abuse the space.
-+
+
 TIP: If during the login process in _Slack_ you have problems with the SSO server, try again from an incognito window in your browser.
-+
-NOTE: if you were unsuccessful joining the public workspace provided, feel free to create you own Slack workspace, you should be able to complete the workshop in the same manner.
+
+NOTE: if you were unsuccessful joining the public workspace provided, feel free to create you own _Slack_ workspace, you should be able to complete the workshop in the same manner.
 
 {empty} +
 
