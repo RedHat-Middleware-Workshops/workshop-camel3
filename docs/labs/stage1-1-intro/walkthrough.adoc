@@ -462,11 +462,15 @@ image::images/slack-room-details.png[align="left", width=20%]
 
 . Click on the `Integrations` tab, and add an App
 +
+NOTE: Your selected room might already have the *_CamelWorkshopApp_* added. If that is the case you can ignore these actions.
++
 image::images/slack-add-app.png[align="left", width=50%]
 +
 {empty} +
 
 . Find the `CamelWorkshopApp` (or your own app), and click `Add`
++
+NOTE: If the room already has the *_CamelWorkshopApp_* you can ignore this action.
 +
 image::images/slack-add-app-to-room.png[align="left", width=60%]
 +
