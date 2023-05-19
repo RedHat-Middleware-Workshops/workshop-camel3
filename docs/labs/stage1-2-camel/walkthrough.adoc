@@ -428,7 +428,7 @@ slack.token=YOUR_TOKEN
 +
 {empty} +
 +
-Obtain the _Slack_ token with 1 of these 3 options:
+Obtain the _Slack_ token with 1 of these 3 options, and replate `YOUR_TOKEN`:
 +
 * *Option 1*: Try the link below:
 +

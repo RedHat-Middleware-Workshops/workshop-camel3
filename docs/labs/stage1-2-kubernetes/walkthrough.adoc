@@ -1,6 +1,7 @@
 :walkthrough: Gitter to Slack bridge ()
 :user-password: openshift
 :namespace: {user-username}
+:invite-url: http://invite-webapp.{openshift-app-host}
 
 ifdef::env-github[]
 endif::[]
@@ -558,8 +559,21 @@ slack.token=YOUR_TOKEN
 +
 {empty} +
 +
-* If you're sharing an App with the group, use the App's token your admin has provided.
-* If you created your own App, use your App's `Bot User OAuth Token`
+Obtain the _Slack_ token with 1 of these 3 options, and replace `YOUR_TOKEN`:
++
+* *Option 1*: Try the link below:
++
+--
+WARNING: The link may fail if the cluster did not enable token resolution. +
+If it fails, choose [*Option 2*] or [*Option 3*].
+--
++
+- link:{invite-url}/token/slack[Obtain _Slack_ token,window="_blank"]
++
+{empty} +
+
+* *Option 2*: if you're sharing an App with the group, use the App's token your admin has provided.
+* *Option 3*: if you created your own App, use your App's `Bot User OAuth Token`
 +
 {empty} +
 .. Update your _Secret_ by running:
