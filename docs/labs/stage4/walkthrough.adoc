@@ -2,6 +2,7 @@
 :checkedbox: pass:normal[{startsb}&#10004;{endsb}]
 :user-password: openshift
 :namespace: {user-username}
+:invite-url: http://invite-webapp.{openshift-app-host}/
 
 ifdef::env-github[]
 endif::[]
