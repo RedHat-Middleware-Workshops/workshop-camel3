@@ -335,7 +335,12 @@ To connect from _Camel_ to the chat platform, an App needs to be registered in _
 +
 [TIP]
 --
-Ask your classroom administrator for the shared App's credentials. +
+To configure _Camel_ you will need to _Slack_ App credentials. Later, you will find the credentials following the lab instructions.
+--
++
+[TIP]
+--
+If you can't obtain the App's credentials, ask your classroom instructor/administrator. +
 The workshop slides should contain the token values valid for today's session:
 
 image::images/apps-tokens.png[align="left", width=80%]
