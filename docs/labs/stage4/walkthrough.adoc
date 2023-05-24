@@ -142,10 +142,16 @@ Alternatively, you can also create your own room (channel), use the prefix `room
 
 To connect from _Camel_ to the chat platform, an App needs to be registered in _Discord_. Apps in _Discord_ are automatically member of all channels in the server.
 
-* An App has been made available for all students to share. Ask your workshop's admin for the App's credentials to configure your Camel instance.
+* An App has been made available for all students to share.
 +
 [TIP]
 --
+To configure _Camel_ you will need the _Discord_ App credentials. Later, you will find the credentials following the lab instructions.
+--
++
+[TIP]
+--
+If you can't obtain the App's credentials, ask your classroom instructor/administrator. +
 The workshop slides should contain the token values valid today's session:
 
 image::images/apps-tokens.png[align="left", width=80%]

@@ -335,7 +335,7 @@ To connect from _Camel_ to the chat platform, an App needs to be registered in _
 +
 [TIP]
 --
-To configure _Camel_ you will need to _Slack_ App credentials. Later, you will find the credentials following the lab instructions.
+To configure _Camel_ you will need the _Slack_ App credentials. Later, you will find the credentials following the lab instructions.
 --
 +
 [TIP]
