@@ -115,8 +115,8 @@ spec:
 
                               {
                                 "fromUser": {
-                                  "username": replace($event[0].sender,"@|-(.*)",""),
-                                  "displayName": replace($event[0].sender,"@|-(.*)","")
+                                  "username": replace($event[0].sender,"@|:(.*)",""),
+                                  "displayName": replace($event[0].sender,"@|:(.*)","")
                                 },
                                 "text": $event[0].content.body,
                                 "sent": format-time(replace($event[0].origin_server_ts, "[\\s\\S]{3}\\z", ""), "yyyy-MM-dd'T'HH:mm:ss.SSSX"),
