@@ -1,12 +1,12 @@
-:walkthrough: Gitter to Slack bridge ()
+:walkthrough: Matrix to Rocket.Chat bridge ()
 :user-password: openshift
 :namespace: {user-username}
 
 ifdef::env-github[]
 endif::[]
 
-[id='lab3-gitter-kafka-slack']
-// = Lab 3 - Gitter ⇔ Kafka ⇔ Slack (via streams)
+[id='lab3-matrix-kafka-rocketchat']
+// = Lab 3 - Matrix ⇔ Kafka ⇔ Rocket.Chat (via streams)
 = Lab 3 - Decoupled Re-Architecture
 
 // = [[kubernetes-user]] The Kubernetes user deployment flow
@@ -17,7 +17,7 @@ Open the architecture by decoupling the chat systems using streaming capabilitie
 
 *Overview*
 
-Lab 1 and 2 enabled _Gitter_/_Slack_ conversations. However their connectivity was tightly coupled with dedicated data translations between both platforms. On this third lab we want to break them away to open up the architecture in order to welcome additional systems and services.
+Lab 1 and 2 enabled _Matrix_/_Rocket.Chat_ conversations. However their connectivity was tightly coupled with dedicated data translations between both platforms. On this third lab we want to break them away to open up the architecture in order to welcome additional systems and services.
 
 
 {empty} +
@@ -61,21 +61,21 @@ image::images/data-flow.png[align="center", width=90%]
 
 In terms of implementation effort for this lab, your main task is to split each of your current data flows (from Lab-2) in two different parts:
 
-- The _Gitter_ to _Slack_ process into:
-. _Gitter_ to _Kafka_
-. _Kafka_ to _Slack_
-- The _Slack_ to _Gitter_ process into:
-. _Slack_ to _Kafka_
-. _Kafka_ to _Gitter_
+- The _Matrix_ to _Rocket.Chat_ process into:
+. _Matrix_ to _Kafka_
+. _Kafka_ to _Rocket.Chat_
+- The _Rocket.Chat_ to _Matrix_ process into:
+. _Rocket.Chat_ to _Kafka_
+. _Kafka_ to _Matrix_
 
 {empty} +
 
 One fundamental architecture consideration is that if we want an easy to plugin platform where other communication systems or services need to plugin with ease, we should adopt a standard data model. It would establish a common interface for systems willing to integrate with the platform.
 
-This implies that instead of applying platform specific data transformations (eg. _Gitter_ data model to _Slack_ data model), we apply the following data transformations:
+This implies that instead of applying platform specific data transformations (eg. _Matrix_ data model to _Rocket.Chat_ data model), we apply the following data transformations:
 
-- System specific to standard data model (e.g. _Gitter_/_Slack_ to _Kafka_)
-- Standard data model to system specific (e.g. _Kafka_ to _Gitter_/_Slack_)
+- System specific to standard data model (e.g. _Matrix_/_Rocket.Chat_ to _Kafka_)
+- Standard data model to system specific (e.g. _Kafka_ to _Matrix_/_Rocket.Chat_)
 
 {empty} +
 
@@ -220,8 +220,8 @@ Make sure the syntax of the commands are compatible with with your environment a
 
 
 [time=5]
-[id="gitter-slack-to-kafka"]
-== Gitter/Slack to Kafka
+[id="matrix-rocketchat-to-kafka"]
+== Matrix/Rocket.Chat to Kafka
 
 The two data flows we have created in previous labs are almost identical in terms of processing steps, those are:
 
@@ -232,13 +232,13 @@ The two data flows we have created in previous labs are almost identical in term
 
 {empty} +
 
-For the processes from _Gitter_/_Slack_ to _Kafka_, the steps remain the same, we just need to switch to the standard data model (step 3) and target _Kafka_ instead (step 4).
+For the processes from _Matrix_/_Rocket.Chat_ to _Kafka_, the steps remain the same, we just need to switch to the standard data model (step 3) and target _Kafka_ instead (step 4).
 
 {empty} +
 
 === Process overview
 
-The diagram below applies to the data flows (2 of them) from _Gitter_/_Slack_ respectively to _Kafka_:
+The diagram below applies to the data flows (2 of them) from _Matrix_/_Rocket.Chat_ respectively to _Kafka_:
 
 image::images/processing-flow-chat2kafka.png[align="center", width=90%]
 
@@ -248,11 +248,11 @@ There are 4 Kamelets in use:
 
 ====
 * *A source* +
-Consumes events from _Gitter/Slack_.
+Consumes events from _Matrix/Rocket.Chat_.
 
 * *Two actions* +
 One filters messages to prevent death loops. +
-One transforms _Gitter/Slack_ events to the standard data model.
+One transforms _Matrix/Rocket.Chat_ events to the standard data model.
 
 * *A sink* +
 Produces events to _Kafka_.
@@ -265,7 +265,7 @@ As in lab 1 & 2, this one also fits the _Kubernetes_ user. We compose the defini
 
 {empty} +
 
-=== Gitter to Kafka
+=== Matrix to Kafka
 
 . Replace the sink to target _Kafka_
 +
@@ -288,10 +288,10 @@ spec:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: gitter-source
+      name: matrix-source
     properties:
-      token: "{{gitter.token}}"
-      room:  "{{gitter.room}}"
+      token: "{{matrix.token}}"
+      room:  "{{matrix.room}}"
 
   steps:
     
@@ -341,7 +341,7 @@ Copy the snippet below and paste it into your new `g2k.jslt` file:
 ```
 {
 	"timestamp": string(round(parse-time(.sent, "yyyy-MM-dd'T'HH:mm:ss.SSSX"))),
-	"source":"gitter", 
+	"source":"matrix", 
 	"user": .fromUser.displayName, 
 	"text": .text
 }
@@ -354,15 +354,15 @@ Copy the snippet below and paste it into your new `g2k.jslt` file:
 ====
 {empty} +
 
-And that's all it takes for this first data flow between _Gitter_ and _Kafka_.
+And that's all it takes for this first data flow between _Matrix_ and _Kafka_.
 
 {empty} +
 
 
 
-=== Slack to Kafka
+=== Rocket.Chat to Kafka
 
-Very similar changes apply for the _Slack_ -> _Kafka_ flow.
+Very similar changes apply for the _Rocket.Chat_ -> _Kafka_ flow.
 
 . Replace the sink to target _Kafka_
 +
@@ -385,10 +385,10 @@ spec:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: slack-source
+      name: rocketchat-source
     properties:
-      token:   "{{slack.token}}"
-      channel: "{{slack.channel.name}}"
+      token:   "{{rocketchat.token}}"
+      channel: "{{rocketchat.channel.name}}"
       delay: 2000
 
 
@@ -435,7 +435,7 @@ Copy the snippet below and paste it into your new `s2k.jslt` file:
 ```
 {
 	"timestamp": .ts,
-	"source":"slack", 
+	"source":"rocketchat", 
 	"user": .user, 
 	"text": .text
 }
@@ -454,8 +454,8 @@ Very straightforward, nothing else to be done here.
 
 
 [time=5]
-[id="kafka-to-gitter-slack"]
-== Kafka to Gitter/Slack
+[id="kafka-to-matrix-rocketchat"]
+== Kafka to Matrix/Rocket.Chat
 
 The processing steps still remain essentially the same:
 
@@ -466,13 +466,13 @@ The processing steps still remain essentially the same:
 
 {empty} +
 
-The main differences are that we are consuming events from _Kafka_ (step 1) and that we have to translate events (step 3) from the standard data model to the target specific model (e.g. _Gitter_, _Slack_, other)
+The main differences are that we are consuming events from _Kafka_ (step 1) and that we have to translate events (step 3) from the standard data model to the target specific model (e.g. _Matrix_, _Rocket.Chat_, other)
 
 {empty} +
 
 === Process overview
 
-The diagram below applies to the data flows (2 of them) from _Kafka_ to Gitter/Slack respectively:
+The diagram below applies to the data flows (2 of them) from _Kafka_ to Matrix/Rocket.Chat respectively:
 
 image::images/processing-flow-kafka2chat.png[align="center", width=90%]
 
@@ -486,17 +486,17 @@ Consumes events from _Kafka_.
 
 * *Two actions* +
 One filters messages to prevent death loops. +
-One transforms events from the standard data model to _Gitter/Slack_.
+One transforms events from the standard data model to _Matrix/Rocket.Chat_.
 
 * *A sink* +
-Produces events to _Gitter/Slack_.
+Produces events to _Matrix/Rocket.Chat_.
 ====
 
 {empty} +
 
 
 
-=== Kafka to Gitter
+=== Kafka to Matrix
 
 . Modify the Kamelet Binding
 +
@@ -544,7 +544,7 @@ spec:
 ----
 +
 ```yaml
-      expression: $.source != "gitter"
+      expression: $.source != "matrix"
 ```
 +
 ----
@@ -561,17 +561,17 @@ spec:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: gitter-sink
+      name: matrix-sink
     properties:
-      token: "{{gitter.token}}"
-      room: "{{gitter.room}}"
+      token: "{{matrix.token}}"
+      room: "{{matrix.room}}"
 ----
 +
 {empty} +
 +
 [NOTE]
 ====
-The filter definition is specifically blocking events coming from _Gitter_ itself. As now _Kafka_ sits in the middle, we are simultaneously producing and consuming _Kafka_ events from/to _Gitter_, which can cause event loops. 
+The filter definition is specifically blocking events coming from _Matrix_ itself. As now _Kafka_ sits in the middle, we are simultaneously producing and consuming _Kafka_ events from/to _Matrix_, which can cause event loops. 
 ====
 +
 [TIP]
@@ -580,7 +580,7 @@ The source definition in a _Kamelet Binding_ can either be a _Kamelet_ source fr
 ====
 {empty} +
 
-. Define the JSLT transformation (Standard -> Gitter).
+. Define the JSLT transformation (Standard -> Matrix).
 +
 Copy the snippet below and paste it into your new `k2g.jslt` file:
 +
@@ -596,15 +596,15 @@ We're mapping values from the Standard data model
 ====
 {empty} +
 
-Again, very simple updates, nothing else required for the _Kafka_ -> _Gitter_ process.
+Again, very simple updates, nothing else required for the _Kafka_ -> _Matrix_ process.
 
 {empty} +
 
 
 
-=== Kafka to Slack
+=== Kafka to Rocket.Chat
 
-Very similar changes apply for the _Kafka_ -> _Slack_ flow.
+Very similar changes apply for the _Kafka_ -> _Rocket.Chat_ flow.
 
 
 . Modify the Kamelet Binding
@@ -653,7 +653,7 @@ spec:
 ----
 +
 ```yaml
-      expression: $.source != "slack"
+      expression: $.source != "rocketchat"
 ```
 +
 ----
@@ -668,21 +668,21 @@ spec:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: slack-sink
+      name: rocketchat-sink
     properties:
-      token: "{{slack.token}}"
+      token: "{{rocketchat.token}}"
 ----
 +
 {empty} +
 +
 [NOTE]
 ====
-The filter definition is specifically blocking events coming from _Slack_ itself. As now _Kafka_ sits in the middle, we are simultaneously producing and consuming _Kafka_ events from/to _Slack_, which can cause event loops. 
+The filter definition is specifically blocking events coming from _Rocket.Chat_ itself. As now _Kafka_ sits in the middle, we are simultaneously producing and consuming _Kafka_ events from/to _Rocket.Chat_, which can cause event loops. 
 ====
 +
 {empty} +
 
-. Define the JSLT transformation (Standard -> _Slack_).
+. Define the JSLT transformation (Standard -> _Rocket.Chat_).
 +
 Copy the snippet below and paste it into your new `k2s.jslt` file:
 +
@@ -695,17 +695,17 @@ Copy the snippet below and paste it into your new `k2s.jslt` file:
 +
 [IMPORTANT]
 ====
-Ensure you configure the _Slack_ `channel` by replacing `YOUR_ROOM_ID` with your chat's room identifier.
+Ensure you configure the _Rocket.Chat_ `channel` by replacing `YOUR_ROOM_ID` with your chat's room identifier.
 ====
 +
 [NOTE]
 ====
-* The field `channel` denotes the target room in _Slack_ where messages will be pushed. Use your room ID in _Slack_. +
+* The field `channel` denotes the target room in _Rocket.Chat_ where messages will be pushed. Use your room ID in _Rocket.Chat_. +
 * The field `text` includes JsonPath rules extracting values from the input Standard data model.
 ====
 {empty} +
 
-And you're done with the _Kafka_ -> _Slack_ changes.
+And you're done with the _Kafka_ -> _Rocket.Chat_ changes.
 
 
 {empty} +
@@ -829,9 +829,9 @@ image::images/topology-view.png[align="left", width=80%]
 
 . Send messages to test the system.
 +
-.. Go to you _Gitter_'s room and send a message, for example `Hello from Gitter`.
+.. Go to you _Matrix_'s room and send a message, for example `Hello from Matrix`.
 
-.. Then go to you _Slack_'s room and send a message, for example `Hello from Slack`.
+.. Then go to you _Rocket.Chat_'s room and send a message, for example `Hello from Rocket.Chat`.
 +
 If all goes well you should see something similar to the picture below:
 +
@@ -843,7 +843,7 @@ image::images/stage3-msg-chat-test.png[align="left", width=90%]
 {empty} +
 
 [type=verification]
-Did you see the message going from _Gitter_ to _Slack_?
+Did you see the message going from _Matrix_ to _Rocket.Chat_?
 
 [type=verificationSuccess]
 Very good !
@@ -853,7 +853,7 @@ Inspect in the pod logs to troubleshoot.
 
 
 [type=verification]
-Did you see the message going from _Slack_ to _Gitter_?
+Did you see the message going from _Rocket.Chat_ to _Matrix_?
 
 [type=verificationSuccess]
 Very good !

@@ -11,7 +11,7 @@ ifdef::env-github[]
 endif::[]
 
 [id='lab1-part1-intro']
-// = Lab 1 - Gitter to Slack bridge (part-1, Introduction)
+// = Lab 1 - Matrix to Rocket.Chat bridge (part-1, Introduction)
 = Lab 1.intro - MessageHub - Scenario and Onboarding
 
 Part 1 (out of 2) introduces the first integration flow to implement and helps you to onboard onto the chat platforms.
@@ -47,9 +47,9 @@ The picture billow illustrates the data flow traversing our Camel instance:
 
 image::images/data-flow.png[align="center", width=80%]
 
-The above process bridges chat messages from _Gitter_ to _Slack_. It requires enabling access to both chat platforms.
+The above process bridges chat messages from _Matrix_ to _Rocket.Chat_. It requires enabling access to both chat platforms.
 
-Both _Gitter_ and _Slack_ are independent instant messaging systems. _Gitter_ is designed to be a developer collaboration tool while _Slack_ is more generic and aims to be the platform of choice for the entire office. They both have convenient online web access making them ideal for students to use in this workshop.
+Both _Matrix_ and _Rocket.Chat_ are independent instant messaging systems. _Matrix_ is designed to be a developer collaboration tool while _Rocket.Chat_ is more generic and aims to be the platform of choice for the entire office. They both have convenient online web access making them ideal for students to use in this workshop.
 
 The tasks to complete in this lab will guide you on how to onboard to both chat systems.
 
@@ -57,14 +57,14 @@ The tasks to complete in this lab will guide you on how to onboard to both chat 
 
 
 [time=5]
-[id="gitter-chat"]
-== Gitter platform onboarding
+[id="matrix-chat"]
+== Matrix platform onboarding
 
-TIP: If you're unfamiliar with Gitter, it is an open-source chat platform designed for developers to have a space where to collaborate and discuss project topics.
+TIP: If you're unfamiliar with Matrix, it is an open-source chat platform designed for developers to have a space where to collaborate and discuss project topics.
 
 {empty} +
 
-=== Join a Gitter room.
+=== Join a Matrix room.
 
 . Choose your room
 + 
@@ -83,26 +83,26 @@ For example, if your username is:
 
 
 
-. Join your room in Gitter
+. Join your room in Matrix
 +
-.. Click on the link below to generate your invitation to _Gitter_ (opens a new tab).
+.. Click on the link below to generate your invitation to _Matrix_ (opens a new tab).
 +
 NOTE: The generated invitation will automatically assign your room as above explained (`userN` -> `roomN`)
 +
 --
-- link:{invite-url}/invite/gitter?user={user-username}[Generate Gitter invite,window="_blank"]
+- link:{invite-url}/invite/matrix?user={user-username}[Generate Matrix invite,window="_blank"]
 --
 {empty} +
 
-.. Then, follow the link generated (click on it) to join your _Gitter_ room.
+.. Then, follow the link generated (click on it) to join your _Matrix_ room.
 +
 image::images/invite-link.png[align="left", width=50%]
 +
 {empty} +
 
-. Follow the steps below to complete the Gitter invitation:
+. Follow the steps below to complete the Matrix invitation:
 +
-Your browser might present to you the following screen, prompting you to confirm you use the `gitter.im` server. +
+Your browser might present to you the following screen, prompting you to confirm you use the `matrix.im` server. +
 Click `Continue`.
 +
 image::images/matrix-join-0.png[align="left", width=40%]
@@ -134,7 +134,7 @@ image::images/matrix-join-4-pre.png[align="left", width=50%]
 +
 {blank}
 +
-Then choose the option `Other homeserver`, type in `gitter.im` and click `Continue` as illustrated in the caption below:
+Then choose the option `Other homeserver`, type in `matrix.im` and click `Continue` as illustrated in the caption below:
 +
 image::images/matrix-join-4-pre2.png[align="left", width=50%]
 +
@@ -160,11 +160,11 @@ image::images/matrix-join-6.png[align="left", width=30%]
 
 
 [type=verification]
-Were you able to join the Gitter room successfully?
+Were you able to join the Matrix room successfully?
 
 === Obtain the room ID.
 
-Your _Camel_ definitions need to be configured using Gitter's internal Room ID.
+Your _Camel_ definitions need to be configured using Matrix's internal Room ID.
 
 To find the room's ID, follow the steps indicated below:
 
@@ -191,7 +191,7 @@ Were you able to obtain the internal room ID?
 
 === Obtain an authorization token.
 
-You'll need to obtain an _OAuth_ token for _Camel_ to use when consuming or producing events to _Gitter_.
+You'll need to obtain an _OAuth_ token for _Camel_ to use when consuming or producing events to _Matrix_.
 
 To complete the OAuth flow and obtain a token, follow the instructions below.
 
@@ -207,7 +207,7 @@ Proceed by executing the following command in your terminal:
 ```curl
 read -p "Paste here your 'loginToken': " LOGIN_TOKEN \
 && \
-curl -s -X POST https://gitter.ems.host/_matrix/client/v3/login -d "{\"type\": \"m.login.token\",\"token\": \"$LOGIN_TOKEN\"}" | jq -r .access_token
+curl -s -X POST https://matrix.ems.host/_matrix/client/v3/login -d "{\"type\": \"m.login.token\",\"token\": \"$LOGIN_TOKEN\"}" | jq -r .access_token
 ```
 +
 NOTE: Proceed with step 2 to obtain your `loginToken` in order to complete the command's execution.
@@ -222,7 +222,7 @@ IMPORTANT: The sequence of steps that follows need to happen quickly, as the tem
 (opens a new tab)
 +
 --
-- link:https://gitter.ems.host/_matrix/client/v3/login/sso/redirect?redirectUrl=http://localhost:8080[Authorization flow,window="_blank"]
+- link:https://matrix.ems.host/_matrix/client/v3/login/sso/redirect?redirectUrl=http://localhost:8080[Authorization flow,window="_blank"]
 --
 +
 {empty} +
@@ -272,7 +272,7 @@ Did you take note of your access token?
 
 
 [time=5]
-[id="slack-chat"]
+[id="rocketchat-chat"]
 == Slack platform onboarding
 
 
@@ -283,7 +283,7 @@ To accelerate the onboarding process in Slack, we've created a public workspace 
 . Click on the link below to generate your invitation to _Slack_ (opens a new tab).
 +
 --
-- link:{invite-url}/invite/slack[Generate _Slack_ invite,window="_blank"]
+- link:{invite-url}/invite/rocketchat[Generate _Slack_ invite,window="_blank"]
 --
 +
 {empty} +
@@ -359,7 +359,7 @@ TIP: Some browsers misbehave, if the link below fails, simply scroll down to the
 --
 TIP: Some browsers misbehave, if the link below fails, simply scroll down to the section they're pointing to.
 
-** link:#creating-your-own-app-for-slack[Creating your own App for Slack]
+** link:#creating-your-own-app-for-rocketchat[Creating your own App for Slack]
 
 WARNING: Instead of creating your own app, we recommend the option above to use the shared App already available, contact the DIL-Camel admins. +
 _Slack_ limits the number of apps in a _Workspace_ to 10 and the workshop's space might already be full. If you can't associate your app, contact the DIL-Camel admins. _Slack_ might take 24h to completely process the deletion of old apps to make room to yours.
@@ -373,7 +373,7 @@ WARNING: DIL-Camel admins will periodically perform a clean-up of old workspace 
 
 
 
-==== [[creating-your-own-app-for-slack]] Creating your own App for Slack
+==== [[creating-your-own-app-for-rocketchat]] Creating your own App for Slack
 
 
 
@@ -382,13 +382,13 @@ IMPORTANT: You can skip this part if a shared App was made available for the wor
 
 . Connect to the following URL
 +
-* link:https://api.slack.com/apps[window="_blank"]
+* link:https://api.rocketchat.com/apps[window="_blank"]
 +
 {empty} +
 
 . Click on the `Create New App` button
 +
-image::images/slack-create-app.png[align="left", width=20%]
+image::images/rocketchat-create-app.png[align="left", width=20%]
 +
 {blank}
 +
@@ -431,7 +431,7 @@ You will be requested permissions to access the workspace, click `Allow`.
 +
 Slack then generates and presents the Oauth token for your App:
 +
-image::images/slack-app-oauth-token.png[align="left", width=50%]
+image::images/rocketchat-app-oauth-token.png[align="left", width=50%]
 
 {empty} +
 
@@ -519,10 +519,10 @@ There are 3 Kamelets in use:
 
 ====
 * *A source* +
-Consumes events from _Gitter_.
+Consumes events from _Matrix_.
 
 * *An action* +
-Transforms _Gitter_ events to _Slack_ events (in JSON format).
+Transforms _Matrix_ events to _Slack_ events (in JSON format).
 
 * *A sink* +
 Produces events to _Slack_.

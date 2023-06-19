@@ -37,9 +37,9 @@ spec:
   #   ref:
   #     kind: Kamelet
   #     apiVersion: camel.apache.org/v1
-  #     name: slack-sink
+  #     name: rocketchat-sink
   #   properties:
-  #     token: "{{slack.token}}"
+  #     token: "{{rocketchat.token}}"
 
   sink:
     ref:

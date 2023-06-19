@@ -21,7 +21,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: predicate-filter-action
     properties:
-      expression: $.source != "slack"
+      expression: $.source != "rocketchat"
 
 
   - ref:
@@ -35,6 +35,6 @@ spec:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: slack-sink
+      name: rocketchat-sink
     properties:
-      token: "{{slack.token}}"
+      token: "{{rocketchat.token}}"

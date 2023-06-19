@@ -15,7 +15,7 @@ Use Camel K to integrate additional chat systems to the platform.
 // toc::[]
 
 // == Overview
-Up until now we have evolved a solution to interconnect _Gitter_ and _Slack_, and crucially, with the addition of AMQ Streams, now the platform allows for new systems to easily integrate. In this new Lab we're going to add a new chat option: _Discord_.
+Up until now we have evolved a solution to interconnect _Matrix_ and _Rocket.Chat_, and crucially, with the addition of AMQ Streams, now the platform allows for new systems to easily integrate. In this new Lab we're going to add a new chat option: _Discord_.
 
 _Discord_ is a well known chat platform, very popular among gamers, but increasingly embraced by enterprises to connect internal teams but also for external interactions with customers as a way to maintain close contact.
 
@@ -867,7 +867,7 @@ Produces events to _Discord_.
 
 . Setup the _Kamelet_ binding
 +
-Given the process is almost identical to the _Kafka_ to _Gitter_/_Slack_ ones, we can use one of those as a base for our definition.
+Given the process is almost identical to the _Kafka_ to _Matrix_/_Rocket.Chat_ ones, we can use one of those as a base for our definition.
 +
 Run the following commands in your terminal:
 +
@@ -877,7 +877,7 @@ Run the following commands in your terminal:
 ```bash
 cp ../lab3/flows/k2s.yaml k2d.yaml
 sed -i 's/k2s/k2d/g'       k2d.yaml
-sed -i 's/slack/discord/g' k2d.yaml
+sed -i 's/rocketchat/discord/g' k2d.yaml
 sed -i 's/stage3/stage4/g' k2d.yaml
 touch k2d.jslt<br>
 ```
@@ -888,7 +888,7 @@ touch k2d.jslt<br>
 ```bash
 cp ../lab3/flows/k2s.yaml k2d.yaml
 sed -i '' 's/k2s/k2d/g'       k2d.yaml
-sed -i '' 's/slack/discord/g' k2d.yaml
+sed -i '' 's/rocketchat/discord/g' k2d.yaml
 sed -i '' 's/stage3/stage4/g' k2d.yaml
 touch k2d.jslt<br>
 ```
@@ -909,7 +909,7 @@ The commands above modified the `k2d.yaml` binding with the following changes:
 
 . Update the sink definition in `k2d.yaml`
 +
-One of the CLI commands in the previous step modified the _Slack_ sink for a _Discord_ one. However, _Slack_ only had one parameter (`token`), while _Discord_ requires two: `token` and `channel`.
+One of the CLI commands in the previous step modified the _Rocket.Chat_ sink for a _Discord_ one. However, _Rocket.Chat_ only had one parameter (`token`), while _Discord_ requires two: `token` and `channel`.
 +
 Copy the `channel` parameter from the snipped below and paste it in the sink definition of your `k2d.yaml` file:
 +
@@ -1028,9 +1028,9 @@ k2d    Ready   1
 
 . Send messages to test the system.
 +
-.. Go to your _Gitter_'s room and send a message, for example `Hello from Gitter`.
+.. Go to your _Matrix_'s room and send a message, for example `Hello from Matrix`.
 
-.. Then go to your _Slack_'s room and send a message, for example `Hello from Slack`.
+.. Then go to your _Rocket.Chat_'s room and send a message, for example `Hello from Rocket.Chat`.
 +
 If all goes well you should see something similar to the picture below:
 +
@@ -1042,7 +1042,7 @@ image::images/stage4-msg-k2d-test.png[align="left", width=90%]
 {empty} +
 
 [type=verification]
-Did you see the message going from _Gitter_ to _Discord_?
+Did you see the message going from _Matrix_ to _Discord_?
 
 [type=verificationSuccess]
 Very good !
@@ -1052,7 +1052,7 @@ Inspect in the pod logs to troubleshoot.
 
 
 [type=verification]
-Did you see the message going from _Slack_ to _Discord_?
+Did you see the message going from _Rocket.Chat_ to _Discord_?
 
 [type=verificationSuccess]
 Very good !
@@ -1577,14 +1577,14 @@ kamel logs d2k
 .. Go to your _Discord's_ room and send a message. +
 For example, type `Hello from Discord`.
 +
-If all goes well you should see the message displayed both in Slack and Gitter, as the picture shown below:
+If all goes well you should see the message displayed both in Rocket.Chat and Matrix, as the picture shown below:
 +
 image::images/stage4-msg-d2k-test-ocp.png[align="left", width=90%]
 +
 {empty} +
 
 [type=verification]
-Did you see the message displayed in _Slack_?
+Did you see the message displayed in _Rocket.Chat_?
 
 [type=verificationSuccess]
 Very good !
@@ -1594,7 +1594,7 @@ Inspect in the pod logs to troubleshoot.
 
 
 [type=verification]
-Did you see the message displayed in _Gitter_?
+Did you see the message displayed in _Matrix_?
 
 [type=verificationSuccess]
 Very good !

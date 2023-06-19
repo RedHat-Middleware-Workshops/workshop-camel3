@@ -1,4 +1,4 @@
-:walkthrough: Gitter to Slack bridge ()
+:walkthrough: Matrix to Rocket.Chat bridge ()
 :user-password: openshift
 :namespace: {user-username}
 :invite-url: http://invite-webapp.{openshift-app-host}
@@ -7,12 +7,12 @@ ifdef::env-github[]
 endif::[]
 
 [id='lab1-part2-kubernetes']
-// = Lab 1 - Gitter to Slack bridge (part-2, Kubernetes user)
+// = Lab 1 - Matrix to Rocket.Chat bridge (part-2, Kubernetes user)
 = Lab 1.path2 - MessageHub - Be the Kubernetes user
 
 // = [[kubernetes-user]] The Kubernetes user deployment flow
 
-Impersonate the Kubernetes user to complete Lab-1's Gitter to Slack processing flow.
+Impersonate the Kubernetes user to complete Lab-1's Matrix to Rocket.Chat processing flow.
 
 In this second part, the instructions will guide you in defining a _Kamelet Binding_ that enables the data flow, and pushing it to the _OpenShift_ environment where it becomes live.
 
@@ -37,20 +37,20 @@ You will include 3 Kamelets:
 
 ====
 * *A source* +
-Consumes events from _Gitter_.
+Consumes events from _Matrix_.
 
 * *An action* +
-Transforms _Gitter_ events to _Slack_ events (in JSON format).
+Transforms _Matrix_ events to _Rocket.Chat_ events (in JSON format).
 
 * *A sink* +
-Produces events to _Slack_.
+Produces events to _Rocket.Chat_.
 ====
 
 {empty} +
 
 [IMPORTANT] 
 --
-You need to already be onboarded into _Gitter_ and _Slack_. +
+You need to already be onboarded into _Matrix_ and _Rocket.Chat_. +
 Ensure you have previously completed: 
 
 - *_Lab 1.intro - MessageHub - Scenario and Onboarding_*.
@@ -88,18 +88,18 @@ image::images/crw-open-yaml.png[align="left", width=50%]
 +
 {empty} +
 
-.. To start with, we will simply consume Gitter messages and log them. We select the following 2 Kamelets to bind:
+.. To start with, we will simply consume Matrix messages and log them. We select the following 2 Kamelets to bind:
 +
 --
-- gitter-source
+- matrix-source
 - log-sink
 --
 +
-NOTE: The `gitter-source` _Kamelet_ is not provided out of the box by Camel K. It has been specifically created and deployed for this workshop.
+NOTE: The `matrix-source` _Kamelet_ is not provided out of the box by Camel K. It has been specifically created and deployed for this workshop.
 +
 {empty} +
 +
-Include in your YAML file `g2s.yaml` (gitter to slack) the following definition:
+Include in your YAML file `g2s.yaml` (matrix to rocketchat) the following definition:
 +
 ```yaml
 apiVersion: camel.apache.org/v1alpha1
@@ -115,10 +115,10 @@ spec:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: gitter-source
+      name: matrix-source
     properties:
-      token: "{{gitter.token}}"
-      room:  "{{gitter.room}}"
+      token: "{{matrix.token}}"
+      room:  "{{matrix.room}}"
 
   sink:
     ref:
@@ -132,19 +132,19 @@ spec:
 .. Now include in your properties file `stage1.properties` the following entries:
 +
 ```properties
-# Gitter credentials
-gitter.token=YOUR_ACCESS_TOKEN
-gitter.room=YOUR_ROOM_ID
+# Matrix credentials
+matrix.token=YOUR_ACCESS_TOKEN
+matrix.room=YOUR_ROOM_ID
 ```
 +
 {empty} +
 +
 [IMPORTANT]
 ====
-Ensure you replace `YOUR_ACCESS_TOKEN` and `YOUR_ROOM_ID` with the values you obtained from the _Gitter_ onboarding process.
+Ensure you replace `YOUR_ACCESS_TOKEN` and `YOUR_ROOM_ID` with the values you obtained from the _Matrix_ onboarding process.
 ====
 +
-NOTE: The `gitter-source` kamelet is implemented following the specification of the Matrix Sync API (new Gitter's API) to consume events from the server. To know more, read its API documentation here: https://spec.matrix.org/v1.6/client-server-api/#syncing
+NOTE: The `matrix-source` kamelet is implemented following the specification of the Matrix Sync API (new Matrix's API) to consume events from the server. To know more, read its API documentation here: https://spec.matrix.org/v1.6/client-server-api/#syncing
 +
 {empty} +
 
@@ -242,42 +242,42 @@ image::images/ocp-dev-pod-logs.png[align="left", width=90%]
 +
 {blank}
 +
-You should see Camel connecting to Gitter and wait for the stream to start:
+You should see Camel connecting to Matrix and wait for the stream to start:
 +
 ----
 ... : Apache Camel 3.14.2.redhat-00047 (camel-1) started in 825ms (build:0ms init:708ms start:117ms)
 ...
-... : Opening connection to Gitter...
-... : Gitter HTTP Streaming started
+... : Opening connection to Matrix...
+... : Matrix HTTP Streaming started
 ----
 +
 {empty} +
 
-. Send a message from _Gitter_
+. Send a message from _Matrix_
 +
-Now, from _Gitter_'s chat room, send a message, for example `Hello Camel`.
+Now, from _Matrix_'s chat room, send a message, for example `Hello Camel`.
 +
 image::images/gitter-send-message.png[align="left", width=60%]
 +
 {blank}
 +
-The logs in your pod should show the arrival of a _Gitter_ event similar to the following JSON payload:
+The logs in your pod should show the arrival of a _Matrix_ event similar to the following JSON payload:
 +
 ----
 {"fromUser":{"username":"bmesegue","displayName":"bmesegue"},"text":"Hello Camel","sent":"2023-02-21T10:15:17.000Z"}
 ----
 +
-CAUTION: If your terminal does not log JSON events (as above), you might be sending messages from the _Matrix_ server instead of the _Gitter_ server. Ensure you connect to the _Gitter_ server when you login to the platform from your browser. Follow carefully the instructions in the section *Gitter platform onboarding* where the login process is described in detail.
+CAUTION: If your terminal does not log JSON events (as above), you might be sending messages from the _Matrix_ server instead of the _Matrix_ server. Ensure you connect to the _Matrix_ server when you login to the platform from your browser. Follow carefully the instructions in the section *Matrix platform onboarding* where the login process is described in detail.
 +
 {blank}
 +
 {empty} +
 +
-Hopefully you've been successful in capturing _Gitter_ messages with _Camel_. 
+Hopefully you've been successful in capturing _Matrix_ messages with _Camel_. 
 +
 {empty} +
 
-. Now we need to extend the _Kamelet Binding_ definition to include data transformation matching the JSON structure the target system (Slack) expects.
+. Now we need to extend the _Kamelet Binding_ definition to include data transformation matching the JSON structure the target system (Rocket.Chat) expects.
 +
 We choose from the Kamelet Catalog the JSLT action to transform the body.
 +
@@ -296,14 +296,14 @@ touch g2s.jslt
 ```
 {
     "channel":"TO_BE_DEFINED",
-    "text":"*"+.fromUser.username+"@gitter*: "+.text
+    "text":"*"+.fromUser.username+"@matrix*: "+.text
 }
 ```
 +
 [NOTE]
 ====
-* The field `channel` denotes the target room in _Slack_ where messages will be pushed. For now we use a temporary value. +
-* The field `text` includes JsonPath rules extracting values from the input _Gitter_ event.
+* The field `channel` denotes the target room in _Rocket.Chat_ where messages will be pushed. For now we use a temporary value. +
+* The field `text` includes JsonPath rules extracting values from the input _Matrix_ event.
 ====
 {empty} +
 
@@ -358,10 +358,10 @@ spec:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: gitter-source
+      name: matrix-source
     properties:
-      token: "{{gitter.token}}"
-      room:  "{{gitter.room}}"
+      token: "{{matrix.token}}"
+      room:  "{{matrix.room}}"
 ----
 +
 ```yaml
@@ -428,22 +428,22 @@ image::images/ocp-dev-pod-new-version.png[align="left", width=40%]
 
 . Send test message
 +
-When the new pod is ready, from _Gitter_ send another chat message and inspect your terminal output. +
+When the new pod is ready, from _Matrix_ send another chat message and inspect your terminal output. +
 You should see an incoming event now transformed and looking similar to this:
 +
 ----
-{"channel":"TO_BE_DEFINED","text":"*bmesegue@gitter*: Hello Camel"}
+{"channel":"TO_BE_DEFINED","text":"*bmesegue@matrix*: Hello Camel"}
 ----
 +
 {empty} +
 +
-At this stage you're ready to replace the `log-sink` kamelet by the real one, the `slack-sink` kamelet.
+At this stage you're ready to replace the `log-sink` kamelet by the real one, the `rocketchat-sink` kamelet.
 +
 {empty} +
 
-. [[step-slack-sink]]Replace your _Log_ sink _Kamelet_ by the _Slack_ one.
+. [[step-rocketchat-sink]]Replace your _Log_ sink _Kamelet_ by the _Rocket.Chat_ one.
 +
-Copy from below the `slack-sink` definition, and replace your old `log-sink` code.
+Copy from below the `rocketchat-sink` definition, and replace your old `log-sink` code.
 +
 ----
 apiVersion: camel.apache.org/v1alpha1
@@ -459,10 +459,10 @@ spec:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: gitter-source
+      name: matrix-source
     properties:
-      token: "{{gitter.token}}"
-      room:  "{{gitter.room}}"
+      token: "{{matrix.token}}"
+      room:  "{{matrix.room}}"
 
   steps:
   - ref:
@@ -478,9 +478,9 @@ spec:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: slack-sink
+      name: rocketchat-sink
     properties:
-      token: "{{slack.token}}"
+      token: "{{rocketchat.token}}"
 ```
 +
 {blank}
@@ -499,11 +499,11 @@ If you want to keep the `log-sink` activity, you can move it to the `steps` grou
 +
 {empty} +
 
-. Configure your target Slack `channel`
+. Configure your target Rocket.Chat `channel`
 +
 Previously we defined a dummy value in our JSLT transformation (where the `channel` field is defined). Now we need to replace the dummy value with the real one.
 +
-.. Open in Slack the room details
+.. Open in Rocket.Chat the room details
 +
 image::images/slack-room-details.png[align="left", width=20%]
 +
@@ -520,7 +520,7 @@ image::images/slack-room-details-channel-id.png[align="left", width=30%]
 ```
 {
     "channel":"C04QBN33NUW",
-    "text":"*"+.fromUser.username+"@gitter*: "+.text
+    "text":"*"+.fromUser.username+"@matrix*: "+.text
 }
 ```
 +
@@ -528,7 +528,7 @@ IMPORTANT: The above `channel` is an example, make sure you replace `C04QBN33NUW
 +
 {empty} +
 +
-Slack will read the `channel` field (target room), from the JSON payload we send, to know where to place the message. +
+Rocket.Chat will read the `channel` field (target room), from the JSON payload we send, to know where to place the message. +
 +
 {empty} +
 .. Update your _ConfigMap_ by running:
@@ -541,25 +541,25 @@ oc create cm stage1-transform --from-file=g2s.jslt
 ----
 {empty} +
 
-. Include your _Slack_ token in your configuration file.
+. Include your _Rocket.Chat_ token in your configuration file.
 +
-.. Copy from below the parameter definition `slack.token`, paste it into your properties file, and configure its value with your Slack access token value.
+.. Copy from below the parameter definition `rocketchat.token`, paste it into your properties file, and configure its value with your Rocket.Chat access token value.
 +
 ----
-# Gitter credentials
-gitter.token=2d482bdf092e0e2299832b1f38d9560243083894
-gitter.room=6317569e6da03739849c519a
+# Matrix credentials
+matrix.token=2d482bdf092e0e2299832b1f38d9560243083894
+matrix.room=6317569e6da03739849c519a
 ----
 +
 ```properties
-# Slack 
+# Rocket.Chat 
 # Credentials
-slack.token=YOUR_TOKEN
+rocketchat.token=YOUR_TOKEN
 ```
 +
 {empty} +
 +
-Obtain the _Slack_ token with 1 of these 3 options, and replace `YOUR_TOKEN`:
+Obtain the _Rocket.Chat_ token with 1 of these 3 options, and replace `YOUR_TOKEN`:
 +
 * *Option 1*: Try the link below:
 +
@@ -568,7 +568,7 @@ WARNING: The link may fail if the cluster did not enable token resolution. +
 If it fails, choose [*Option 2*] or [*Option 3*].
 --
 +
-- link:{invite-url}/token/slack[Obtain _Slack_ token,window="_blank"]
+- link:{invite-url}/token/rocketchat[Obtain _Rocket.Chat_ token,window="_blank"]
 +
 {empty} +
 
@@ -594,13 +594,13 @@ oc apply -f g2s.yaml
 +
 {empty} +
 +
-Once more the _Camel K_ operator will rebuild the integration and replace the pod with a new instance that points to _Slack_.
+Once more the _Camel K_ operator will rebuild the integration and replace the pod with a new instance that points to _Rocket.Chat_.
 +
 IMPORTANT: The old version will keep running until _Camel K_ finishes building and deploying the new version. Make sure you wait until the new version has been rolled out.
 +
 {empty} +
 
-. One more time, from Gitter send one last message. If all goes well you should see the message listed in your Slack chat window
+. One more time, from Matrix send one last message. If all goes well you should see the message listed in your Rocket.Chat chat window
 +
 image::images/stage1-msg-gitter-slack.png[align="left", width=80%]
 +
@@ -608,7 +608,7 @@ image::images/stage1-msg-gitter-slack.png[align="left", width=80%]
 
 
 [type=verification]
-Did you see the message going from _Gitter_ showing to _Slack_?
+Did you see the message going from _Matrix_ showing to _Rocket.Chat_?
 
 [type=verificationFail]
 Inspect in the pod logs to investigate possible failure causes.
