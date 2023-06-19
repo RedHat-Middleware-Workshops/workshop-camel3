@@ -2,6 +2,8 @@
 :walkthrough: Scenario Introduction
 :user-password: openshift
 :namespace: {user-username}
+:url-element: https://app.element.io
+:url-rocketchat: rocketchat-rocketchat.{openshift-app-host}
 
 // URLs
 :codeready-url: http://codeready-che.{openshift-app-host}/
@@ -23,6 +25,24 @@ Estimated time: +
 * *15 mn* +
 {empty} +
 --
+
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Matrix
+****
+* link:{url-element}[Console, window="_blank", , id="resources-codeready-url"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}/topology/ns/{namespace}[Console, window="_blank"]
+****
+
 
 {empty} +
 

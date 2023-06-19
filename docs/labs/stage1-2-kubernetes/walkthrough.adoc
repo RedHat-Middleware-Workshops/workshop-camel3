@@ -141,7 +141,7 @@ matrix.room=YOUR_ROOM_ID
 +
 {empty} +
 +
-... To configure the `matrix.token` parameter, follow the sequence of steps shown in the image below:
+... To configure the `matrix.token` parameter, obtain its value from the sequence of steps shown in the image below:
 +
 image::images/matrix-copy-token.png[align="center", width=100%]
 +
@@ -157,7 +157,7 @@ From Matrix:
 +
 {empty} +
 +
-... To configure the `matrix.room` parameter, follow the sequence of steps shown in the image below:
+... To configure the `matrix.room` parameter, obtain its value from the sequence of steps shown in the image below:
 +
 image::images/matrix-copy-room-id.png[align="center", width=100%]
 +
