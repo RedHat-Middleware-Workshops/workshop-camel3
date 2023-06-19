@@ -133,6 +133,8 @@ spec:
       name: log-sink 
 ```
 +
+NOTE: The `matrix-source` kamelet is implemented following the specification of the Matrix Sync API (new Matrix's API) to consume events from the server. To know more, read its API documentation here: https://spec.matrix.org/v1.6/client-server-api/#syncing
++
 {empty} +
 +
 .. Now include in your properties file `stage1.properties` the following entries:
@@ -148,12 +150,34 @@ matrix.room=YOUR_ROOM_ID
 +
 {empty} +
 +
-[IMPORTANT]
-====
-Ensure you replace `YOUR_ACCESS_TOKEN` and `YOUR_ROOM_ID` with the values you obtained from the _Matrix_ onboarding process.
-====
+... To configure the `matrix.token` parameter, follow the sequence of steps shown in the image below:
 +
-NOTE: The `matrix-source` kamelet is implemented following the specification of the Matrix Sync API (new Matrix's API) to consume events from the server. To know more, read its API documentation here: https://spec.matrix.org/v1.6/client-server-api/#syncing
+image::images/matrix-copy-token.png[align="center", width=100%]
++
+--
+From Matrix: 
+
+. Start from the _"User Menu"_
+. Then, click _"All settings"_
+. Select _"Help & About"_
+. Scroll to the very bottom, and click _"Access Token"_
+. Finally, click the _Copy_ button
+--
++
+{empty} +
++
+... To configure the `matrix.room` parameter, follow the sequence of steps shown in the image below:
++
+image::images/matrix-copy-room-id.png[align="center", width=100%]
++
+--
+From Matrix: 
+
+. Start from the _"Room options"_.
+. Then, click _"Settings"_.
+. Select _"Advanced"_.
+. Finally, click the _Copy_ button of the _"Internal room ID"_.
+--
 +
 {empty} +
 
@@ -199,7 +223,7 @@ image::images/gitter-send-message.png[align="left", width=60%]
 Your terminal should show the arrival of a _Matrix_ event similar to the following JSON payload:
 +
 ----
-{"fromUser":{"username":"bmesegue","displayName":"bmesegue"},"text":"Hello Camel","sent":"2023-02-21T10:15:17.000Z"}
+{"fromUser":{"username":"user1","displayName":"user1"},"text":"Hello Camel","sent":"2023-06-19T10:10:20.000Z"}
 ----
 +
 CAUTION: If your terminal does not log JSON events (as above), you might be sending messages from the _Matrix_ server instead of the _Matrix_ server. Ensure you connect to the _Matrix_ server when you login to the platform from your browser. Follow carefully the instructions in the section *Matrix platform onboarding* where the login process is described in detail.
@@ -237,15 +261,24 @@ Open the new file in your editor and copy/paste the following definition:
 +
 ```
 {
-    "channel":"TO_BE_DEFINED",
+    "channel":"YOUR_ROOM",
     "text":"*"+.fromUser.username+"@matrix*: "+.text
 }
 ```
 +
+[IMPORTANT]
+====
+The field `channel` denotes the target room in _Rocket.Chat_ where messages will be pushed. +
+Make sure you replace `YOUR_ROOM` with your designated room, for example:
+
+* `user1` -> use `room1`
+* `user2` -> use `room2`
+* `userN` -> use `roomN`
+====
++
 [NOTE]
 ====
-* The field `channel` denotes the target room in _Rocket.Chat_ where messages will be pushed. For now we use a temporary value. +
-* The field `text` includes JsonPath rules extracting values from the input Matrix event.
+The field `text` includes JsonPath rules extracting values from the input Matrix event.
 ====
 {empty} +
 
@@ -310,7 +343,7 @@ camel run * --local-kamelet-dir=../support/deploy/kamelets
 You should see an incoming event now transformed and looking similar to this:
 +
 ----
-{"channel":"TO_BE_DEFINED","text":"*bmesegue@matrix*: Hello Camel"}
+{"channel":"room1","text":"*user1@matrix*: Hello Camel"}
 ----
 +
 {empty} +
@@ -355,6 +388,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: rocketchat-sink
     properties:
+      userid: "{{rocketchat.userid}}"
       token: "{{rocketchat.token}}"
 ```
 +
@@ -374,40 +408,9 @@ If you want to keep the `log-sink` activity, you can move it to the `steps` grou
 +
 {empty} +
 
-. Configure your target Rocket.Chat `channel`
-+
-Previously we defined a dummy value in our JSLT transformation (where the `channel` field is defined). Now we need to replace the dummy value with the real one.
-+
-.. Open in Rocket.Chat the room details
-+
-image::images/slack-room-details.png[align="left", width=20%]
-+
-{empty} +
 
-.. Copy the Channel ID at the bottom of the details frame
-+
-image::images/slack-room-details-channel-id.png[align="left", width=30%]
-+
-{empty} +
 
-.. Paste its value in your JSLT mapping. It should you similar to the following:
-+
-```
-{
-    "channel":"C04QBN33NUW",
-    "text":"*"+.fromUser.username+"@matrix*: "+.text
-}
-```
-+
-IMPORTANT: The above `channel` is an example, make sure you replace `C04QBN33NUW` with your _Channel ID_.
-+
-{empty} +
-+
-Rocket.Chat will read the `channel` field (target room), from the JSON payload we send, to know where to place the message. +
-+
-{empty} +
-
-. Include your Rocket.Chat token in your configuration file.
+. Include your Rocket.Chat credentials in your configuration file.
 +
 Copy from below the parameter definition `rocketchat.token`, paste it into your properties file, and configure its value with your Rocket.Chat access token value.
 +
@@ -423,6 +426,7 @@ matrix.room=6317569e6da03739849c519a
 ```properties
 # Rocket.Chat
 # credentials
+rocketchat.userid=YOUR_USER_ID
 rocketchat.token=YOUR_TOKEN
 ```
 +
