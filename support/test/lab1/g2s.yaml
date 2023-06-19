@@ -1,7 +1,7 @@
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: g2s
+  name: m2r
   annotations:
     trait.camel.apache.org/mount.resources: "configmap:stage1-transform"
     trait.camel.apache.org/mount.configs: "secret:stage1"
@@ -31,7 +31,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: g2s.jslt
+      template: m2r.jslt
 
   # sink:
   #   ref:

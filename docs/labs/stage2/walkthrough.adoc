@@ -67,7 +67,7 @@ Luckily, you've already done all the necessary onboarding setup with both chat s
 
 
 [time=5]
-[id="g2s"]
+[id="m2r"]
 == Matrix to Rocket.Chat
 
 This process is identical to the one you've already created in Lab 1, except there is situation you need to prevent. +
@@ -154,7 +154,7 @@ Run the commands below in your terminal:
 [subs=]
 ```bash
 mv stage1.properties stage2.properties
-sed -i 's/stage1/stage2/g' g2s.yaml
+sed -i 's/stage1/stage2/g' m2r.yaml
 <br> 
 ```
 +
@@ -163,7 +163,7 @@ sed -i 's/stage1/stage2/g' g2s.yaml
 [subs=]
 ```bash
 mv stage1.properties stage2.properties
-sed -i '' 's/stage1/stage2/g' g2s.yaml
+sed -i '' 's/stage1/stage2/g' m2r.yaml
 <br> 
 ```
 --
@@ -173,7 +173,7 @@ sed -i '' 's/stage1/stage2/g' g2s.yaml
 The commands above will:
 +
 --
-* replace the annotations in the `g2s.yaml` file from `stage1` to `stage2` 
+* replace the annotations in the `m2r.yaml` file from `stage1` to `stage2` 
 * rename `stage1.properties` to `stage2.properties`
 --
 {empty} +
@@ -213,7 +213,7 @@ With all the above in mind, let's include a `filter-action` _Kamelet_, as an add
 Find in your editor's file tree, and open to edit:
 +
 --
-* *_MessageHub_* -> *_lab2_* -> *`g2s.yaml`*
+* *_MessageHub_* -> *_lab2_* -> *`m2r.yaml`*
 --
 +
 {empty} +
@@ -224,7 +224,7 @@ Copy the filter snippet below and paste it in your _Kamelet_ Binding:
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: g2s
+  name: m2r
   annotations:
     trait.camel.apache.org/mount.configs: "secret:stage2"
     trait.camel.apache.org/mount.resources: "configmap:stage2-transform"
@@ -258,7 +258,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: g2s.jslt
+      template: m2r.jslt
 
   sink:
     ref:
@@ -282,7 +282,7 @@ Run the following `oc` command:
 +
 [source, subs=]
 ----
-oc create cm stage2-transform --from-file=g2s.jslt
+oc create cm stage2-transform --from-file=m2r.jslt
 oc create secret generic stage2 --from-file=stage2.properties
 <br>
 ----
@@ -292,7 +292,7 @@ oc create secret generic stage2 --from-file=stage2.properties
 .. Run the following `oc` command to deploy the integration:
 +
 ```bash
-oc apply -f g2s.yaml
+oc apply -f m2r.yaml
 ```
 +
 NOTE: Be patient, this action will take some time to complete as the operator needs to download all the filter's maven dependencies, build the application and create the image before the integration can be deployed.
@@ -313,9 +313,9 @@ During the time you see _Camel K_ building and deploying the new version, the ou
 +
 ----
 NAME   PHASE      REPLICAS
-g2s    Creating 
-g2s    Ready      2
-g2s    Ready      1
+m2r    Creating 
+m2r    Ready      2
+m2r    Ready      1
 ----
 +
 {blank}
@@ -379,7 +379,7 @@ Inspect in the pod logs to troubleshoot.
 
 
 [time=5]
-[id="s2g"]
+[id="r2m"]
 == Rocket.Chat to Matrix
 
 This process is equivalent to the previous one, but designed to enable the opposite data flow.
@@ -418,20 +418,20 @@ Produces events to _Matrix_.
 Run the following command to crate the YAML file:
 +
 ```bash
-touch s2g.yaml
+touch r2m.yaml
 ```
 +
 {empty} +
 
 . Define its source
 +
-Copy the snippet below and paste it into your new `s2g.yaml` file:
+Copy the snippet below and paste it into your new `r2m.yaml` file:
 +
 ```yaml
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: s2g
+  name: r2m
   annotations:
     trait.camel.apache.org/mount.configs: "secret:stage2"
     trait.camel.apache.org/mount.resources: "configmap:stage2-transform"
@@ -464,7 +464,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: "{{transform.path:s2g.jslt}}"
+      template: "{{transform.path:r2m.jslt}}"
 
 
   sink:
@@ -522,14 +522,14 @@ An example setting for the channel name could be `rocketchat.channel.name=room1`
 .. Run the following command to crate the JSLT file:
 +
 ```bash
-touch s2g.jslt
+touch r2m.jslt
 ```
 +
 {empty} +
 
 .. Define its mapping definition.
 +
-Copy the snippet below and paste it into your new `s2g.jslt` file:
+Copy the snippet below and paste it into your new `r2m.jslt` file:
 +
 ```
 {
@@ -557,7 +557,7 @@ oc delete secret stage2
 oc create secret generic stage2 --from-file=stage2.properties
 
 oc delete cm stage2-transform
-oc create cm stage2-transform --from-file=g2s.jslt --from-file=s2g.jslt<br>
+oc create cm stage2-transform --from-file=m2r.jslt --from-file=r2m.jslt<br>
 ----
 {empty} +
 
@@ -565,7 +565,7 @@ oc create cm stage2-transform --from-file=g2s.jslt --from-file=s2g.jslt<br>
 .. Run the following `oc` command to deploy the integration:
 +
 ```bash
-oc apply -f s2g.yaml
+oc apply -f r2m.yaml
 
 ```
 +
@@ -585,11 +585,11 @@ During the time you see _Camel K_ building and deploying the integration, the ou
 +
 ----
 NAME   PHASE      REPLICAS
-g2s    Ready      1
-s2g    Creating   
-s2g    Ready      0
-s2g    Ready      1
-s2g    Ready      1
+m2r    Ready      1
+r2m    Creating   
+r2m    Ready      0
+r2m    Ready      1
+r2m    Ready      1
 ----
 +
 {blank}

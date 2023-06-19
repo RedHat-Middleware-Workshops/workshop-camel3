@@ -875,8 +875,8 @@ Run the following commands in your terminal:
 +
 [subs=]
 ```bash
-cp ../lab3/flows/k2s.yaml k2d.yaml
-sed -i 's/k2s/k2d/g'       k2d.yaml
+cp ../lab3/flows/k2r.yaml k2d.yaml
+sed -i 's/k2r/k2d/g'       k2d.yaml
 sed -i 's/rocketchat/discord/g' k2d.yaml
 sed -i 's/stage3/stage4/g' k2d.yaml
 touch k2d.jslt<br>
@@ -886,8 +886,8 @@ touch k2d.jslt<br>
 +
 [subs=]
 ```bash
-cp ../lab3/flows/k2s.yaml k2d.yaml
-sed -i '' 's/k2s/k2d/g'       k2d.yaml
+cp ../lab3/flows/k2r.yaml k2d.yaml
+sed -i '' 's/k2r/k2d/g'       k2d.yaml
 sed -i '' 's/rocketchat/discord/g' k2d.yaml
 sed -i '' 's/stage3/stage4/g' k2d.yaml
 touch k2d.jslt<br>

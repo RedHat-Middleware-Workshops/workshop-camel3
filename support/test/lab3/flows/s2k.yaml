@@ -1,7 +1,7 @@
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: s2k
+  name: r2k
   annotations:
     trait.camel.apache.org/mount.configs: "secret:stage3"
     trait.camel.apache.org/mount.resources: "configmap:stage3-transform"
@@ -42,7 +42,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: "{{transform.path:s2k.jslt}}"
+      template: "{{transform.path:r2k.jslt}}"
 
 
   sink:

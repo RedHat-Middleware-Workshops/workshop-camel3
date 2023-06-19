@@ -77,7 +77,7 @@ For example:
 ----
 mkdir lab1
 cd lab1
-touch g2s.yaml
+touch m2r.yaml
 touch stage1.properties<br>
 ----
 +
@@ -87,11 +87,11 @@ NOTE: The commands above also create the file sources you need for the exercise.
 
 . Create the definitions
 +
-.. Open the `g2s.yaml` file in your editor.
+.. Open the `m2r.yaml` file in your editor.
 +
 Select from your project tree:
 +
-* MessageHub -> Lab1 -> g2s.yaml
+* MessageHub -> Lab1 -> m2r.yaml
 +
 image::images/crw-open-yaml.png[align="left", width=50%]
 +
@@ -108,13 +108,13 @@ NOTE: The `matrix-source` _Kamelet_ is not provided out of the box by Camel K. I
 +
 {empty} +
 +
-Include in your YAML file `g2s.yaml` (matrix to rocketchat) the following definition:
+Include in your YAML file `m2r.yaml` (matrix to rocketchat) the following definition:
 +
 ```yaml
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: g2s
+  name: m2r
 spec:
 
   source:
@@ -183,7 +183,7 @@ _Camel JBang_ will build a local runnable and start it. +
 In the output logs you should see _Camel_ connecting to _Matrix_, similar to the following:
 +
 ----
-... : Apache Camel 3.19.0 (g2s) started in 1s658ms (build:118ms init:1s323ms start:217ms JVM-uptime:3s)
+... : Apache Camel 3.19.0 (m2r) started in 1s658ms (build:118ms init:1s323ms start:217ms JVM-uptime:3s)
 ... : Opening connection to Matrix...
 ... : Matrix HTTP Streaming started
 ----
@@ -225,10 +225,10 @@ We choose from the Kamelet Catalog the JSLT action to transform the body.
 +
 TIP: JSLT is a very convenient transformer to manipulate JSON payloads. It's inspired in XSLT (XML Transformation) to define stylesheets containing transformation rules for JSON.
 +
-Create the JSLT file `g2s.jslt` with the command:
+Create the JSLT file `m2r.jslt` with the command:
 +
 ```bash
-touch g2s.jslt
+touch m2r.jslt
 ```
 +
 {blank}
@@ -266,7 +266,7 @@ Following the above illustration, copy and paste the snippet from below into you
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: g2s
+  name: m2r
 spec:
 
   source:
@@ -286,7 +286,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: g2s.jslt
+      template: m2r.jslt
 ```
 +
 ----
@@ -327,7 +327,7 @@ Copy from below the `rocketchat-sink` definition, and replace your old `log-sink
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: g2s
+  name: m2r
 spec:
 
   source:
@@ -345,7 +345,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: g2s.jslt
+      template: m2r.jslt
 ----
 +
 ```yaml
@@ -499,7 +499,7 @@ Copy from below the `annotations` snippet and include it in your _Kamelet Bindin
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: g2s
+  name: m2r
 ----
 +
 ```yaml
@@ -526,7 +526,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: g2s.jslt
+      template: m2r.jslt
 
   sink:
     ref:
@@ -569,7 +569,7 @@ oc create secret generic stage1 --from-file=stage1.properties
 .. Create a _ConfigMap_ containing your JSLT mapping. Run the following `oc` command:
 +
 ```bash
-oc create cm stage1-transform --from-file=g2s.jslt
+oc create cm stage1-transform --from-file=m2r.jslt
 ```
 {empty} +
 
@@ -577,7 +577,7 @@ oc create cm stage1-transform --from-file=g2s.jslt
 .. Run the following `oc` command to deploy the integration:
 +
 ```bash
-oc apply -f g2s.yaml
+oc apply -f m2r.yaml
 ```
 +
 {empty} +
@@ -600,19 +600,19 @@ While Camel K builds the integration, the command above shows:
 +
 ----
 NAME   PHASE      REPLICAS
-g2s    Creating   
+m2r    Creating   
 ----
 +
 {empty} +
 
 .. Check the logs.
 +
-You can use the `kamel` client to inspect the logs from the running pod where you integration `g2s` is deployed.
+You can use the `kamel` client to inspect the logs from the running pod where you integration `m2r` is deployed.
 +
 Run the command:
 +
 ```bash
-kamel logs g2s
+kamel logs m2r
 ```
 +
 {empty} +

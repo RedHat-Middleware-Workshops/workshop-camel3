@@ -102,8 +102,8 @@ oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:
 First of all, ensure you undeploy Lab2's _Kamelet_ bindings, otherwise they will enter in conflict with the ones we're about to create:
 [subs=]
 ```bash
-oc delete klb g2s
-oc delete klb s2g
+oc delete klb m2r
+oc delete klb r2m
 <br>
 ```
 {empty} +
@@ -151,10 +151,10 @@ grep -rl stage2 . | xargs sed -i '' 's/stage2/stage3/g'<br>
 +
 [subs=]
 ```bash
-mv g2s.yaml g2k.yaml
-cp g2k.yaml k2s.yaml
-mv s2g.yaml s2k.yaml
-cp s2k.yaml k2g.yaml
+mv m2r.yaml m2k.yaml
+cp m2k.yaml k2r.yaml
+mv r2m.yaml r2k.yaml
+cp r2k.yaml k2m.yaml
 mkdir flows
 mv *.yaml flows/<br>
 ```
@@ -167,20 +167,20 @@ mv *.yaml flows/<br>
 +
 [subs=]
 ```bash
-sed -i 's/g2s/g2k/g' flows/g2k.yaml
-sed -i 's/g2s/k2s/g' flows/k2s.yaml
-sed -i 's/s2g/s2k/g' flows/s2k.yaml
-sed -i 's/s2g/k2g/g' flows/k2g.yaml<br>
+sed -i 's/m2r/m2k/g' flows/m2k.yaml
+sed -i 's/m2r/k2r/g' flows/k2r.yaml
+sed -i 's/r2m/r2k/g' flows/r2k.yaml
+sed -i 's/r2m/k2m/g' flows/k2m.yaml<br>
 ```
 +
 * **MacOS**
 +
 [subs=]
 ```bash
-sed -i '' 's/g2s/g2k/g' flows/g2k.yaml
-sed -i '' 's/g2s/k2s/g' flows/k2s.yaml
-sed -i '' 's/s2g/s2k/g' flows/s2k.yaml
-sed -i '' 's/s2g/k2g/g' flows/k2g.yaml<br>
+sed -i '' 's/m2r/m2k/g' flows/m2k.yaml
+sed -i '' 's/m2r/k2r/g' flows/k2r.yaml
+sed -i '' 's/r2m/r2k/g' flows/r2k.yaml
+sed -i '' 's/r2m/k2m/g' flows/k2m.yaml<br>
 ```
 +
 {empty} +
@@ -191,10 +191,10 @@ sed -i '' 's/s2g/k2g/g' flows/k2g.yaml<br>
 ```bash
 rm *.jslt
 mkdir maps
-touch maps/g2k.jslt
-touch maps/k2s.jslt
-touch maps/s2k.jslt
-touch maps/k2g.jslt<br>
+touch maps/m2k.jslt
+touch maps/k2r.jslt
+touch maps/r2k.jslt
+touch maps/k2m.jslt<br>
 ```
 {empty} +
 
@@ -269,7 +269,7 @@ As in lab 1 & 2, this one also fits the _Kubernetes_ user. We compose the defini
 
 . Replace the sink to target _Kafka_
 +
-Open and edit your `g2k.yaml` file.
+Open and edit your `m2k.yaml` file.
 +
 The original definition remains intact except for the sink to be replaced by a _Kafka_ destination. +
 Copy the sink snippet down below and paste it in your _Kamelet Binding_:
@@ -278,7 +278,7 @@ Copy the sink snippet down below and paste it in your _Kamelet Binding_:
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: g2k
+  name: m2k
   annotations:
     trait.camel.apache.org/mount.configs: "secret:stage3"
     trait.camel.apache.org/mount.resources: "configmap:stage3-transform"
@@ -308,7 +308,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: g2k.jslt
+      template: m2k.jslt
 
 ----
 +
@@ -336,7 +336,7 @@ Keep the name `roomx` for your _KafkaTopic_, do not change its value, it simplif
 
 . Define the JSLT transformation to the new standard data model.
 +
-Copy the snippet below and paste it into your new `g2k.jslt` file:
+Copy the snippet below and paste it into your new `m2k.jslt` file:
 +
 ```
 {
@@ -366,7 +366,7 @@ Very similar changes apply for the _Rocket.Chat_ -> _Kafka_ flow.
 
 . Replace the sink to target _Kafka_
 +
-Open and edit your `s2k.yaml` file.
+Open and edit your `r2k.yaml` file.
 +
 The original definition remains intact except for the sink to be replaced by a _Kafka_ destination. +
 Copy the sink snippet down below and paste it in your _Kamelet Binding_:
@@ -375,7 +375,7 @@ Copy the sink snippet down below and paste it in your _Kamelet Binding_:
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: s2k
+  name: r2k
   annotations:
     trait.camel.apache.org/mount.configs: "secret:stage3"
     trait.camel.apache.org/mount.resources: "configmap:stage3-transform"
@@ -408,7 +408,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: "{{transform.path:s2k.jslt}}"
+      template: "{{transform.path:r2k.jslt}}"
 ----
 +
 ```yaml
@@ -430,7 +430,7 @@ Keep the name `roomx` for your _KafkaTopic_, do not change its value, it simplif
 
 . Define the JSLT transformation to the new standard data model.
 +
-Copy the snippet below and paste it into your new `s2k.jslt` file:
+Copy the snippet below and paste it into your new `r2k.jslt` file:
 +
 ```
 {
@@ -500,7 +500,7 @@ Produces events to _Matrix/Rocket.Chat_.
 
 . Modify the Kamelet Binding
 +
-Open and edit your `k2g.yaml` file.
+Open and edit your `k2m.yaml` file.
 +
 Two modifications are required:
 +
@@ -517,7 +517,7 @@ Copy the corresponding snippets and replace in your _Kamelet Binding_:
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: k2g
+  name: k2m
   annotations:
     trait.camel.apache.org/mount.configs: "secret:stage3"
     trait.camel.apache.org/mount.resources: "configmap:stage3-transform"
@@ -554,7 +554,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: "{{transform.path:k2g.jslt}}"
+      template: "{{transform.path:k2m.jslt}}"
 
 
   sink:
@@ -582,7 +582,7 @@ The source definition in a _Kamelet Binding_ can either be a _Kamelet_ source fr
 
 . Define the JSLT transformation (Standard -> Matrix).
 +
-Copy the snippet below and paste it into your new `k2g.jslt` file:
+Copy the snippet below and paste it into your new `k2m.jslt` file:
 +
 ```
 {
@@ -609,7 +609,7 @@ Very similar changes apply for the _Kafka_ -> _Rocket.Chat_ flow.
 
 . Modify the Kamelet Binding
 +
-Open and edit your `k2s.yaml` file.
+Open and edit your `k2r.yaml` file.
 +
 Two modifications are required:
 +
@@ -626,7 +626,7 @@ Copy the corresponding snippets and replace in your _Kamelet Binding_:
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: k2s
+  name: k2r
   annotations:
     trait.camel.apache.org/mount.configs: "secret:stage3"
     trait.camel.apache.org/mount.resources: "configmap:stage3-transform"
@@ -662,7 +662,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: k2s.jslt
+      template: k2r.jslt
 
   sink:
     ref:
@@ -684,7 +684,7 @@ The filter definition is specifically blocking events coming from _Rocket.Chat_ 
 
 . Define the JSLT transformation (Standard -> _Rocket.Chat_).
 +
-Copy the snippet below and paste it into your new `k2s.jslt` file:
+Copy the snippet below and paste it into your new `k2r.jslt` file:
 +
 ```
 {
@@ -789,10 +789,10 @@ oc apply -f kafka/room_x.yaml
 +
 [source, subs=]
 ----
-oc apply -f flows/g2k.yaml
-oc apply -f flows/k2s.yaml
-oc apply -f flows/s2k.yaml
-oc apply -f flows/k2g.yaml<br>
+oc apply -f flows/m2k.yaml
+oc apply -f flows/k2r.yaml
+oc apply -f flows/r2k.yaml
+oc apply -f flows/k2m.yaml<br>
 ----
 +
 NOTE: Be patient, this action will take some time to complete as the operator needs to download all related dependencies, build the applications and create the images before the integrations can be deployed.
@@ -813,10 +813,10 @@ When the pods are ready, the command should return:
 +
 ----
 NAME   PHASE   REPLICAS
-g2k    Ready   1
-k2g    Ready   1
-k2s    Ready   1
-s2k    Ready   1
+m2k    Ready   1
+k2m    Ready   1
+k2r    Ready   1
+r2k    Ready   1
 ----
 +
 {empty} +

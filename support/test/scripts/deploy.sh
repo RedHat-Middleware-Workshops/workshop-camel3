@@ -16,10 +16,10 @@ do
 
 	# Deploy GITTER/SLACK
 	cd ../lab3
-	oc apply -f flows/g2k.yaml
-	oc apply -f flows/k2s.yaml
-	oc apply -f flows/s2k.yaml
-	oc apply -f flows/k2g.yaml
+	oc apply -f flows/m2k.yaml
+	oc apply -f flows/k2r.yaml
+	oc apply -f flows/r2k.yaml
+	oc apply -f flows/k2m.yaml
 
 	# Deploy DISCORD
 	cd ../lab4-k2d

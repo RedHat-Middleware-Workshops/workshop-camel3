@@ -15,10 +15,10 @@ do
 	oc delete kl test-action
 
 	# clear GITTER/SLACK integrations
-	oc delete klb g2k
-	oc delete klb k2s
-	oc delete klb s2k
-	oc delete klb k2g
+	oc delete klb m2k
+	oc delete klb k2r
+	oc delete klb r2k
+	oc delete klb k2m
 
 	oc delete cm stage3-transform
 	oc delete secret stage3
