@@ -22,7 +22,7 @@ Part 1 (out of 2) introduces the first integration flow to implement and helps y
 
 Estimated time: +
 --
-* *15 mn* +
+* *10 mn* +
 --
 
 {empty} +
@@ -53,9 +53,9 @@ image::images/data-flow.png[align="center", width=80%]
 
 The above process bridges chat messages from _Matrix_ to _Rocket.Chat_.
 
-_Matrix_ is an open standard and communication protocol for real-time decentralised communication. It works seamlessly between different service providers.
+* _Matrix_ is an open standard and communication protocol for real-time decentralised communication. It works seamlessly between different service providers.
 
-_Rocket.Chat_ is also an open-source communications platform with high data protection standards. It enables real-time conversations between colleagues, other companies, or your customers across web, desktop, or mobile devices.
+* _Rocket.Chat_ is also an open-source communications platform with high data protection standards. It enables real-time conversations between colleagues, other companies, or your customers across web, desktop, or mobile devices.
 
 They are both deployed in _OpenShift_ with convenient web access, making them ideal for students to use in this workshop.
 
@@ -64,7 +64,7 @@ The tasks to complete in this lab will guide you on how to onboard to both chat 
 {empty} +
 
 
-[time=5]
+[time=3]
 [id="matrix-chat"]
 == Matrix platform onboarding
 
@@ -181,9 +181,13 @@ Were you able to join the Matrix room successfully?
 {empty} +
 
 
-[time=5]
+[time=3]
 [id="rocketchat-chat"]
 == Rocket.Chat platform onboarding
+
+TIP: If you're unfamiliar with link:https://www.rocket.chat/[_Rocket.Chat_,window="_blank"], it is an open-source communications platform with high data protection standards. It enables real-time conversations between colleagues, other companies, or your customers across web, desktop, or mobile devices.
+
+{empty} +
 
 === Join your Rocket.Chat room.
 
