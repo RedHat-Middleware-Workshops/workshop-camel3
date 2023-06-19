@@ -26,29 +26,9 @@ Estimated time: +
 {empty} +
 --
 
-[type=taskResource]
-.Credentials
-****
-* *username:* `{user-username}`
-* *password:* `{user-password}`
-****
-[type=taskResource]
-.Matrix
-****
-* link:{url-element}[Console, window="_blank", , id="resources-codeready-url"]
-****
-[type=taskResource]
-.Rocket.Chat
-****
-* link:{url-rocketchat}/topology/ns/{namespace}[Console, window="_blank"]
-****
-
-
 {empty} +
 
 === User profiles
-
-This workshop has been designed to attend two different user profiles:
 
 
 * *The Kubernetes user* (no previous Camel experience) +

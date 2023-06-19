@@ -32,6 +32,25 @@ The instructions below are divided in two segments:
 [id="local"]
 == Local development 
 
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Matrix
+****
+* link:{url-element}[Console, window="_blank", , id="resources-codeready-url"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}/topology/ns/{namespace}[Console, window="_blank"]
+****
+
+This workshop has been designed to attend two different user profiles:
+
 For reference, here's again the processing flow to implement:
 
 image::images/processing-flow.png[align="center", width=80%]
