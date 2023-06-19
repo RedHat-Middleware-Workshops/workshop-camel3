@@ -28,8 +28,13 @@ Estimated time: +
 
 {empty} +
 
-=== User profiles
+// === User profiles
 
+++++
+<h3>User Profiles</h3>
+++++
+
+{blank}
 
 * *The Kubernetes user* (no previous Camel experience) +
 The way this user consumes _Camel_ is by selecting catalog _Kamelets_ and creating _Kamelet Bindings_ in YAML definitions. The user creates local YAML files and then pushes them to _OpenShift_. The _Camel K_ operator automates the process of building, creating images and deploying the integrations.

@@ -3,6 +3,9 @@
 :namespace: {user-username}
 :invite-url: http://invite-webapp.{openshift-app-host}
 
+:url-element: https://app.element.io
+:url-rocketchat: rocketchat-rocketchat.{openshift-app-host}
+
 ifdef::env-github[]
 endif::[]
 
