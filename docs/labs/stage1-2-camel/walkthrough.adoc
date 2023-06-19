@@ -247,8 +247,9 @@ image::images/gitter-send-message.png[align="left", width=60%]
 +
 Your terminal should show the arrival of a _Matrix_ event similar to the following JSON payload:
 +
+[subs="attributes+"]
 ----
-{"fromUser":{"username":"user1","displayName":"user1"},"text":"Hello Camel","sent":"2023-06-19T10:10:20.000Z"}
+{"fromUser":{"username":"{user-username}","displayName":"{user-username}"},"text":"Hello Camel","sent":"2023-06-19T10:10:20.000Z"}
 ----
 +
 CAUTION: If your terminal does not log JSON events (as above), you might be sending messages from the _Matrix_ server instead of the _Matrix_ server. Ensure you connect to the _Matrix_ server when you login to the platform from your browser. Follow carefully the instructions in the section *Matrix platform onboarding* where the login process is described in detail.
@@ -367,8 +368,9 @@ camel run * --local-kamelet-dir=../support/deploy/kamelets
 . From Matrix send another chat message and inspect your terminal output. +
 You should see an incoming event now transformed and looking similar to this:
 +
+[subs="attributes+"]
 ----
-{"channel":"room1","text":"*user1@matrix*: Hello Camel"}
+{"channel":"room1","text":"*{user-username}@matrix*: Hello Camel"}
 ----
 +
 {empty} +
