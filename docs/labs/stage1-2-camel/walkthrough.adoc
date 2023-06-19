@@ -137,6 +137,7 @@ apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
   name: m2r
+  # paste annotations here (when instructed)
 spec:
 
   source:
@@ -147,6 +148,8 @@ spec:
     properties:
       token: "{{matrix.token}}"
       room:  "{{matrix.room}}"
+
+  # paste JSLT action here (when instructed)
 
   sink:
     ref:
