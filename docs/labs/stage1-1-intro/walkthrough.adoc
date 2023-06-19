@@ -97,9 +97,13 @@ Click on the link below to open the Login page in _Matrix_ (opens a new tab).
 - link:{url-element}[Matrix Login page,window="_blank"]
 --
 +
+{blank}
++
 You'll be presented with a Login page, as shown below:
 +
 image::images/matrix-login-signin.png[align="left", width=50%]
++
+{blank}
 +
 Click _"Sign In"_.
 +
@@ -115,15 +119,18 @@ image::images/matrix-join-4-pre.png[align="left", width=50%]
 +
 Then choose the option `Other homeserver`:
 +
-image::images/matrix-login-homeserver.png[align="left", width=50%]
+image::images/matrix-login-homeserver.png[align="left", width=40%]
 +
 {blank}
 +
 Now, copy and paste the following _OpenShift_ URL where the homeserver is deployed, and click _"Continue"_
 +
-```url
+[source,bash,subs="attributes+"]
+----
 https://synapse-matrix.{openshift-app-host}
-```
+----
++
+{blank}
 +
 Then, you will be prompted to enter your credentials, as shown below:
 +
@@ -138,7 +145,10 @@ Enter the following:
 * Password: `{user-password}`
 --
 +
+{blank}
++
 Then, click _"Sign in"_
++
 {empty} +
 +
 If you're presented with a _"Verify this device"_, simply discard the window by clicking on the top right corner cross, as shown below:
