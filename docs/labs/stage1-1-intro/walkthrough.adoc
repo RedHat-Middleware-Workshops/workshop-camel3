@@ -74,9 +74,9 @@ TIP: If you're unfamiliar with link:https://matrix.org/[_Matrix_,window="_blank"
 
 === Join a Matrix room.
 
-. Choose your room
+. Your dedicated Matrix room
 + 
-A number of public rooms were made available for this workshop (roomX). 
+A number of rooms have been made available for this workshop (roomX). 
 +
 To work on a room number that nobody uses and avoid noisy conversations, you've been assigned a dedicated room matching your username. +
 For example, if your username is:
@@ -161,16 +161,22 @@ image::images/matrix-login-verify-device.png[align="left", width=40%]
 +
 Confirm by clicking on _"I'll verify later"_.
 +
-Finally, click `Join the discussion` to join the room:
+{empty} +
 +
-image::images/matrix-join-6.png[align="left", width=30%]
+Finally, you'll notice looking at your Matrix screen you have a pending invitation to join your room. Follow the steps below to accept your invitation:
 +
+image::images/matrix-room-accept-invite.png[align="left", width=80%]
++
+--
+. Click on your room.
+. And, click on _"Accept"_.
+--
+
 {empty} +
 
 
 [type=verification]
 Were you able to join the Matrix room successfully?
-
 
 {empty} +
 
@@ -179,12 +185,27 @@ Were you able to join the Matrix room successfully?
 [id="rocketchat-chat"]
 == Rocket.Chat platform onboarding
 
+=== Join your Rocket.Chat room.
 
-=== Join the Rocket.Chat workspace.
+. Your dedicated _Rocket.Chat_ room
++ 
+A number of rooms have been made available for this workshop (roomX). 
++
+To work on a room number that nobody uses and avoid noisy conversations, you've been assigned a dedicated room matching your username. +
+For example, if your username is:
++
+--
+* `user1` -> use `room1`
+* `user2` -> use `room2`
+* `userN` -> use `roomN`
+--
++
+{empty} +
 
-To accelerate the onboarding process in _Rocket.Chat_, we've deployed an instance in _OpenShift_ to freely join and use for the purpose of this enablement workshop. 
 
-. Click on the link below to open the Login page in _Rocket.Chat_ (opens a new tab).
+. Join your room in _Rockat.Chat_
++
+Click on the link below to open the Login page in _Rocket.Chat_ (opens a new tab).
 +
 --
 - link:{url-rocketchat}[Rocket.Chat Login page,window="_blank"]
@@ -192,221 +213,40 @@ To accelerate the onboarding process in _Rocket.Chat_, we've deployed an instanc
 +
 {empty} +
 
-. Then, follow the link generated (click on it) to join your _Slack_ workspace.
+. You will be prompted to enter your credentials, as shown below:
 +
-image::images/invite-link.png[align="left", width=50%]
-
-. In the new tab, navigate as indicated to join the workshop's workspace in _Slack_.
-
-{empty} +
-
-CAUTION: The workspace is open to the public, please be mindful of your actions, don't abuse the space.
-
-TIP: If during the login process in _Slack_ you have problems with the SSO server, try again from an incognito window in your browser.
-
-NOTE: if you were unsuccessful joining the public workspace provided, feel free to create you own _Slack_ workspace, you should be able to complete the workshop in the same manner.
-
-{empty} +
-
-
-=== Join a Slack room (channel).
-. A number of public rooms were made available in the public workspace for the workshop (room1, room2, ...roomN).
-+
-To choose a room number that nobody uses and avoid noisy conversations, select one with the same number as your workshop username. +
-For example, if your username is:
-+
---
-* `user1` -> then select `room1`
-* `user2` -> then select `room2`
-* `userN` -> then select `roomN`
---
-+
-{empty} +
-+
-You can also create your own room, use the prefix `room`, for example:
-
-* `roomx`
-+
-{empty} +
-
-=== Connect Camel to Slack
-
-To connect from _Camel_ to the chat platform, an App needs to be registered in _Slack_. You would just need to add the registered App to a particular room to allow _Camel_ to pick up messages.
-
-{blank}
-
-* An App has been made available for all students to share.
-+
-[TIP]
---
-To configure _Camel_ you will need the _Slack_ App credentials. Later, you will find the credentials following the lab instructions.
---
-+
-[TIP]
---
-If you can't obtain the App's credentials, ask your classroom instructor/administrator. +
-The workshop slides should contain the token values valid for today's session:
-
-image::images/apps-tokens.png[align="left", width=80%]
---
-+
-You can skip the next part (app creation) and directly jump to the section with instructions to add the shared App to your selected room.
-+
-TIP: Some browsers misbehave, if the link below fails, simply scroll down to the section they're pointing to.
-+
-** link:#adding-an-app-to-a-room[Adding an App to a room]
-
-{empty} +
-
-* If you are running the workshop on your own, you'll have to create an App in _Slack_. Click the link below to follow instructions on how to create your own App.
-+
---
-TIP: Some browsers misbehave, if the link below fails, simply scroll down to the section they're pointing to.
-
-** link:#creating-your-own-app-for-rocketchat[Creating your own App for Slack]
-
-WARNING: Instead of creating your own app, we recommend the option above to use the shared App already available, contact the DIL-Camel admins. +
-_Slack_ limits the number of apps in a _Workspace_ to 10 and the workshop's space might already be full. If you can't associate your app, contact the DIL-Camel admins. _Slack_ might take 24h to completely process the deletion of old apps to make room to yours.
-
-WARNING: DIL-Camel admins will periodically perform a clean-up of old workspace apps. If you create a new app and add it to the workspace, it might get deleted after a few days/weeks. 
---
-+
-{empty} +
-
-
-
-
-
-==== [[creating-your-own-app-for-rocketchat]] Creating your own App for Slack
-
-
-
-IMPORTANT: You can skip this part if a shared App was made available for the workshop, ask your administrator.
-
-
-. Connect to the following URL
-+
-* link:https://api.rocketchat.com/apps[window="_blank"]
-+
-{empty} +
-
-. Click on the `Create New App` button
-+
-image::images/rocketchat-create-app.png[align="left", width=20%]
+image::images/rchat-login-credentials.png[align="left", width=50%]
 +
 {blank}
 +
-Select `From scratch`, then
-+
-.. Give it a unique name to prevent naming clashes, for example `MyUniqueNameApp`.
-.. Select `CamelWorkshop` (or your own workspace if you created one)
-.. Click `Create App`
-+
-Once the App created you'll be presented with its `Basic Information`
-+
-{empty} +
-
-. Select from the left menu:
-+
-
-* Features => OAuth & Permissions
-
-+
-.. Add scopes
-+
-Scroll down the screen to find the section `Scopes`. +
-Include the following Bot scopes:
+====
+. Enter the following:
 +
 --
-- channels:history
-- channels:read
-- chat:write
-- mpim:history
+* Username: `{user-username}`
+* Password: `{user-password}`
 --
 +
-{empty} +
-
-.. Generate tokens
+{blank}
 +
-Scroll up until you find `OAuth Tokens for Your Workspace`. +
-Click `Install in Workspace`.
-+
-You will be requested permissions to access the workspace, click `Allow`.
-+
-Slack then generates and presents the Oauth token for your App:
-+
-image::images/rocketchat-app-oauth-token.png[align="left", width=50%]
-
-{empty} +
-
-Once your App is created, you're ready to add it to your workspace room (or channel). +
-Follow the instructions below on how to add your app:
-
-{empty} +
-
-
-==== [[adding-an-app-to-a-room]]Adding an App to a room
-
-Once you have an App available, follow the steps below:
-
-. Join a Slack room (channel)
-+
-A number of public rooms were made available for this workshop (roomX).
-+
-To choose a room number that nobody uses and avoid noisy conversations, select one with the same number as your workshop username. +
-For example, if your username is:
-+
---
-* `user1` -> then select `room1`
-* `user2` -> then select `room2`
-* `userN` -> then select `roomN`
---
+. Then, click _"Login"_
+====
 +
 {empty} +
 
-
+. When you login, you'll see your home page in _Rocket.Chat_, and your room listed in the left panel of your screen, as shown below:
 +
-You can also create your own room, use the prefix `room`, for example:
-
-* `roomx`
-+
-{empty} +
-
-
-. Open the channel details of the room you joined
-+
-image::images/slack-room-details.png[align="left", width=20%]
-+ 
-{empty} +
-
-. Click on the `Integrations` tab, and add an App
-+
-NOTE: Your selected room might already have the *_CamelWorkshopApp_* added. If that is the case you can ignore these actions.
-+
-image::images/slack-add-app.png[align="left", width=50%]
-+
-{empty} +
-
-. Find the `CamelWorkshopApp` (or your own app), and click `Add`
-+
-NOTE: If the room already has the *_CamelWorkshopApp_* you can ignore this action.
-+
-image::images/slack-add-app-to-room.png[align="left", width=60%]
-+
-{empty} +
-
-Your room has now the App included. Camel can use the App credentials to communicate with Slack.
-
-If you are sharing the App with a group, ask your workshop's admin for the App credentials to configure Camel.
+image::images/rchat-room.png[align="left", width=50%]
 
 {empty} +
-
-=== Completion checks
 
 [type=verification]
-Did you complete Slack's onboarding successfully?
+Were you able to join the _Rocket.Chat_ room successfully?
 
 {empty} +
+
+
+
 
 
 [time=2]
