@@ -4,7 +4,7 @@
 :invite-url: http://invite-webapp.{openshift-app-host}
 
 :url-element: https://app.element.io
-:url-rocketchat: rocketchat-rocketchat.{openshift-app-host}
+:url-rocketchat: https://rocketchat-rocketchat.{openshift-app-host}
 
 ifdef::env-github[]
 endif::[]
@@ -501,6 +501,23 @@ Did you see the message in _Matrix_ showing up in _Rocket.Chat_?
 [time=5]
 [id="openshift"]
 == Deployment in OpenShift
+
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Matrix
+****
+* link:{url-element}[Console, window="_blank", , id="resources-codeready-url"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}/topology/ns/{namespace}[Console, window="_blank"]
+****
 
 The definitions that you have implemented can practically be taken 'as-is' into _OpenShift_. 
 
