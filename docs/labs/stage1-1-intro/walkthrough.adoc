@@ -23,7 +23,6 @@ Part 1 (out of 2) introduces the first integration flow to implement and helps y
 Estimated time: +
 --
 * *15 mn* +
-{empty} +
 --
 
 {empty} +
@@ -52,9 +51,13 @@ The picture billow illustrates the data flow traversing our Camel instance:
 
 image::images/data-flow.png[align="center", width=80%]
 
-The above process bridges chat messages from _Matrix_ to _Rocket.Chat_. It requires enabling access to both chat platforms.
+The above process bridges chat messages from _Matrix_ to _Rocket.Chat_.
 
-Both _Matrix_ and _Rocket.Chat_ are independent instant messaging systems. _Matrix_ is designed to be a developer collaboration tool while _Rocket.Chat_ is more generic and aims to be the platform of choice for the entire office. They both have convenient online web access making them ideal for students to use in this workshop.
+_Matrix_ is an open standard and communication protocol for real-time decentralised communication. It works seamlessly between different service providers.
+
+_Rocket.Chat_ is also an open-source communications platform with high data protection standards. It enables real-time conversations between colleagues, other companies, or your customers across web, desktop, or mobile devices.
+
+They are both deployed in _OpenShift_ with convenient web access, making them ideal for students to use in this workshop.
 
 The tasks to complete in this lab will guide you on how to onboard to both chat systems.
 
@@ -65,7 +68,7 @@ The tasks to complete in this lab will guide you on how to onboard to both chat 
 [id="matrix-chat"]
 == Matrix platform onboarding
 
-TIP: If you're unfamiliar with Matrix, it is an open-source chat platform designed for developers to have a space where to collaborate and discuss project topics.
+TIP: If you're unfamiliar with link:https://matrix.org/[_Matrix_,window="_blank"], it is an open standard and communication protocol for real-time decentralised communication. It works seamlessly between different service providers.
 
 {empty} +
 
@@ -75,13 +78,13 @@ TIP: If you're unfamiliar with Matrix, it is an open-source chat platform design
 + 
 A number of public rooms were made available for this workshop (roomX). 
 +
-To choose a room number that nobody uses and avoid noisy conversations, select one with the same number as your workshop username. +
+To work on a room number that nobody uses and avoid noisy conversations, you've been assigned a dedicated room matching your username. +
 For example, if your username is:
 +
 --
-* `user1` -> then select `room1`
-* `user2` -> then select `room2`
-* `userN` -> then select `roomN`
+* `user1` -> use `room1`
+* `user2` -> use `room2`
+* `userN` -> use `roomN`
 --
 +
 {empty} +
@@ -90,12 +93,10 @@ For example, if your username is:
 
 . Join your room in Matrix
 +
-.. Click on the link below to generate your invitation to _Matrix_ (opens a new tab).
-+
-NOTE: The generated invitation will automatically assign your room as above explained (`userN` -> `roomN`)
+.. Click on the link below to open the Login page in _Matrix_ (opens a new tab).
 +
 --
-- link:{invite-url}/invite/matrix?user={user-username}[Generate Matrix invite,window="_blank"]
+- link:{url-element}[Matrix Login page,window="_blank"]
 --
 {empty} +
 
