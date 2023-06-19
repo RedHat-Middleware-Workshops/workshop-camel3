@@ -138,7 +138,8 @@ image::images/matrix-login-credentials.png[align="left", width=50%]
 +
 {blank}
 +
-Enter the following:
+====
+. Enter the following:
 +
 --
 * Username: `{user-username}`
@@ -147,13 +148,14 @@ Enter the following:
 +
 {blank}
 +
-Then, click _"Sign in"_
+. Then, click _"Sign in"_
+====
 +
 {empty} +
 +
 If you're presented with a _"Verify this device"_, simply discard the window by clicking on the top right corner cross, as shown below:
 +
-image::images/matrix-login-verify-device.png[align="left", width=50%]
+image::images/matrix-login-verify-device.png[align="left", width=40%]
 +
 {blank}
 +
@@ -169,128 +171,23 @@ image::images/matrix-join-6.png[align="left", width=30%]
 [type=verification]
 Were you able to join the Matrix room successfully?
 
-=== Obtain the room ID.
-
-Your _Camel_ definitions need to be configured using Matrix's internal Room ID.
-
-To find the room's ID, follow the steps indicated below:
-
-. Expand the options by clicking in your room details and select `Settings`, as shown below:
-+
-image::images/matrix-roomid-1.png[align="left", width=40%]
-+
-{blank}
-+
-. Select `Advanced` and copy the `Internal room ID`, as per the illustration below:
-+
-image::images/matrix-roomid-2.png[align="left", width=40%]
-+
-{empty} +
-+
-IMPORTANT: Keep the returned room ID safely as you'll need it later to configure _Camel_.
-
-{empty} +
-
-[type=verification]
-Were you able to obtain the internal room ID?
-
-{empty} +
-
-=== Obtain an authorization token.
-
-You'll need to obtain an _OAuth_ token for _Camel_ to use when consuming or producing events to _Matrix_.
-
-To complete the OAuth flow and obtain a token, follow the instructions below.
-
-{empty} +
-
-1. Initiate your access token request.
-+
-The command below will obtain your access token. +
-It waits for you to paste the `loginToken` value you will obtain in step 2.
-+
-Proceed by executing the following command in your terminal:
-+
-```curl
-read -p "Paste here your 'loginToken': " LOGIN_TOKEN \
-&& \
-curl -s -X POST https://matrix.ems.host/_matrix/client/v3/login -d "{\"type\": \"m.login.token\",\"token\": \"$LOGIN_TOKEN\"}" | jq -r .access_token
-```
-+
-NOTE: Proceed with step 2 to obtain your `loginToken` in order to complete the command's execution.
-+
-{empty} +
-
-1. Obtain your `loginToken`
-+
-IMPORTANT: The sequence of steps that follows need to happen quickly, as the temporary token's expiry time is very short.
-+
-.. Click the link below to initiate the authorization flow: +
-(opens a new tab)
-+
---
-- link:https://matrix.ems.host/_matrix/client/v3/login/sso/redirect?redirectUrl=http://localhost:8080[Authorization flow,window="_blank"]
---
-+
-{empty} +
-
-.. In the new tab, choose any of the given identity providers.
-+
-You can use one of the following:
-+
---
-* GitHub
-* GitLab
-* Twitter
---
-+
-{blank}
-+
-The approval action triggers a redirect that will cause a browser connection error since we're not running a listening app on 8080, but it allows us to obtain the returned authorisation code from the address bar that should be similar to the following:
-+
-- \http://localhost:8080/?loginToken=`syl_GnyBmyaMSUUhRLRVZHCs_4ddppY`
-+
-{empty} +
-
-1. Take note of the returned `loginToken` (copy the value) 
-
-1. Paste the value in the prompt from step 1. +
-The command will complete its execution and an access token similar to the sample below should be returned:
-+
-----
-syt_Ym1lc2VndWUtBGVtby02MzE1ZjBlOTZkYTAzNzM5ODQ5YzQzM2Y_PvFLHTpEUVJNfHXYZkDO_0YDnHx
-----
-+
-{empty} +
-+
-IMPORTANT: Keep the returned `access_token` safely as you'll need it later to configure _Camel_.
-+
-{empty} +
-
-At this stage, you should have now all the configuration values required to configure your data flows in the lab.
-
-
-[type=verification]
-Did you take note of your access token?
-
-
 
 {empty} +
 
 
 [time=5]
 [id="rocketchat-chat"]
-== Slack platform onboarding
+== Rocket.Chat platform onboarding
 
 
-=== Join a Slack workspace.
+=== Join the Rocket.Chat workspace.
 
-To accelerate the onboarding process in Slack, we've created a public workspace for anyone to freely join and use for the purpose of this enablement workshop. 
+To accelerate the onboarding process in _Rocket.Chat_, we've deployed an instance in _OpenShift_ to freely join and use for the purpose of this enablement workshop. 
 
-. Click on the link below to generate your invitation to _Slack_ (opens a new tab).
+. Click on the link below to open the Login page in _Rocket.Chat_ (opens a new tab).
 +
 --
-- link:{invite-url}/invite/rocketchat[Generate _Slack_ invite,window="_blank"]
+- link:{url-rocketchat}[Rocket.Chat Login page,window="_blank"]
 --
 +
 {empty} +
