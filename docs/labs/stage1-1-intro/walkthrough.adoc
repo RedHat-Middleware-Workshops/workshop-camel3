@@ -89,50 +89,23 @@ For example, if your username is:
 +
 {empty} +
 
-
-
 . Join your room in Matrix
 +
-.. Click on the link below to open the Login page in _Matrix_ (opens a new tab).
+Click on the link below to open the Login page in _Matrix_ (opens a new tab).
 +
 --
 - link:{url-element}[Matrix Login page,window="_blank"]
 --
++
+You'll be presented with a Login page, as shown below:
++
+image::images/matrix-login-signin.png[align="left", width=50%]
++
+Click _"Sign In"_.
++
 {empty} +
 
-.. Then, follow the link generated (click on it) to join your _Matrix_ room.
-+
-image::images/invite-link.png[align="left", width=50%]
-+
-{empty} +
-
-. Follow the steps below to complete the Matrix invitation:
-+
-Your browser might present to you the following screen, prompting you to confirm you use the `matrix.im` server. +
-Click `Continue`.
-+
-image::images/matrix-join-0.png[align="left", width=40%]
-+
-{blank}
-+
-To continue, you'll be presented on screen with a series of apps to choose from. +
-As per the image below, select _Element_ which has a browser based client.
-+
-image::images/matrix-join-1.png[align="left", width=40%]
-+
-{blank}
-+
-Then select `Continue in your browser`, as per the image below.
-+
-image::images/matrix-join-2.png[align="left", width=40%]
-+
-{blank} 
-+
-Next, click `Sign In`:
-+
-image::images/matrix-join-3.png[align="left", width=30%]
-+
-{blank}
+. Follow the steps below to complete the Matrix onboarding:
 +
 To sign in, first click `Edit` where indicated by the red arrow in the image below to switch the homeserver to use:
 +
@@ -140,23 +113,41 @@ image::images/matrix-join-4-pre.png[align="left", width=50%]
 +
 {blank}
 +
-Then choose the option `Other homeserver`, type in `matrix.im` and click `Continue` as illustrated in the caption below:
+Then choose the option `Other homeserver`:
 +
-image::images/matrix-join-4-pre2.png[align="left", width=50%]
-+
-{blank}
-+
-Now, to sign in, you can choose your preferred identity provider, as shown below:
-+
-image::images/matrix-join-4.png[align="left", width=50%]
+image::images/matrix-login-homeserver.png[align="left", width=50%]
 +
 {blank}
 +
-If you're asked to confirm your account, click `Continue`:
+Now, copy and paste the following _OpenShift_ URL where the homeserver is deployed, and click _"Continue"_
 +
-image::images/matrix-join-5.png[align="left", width=40%]
+```url
+https://synapse-matrix.{openshift-app-host}
+```
++
+Then, you will be prompted to enter your credentials, as shown below:
++
+image::images/matrix-login-credentials.png[align="left", width=50%]
 +
 {blank}
++
+Enter the following:
++
+--
+* Username: `{user-username}`
+* Password: `{user-password}`
+--
++
+Then, click _"Sign in"_
+{empty} +
++
+If you're presented with a _"Verify this device"_, simply discard the window by clicking on the top right corner cross, as shown below:
++
+image::images/matrix-login-verify-device.png[align="left", width=50%]
++
+{blank}
++
+Confirm by clicking on _"I'll verify later"_.
 +
 Finally, click `Join the discussion` to join the room:
 +
