@@ -3,7 +3,7 @@
 :user-password: openshift
 :namespace: {user-username}
 :url-element: https://app.element.io
-:url-rocketchat: rocketchat-rocketchat.{openshift-app-host}
+:url-rocketchat: https://rocketchat-rocketchat.{openshift-app-host}
 
 // URLs
 :codeready-url: http://codeready-che.{openshift-app-host}/
