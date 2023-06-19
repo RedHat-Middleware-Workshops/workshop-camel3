@@ -1,4 +1,4 @@
 {
     "channel":"C041XMH9M41",
-    "text":"*"+.fromUser.username+"@gitter*: "+.text
+    "text":"*"+.fromUser.username+"@matrix*: "+.text
 }

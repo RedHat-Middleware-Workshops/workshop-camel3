@@ -22,7 +22,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: predicate-filter-action
     properties:
-      expression: $.source != "gitter"
+      expression: $.source != "matrix"
 
   # JSON Transformation
   - ref:
@@ -37,7 +37,7 @@ spec:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: gitter-sink
+      name: matrix-sink
     properties:
-      token: "{{gitter.token}}"
-      room: "{{gitter.room}}"
+      token: "{{matrix.token}}"
+      room: "{{matrix.room}}"
