@@ -95,6 +95,8 @@ The instructions below will make you progress one _Camel_ step at a time rather 
 +
 image::images/crw-terminal.png[align="left", width=100%]
 +
+{blank}
++
 Create a folder and resources where you will work. +
 Copy and paste in your terminal the following:
 +

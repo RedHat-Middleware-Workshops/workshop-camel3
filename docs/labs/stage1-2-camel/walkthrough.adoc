@@ -107,6 +107,8 @@ TIP: Camel JBang is an upstream tool for _Camel_. It is not supported yet by Red
 +
 image::images/crw-terminal.png[align="left", width=100%]
 +
+{blank}
++
 Create a folder and resources where you will work. +
 Copy and paste in your terminal the following:
 +
@@ -239,6 +241,20 @@ If the command above failed with the message `camel not found`, you may have ins
 
 image::images/tools-terminal.png[align="left", width=15%]
 
+--
++
+[WARNING]
+--
+If the command above failed with the following output:
+----
+[jbang] [ERROR] Could not download https://github.com/apache/camel/blob/HEAD/jbang-catalog.json
+[jbang] Run with --verbose for more details
+----
+{blank}
+Run the following command and try again:
+```bash
+jbang cache clear
+```
 --
 +
 {blank}
