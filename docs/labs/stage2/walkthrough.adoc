@@ -456,7 +456,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: predicate-filter-action
     properties:
-      expression: "!$.botId || $.botId == null"
+      expression: $.text =~ /(?!\*.*@.*\*:).*/
   
   # JSON Transformation
   - ref:
@@ -487,9 +487,7 @@ spec:
 +
 [NOTE]
 --
-The filter is simpler, because _Rocket.Chat_ includes a `botId` field when messages are app-generated.
-
-* Its expression allows messages to go through when not including `botId` (or equal to null).
+In the filter above you'll notice the expression picks the `$.text` JSON field and evaluates it against the regular expression that takes in account the `*` symbol _Matrix_ uses to render rich content.
 --
 +
 {empty} +
