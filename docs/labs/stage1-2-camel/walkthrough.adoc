@@ -246,11 +246,14 @@ image::images/tools-terminal.png[align="left", width=15%]
 [WARNING]
 --
 If the command above failed with the following output:
+
 ----
 [jbang] [ERROR] Could not download https://github.com/apache/camel/blob/HEAD/jbang-catalog.json
 [jbang] Run with --verbose for more details
 ----
+
 {blank}
+
 Run the following command and try again:
 ```bash
 jbang cache clear
@@ -282,8 +285,6 @@ Your terminal should show the arrival of a _Matrix_ event similar to the followi
 ----
 {"fromUser":{"username":"{user-username}","displayName":"{user-username}"},"text":"Hello Camel","sent":"2023-06-19T10:10:20.000Z"}
 ----
-+
-CAUTION: If your terminal does not log JSON events (as above), you might be sending messages from the _Matrix_ server instead of the _Matrix_ server. Ensure you connect to the _Matrix_ server when you login to the platform from your browser. Follow carefully the instructions in the section *Matrix platform onboarding* where the login process is described in detail.
 +
 {blank}
 +
@@ -481,8 +482,8 @@ matrix.room=6317569e6da03739849c519a
 +
 ```properties
 # Rocket.Chat credentials
-rocketchat.userid=YOUR_USER_ID
 rocketchat.token=YOUR_TOKEN
+rocketchat.userid=YOUR_USER_ID
 ```
 +
 {empty} +
