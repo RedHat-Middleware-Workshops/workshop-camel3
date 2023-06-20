@@ -445,11 +445,7 @@ spec:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: rocketchat-source
-    properties:
-      token:   "{{rocketchat.token}}"
-      channel: "{{rocketchat.channel.name}}"
-      delay: 2000
+      name: webhook-source
 
 
   steps:
@@ -498,29 +494,6 @@ The filter is simpler, because _Rocket.Chat_ includes a `botId` field when messa
 +
 {empty} +
 
-. Include an extra _Rocket.Chat_ parameter to your properties file.
-+
-Copy from below the parameter definition `rocketchat.channel.name`, paste it into your properties file, and set its value to the _Rocket.Chat_ room you're using.
-+
-----
-# Matrix credentials
-matrix.token=2d482bdf092e0e2299832b1f38d9560243083894
-matrix.room=6317569e6da03739849c519a
-
-# Rocket.Chat credentials
-rocketchat.token=YOUR_TOKEN
-----
-+
-```properties
-rocketchat.channel.name=YOUR_SLACK_ROOM
-```
-+
-{blank}
-+
-An example setting for the channel name could be `rocketchat.channel.name=room1`.
-+
-{empty} +
-
 . Define the JSLT transformation.
 +
 .. Run the following command to crate the JSLT file:
@@ -537,7 +510,7 @@ Copy the snippet below and paste it into your new `r2m.jslt` file:
 +
 ```
 {
-    "text":"<b>"+.user+"@rocketchat</b>: "+.text
+    "text":"<b>"+.user_name+"@rocketchat</b>: "+.text
 }
 ```
 +
