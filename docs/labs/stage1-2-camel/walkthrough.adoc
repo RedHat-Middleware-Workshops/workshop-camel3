@@ -103,9 +103,12 @@ image::images/camel-jbang.png[align="left", width=40%]
 
 TIP: Camel JBang is an upstream tool for _Camel_. It is not supported yet by Red Hat but it is an extremely useful tool for all things Camel. It simplifies many of the common tasks a Camel developer undergoes. 
 
-. Create a folder and resources where you will work
+. From your UI terminal...
 +
-For example:
+image::images/crw-terminal.png[align="left", width=100%]
++
+Create a folder and resources where you will work. +
+Copy and paste in your terminal the following:
 +
 [source, subs=]
 ----

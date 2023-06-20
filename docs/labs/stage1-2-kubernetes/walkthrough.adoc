@@ -90,9 +90,13 @@ Ensure you have previously completed:
 
 The instructions below will make you progress one _Camel_ step at a time rather than providing a complete _Kamelet Binding_ of the full data flow. This will allow you to play with different _Kamelets_ and understand better the mechanics of _Kamelet Bindings_.
 
-. Create a folder and resources where you will work
+
+. From your UI terminal...
 +
-For example:
+image::images/crw-terminal.png[align="left", width=100%]
++
+Create a folder and resources where you will work. +
+Copy and paste in your terminal the following:
 +
 [source, subs=]
 ----

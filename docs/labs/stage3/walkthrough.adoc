@@ -132,17 +132,17 @@ mv stage2.properties stage3.properties
 grep -rl stage2 . | xargs sed -i 's/stage2/stage3/g'<br>
 ```
 +
-* **MacOS**
-+
-[subs=]
-```bash
-cd /projects/MessageHub
-cp -r lab2 lab3
-cd lab3
-mv stage2.properties stage3.properties
-grep -rl stage2 . | xargs sed -i '' 's/stage2/stage3/g'<br>
-```
-+
+// * **MacOS**
+// +
+// [subs=]
+// ```bash
+// cd /projects/MessageHub
+// cp -r lab2 lab3
+// cd lab3
+// mv stage2.properties stage3.properties
+// grep -rl stage2 . | xargs sed -i '' 's/stage2/stage3/g'<br>
+// ```
+// +
 {empty} +
 
 . Split each YAML file in two:
@@ -173,16 +173,16 @@ sed -i 's/r2m/r2k/g' flows/r2k.yaml
 sed -i 's/r2m/k2m/g' flows/k2m.yaml<br>
 ```
 +
-* **MacOS**
-+
-[subs=]
-```bash
-sed -i '' 's/m2r/m2k/g' flows/m2k.yaml
-sed -i '' 's/m2r/k2r/g' flows/k2r.yaml
-sed -i '' 's/r2m/r2k/g' flows/r2k.yaml
-sed -i '' 's/r2m/k2m/g' flows/k2m.yaml<br>
-```
-+
+// * **MacOS**
+// +
+// [subs=]
+// ```bash
+// sed -i '' 's/m2r/m2k/g' flows/m2k.yaml
+// sed -i '' 's/m2r/k2r/g' flows/k2r.yaml
+// sed -i '' 's/r2m/r2k/g' flows/r2k.yaml
+// sed -i '' 's/r2m/k2m/g' flows/k2m.yaml<br>
+// ```
+// +
 {empty} +
 
 . Prepare JSLTs:

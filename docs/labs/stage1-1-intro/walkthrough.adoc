@@ -57,6 +57,8 @@ The above process bridges chat messages from _Matrix_ to _Rocket.Chat_.
 
 * _Rocket.Chat_ is also an open-source communications platform with high data protection standards. It enables real-time conversations between colleagues, other companies, or your customers across web, desktop, or mobile devices.
 
+{empty} +
+
 They are both deployed in _OpenShift_ with convenient web access, making them ideal for students to use in this workshop.
 
 The tasks to complete in this lab will guide you on how to onboard to both chat systems.
@@ -163,7 +165,8 @@ Confirm by clicking on _"I'll verify later"_.
 +
 {empty} +
 +
-Finally, you'll notice looking at your Matrix screen you have a pending invitation to join your room. Follow the steps below to accept your invitation:
+Finally, you'll notice, looking at your _Matrix_ screen, a pending invitation to join your room. +
+Follow the steps below to accept your invitation:
 +
 image::images/matrix-room-accept-invite.png[align="left", width=80%]
 +
