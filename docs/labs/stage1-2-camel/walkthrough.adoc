@@ -5,6 +5,8 @@
 
 :url-element: https://app.element.io
 :url-rocketchat: https://rocketchat-rocketchat.{openshift-app-host}
+:url-codeready: http://codeready-che.{openshift-app-host}/
+
 
 ifdef::env-github[]
 endif::[]
@@ -42,14 +44,24 @@ The instructions below are divided in two segments:
 * *password:* `{user-password}`
 ****
 [type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank", , id="resources-codeready-url"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{openshift-host}/topology/ns/{namespace}[Topology View, window="_blank"]
+****
+[type=taskResource]
 .Matrix
 ****
-* link:{url-element}[Console, window="_blank", , id="resources-codeready-url"]
+* link:{url-element}[Matrix Web Client, window="_blank", , id="resources-codeready-url"]
 ****
 [type=taskResource]
 .Rocket.Chat
 ****
-* link:{url-rocketchat}/topology/ns/{namespace}[Console, window="_blank"]
+* link:{url-rocketchat}/topology/ns/{namespace}[Rocket.Chat Web Client, window="_blank"]
 ****
 
 This workshop has been designed to attend two different user profiles:
@@ -435,11 +447,9 @@ If you want to keep the `log-sink` activity, you can move it to the `steps` grou
 +
 {empty} +
 
-
-
 . Include your Rocket.Chat credentials in your configuration file.
 +
-Copy from below the parameter definition `rocketchat.token`, paste it into your properties file, and configure its value with your Rocket.Chat access token value.
+Copy from below the parameter definitions `rocketchat.*`, paste them into your properties file, and configure their values with your _Rocket.Chat_ credentials, as per the instructions that follow.
 +
 ----
 # On shutdown it reduces waiting time when stoping Camel's streaming listener
@@ -451,29 +461,39 @@ matrix.room=6317569e6da03739849c519a
 ----
 +
 ```properties
-# Rocket.Chat
-# credentials
+# Rocket.Chat credentials
 rocketchat.userid=YOUR_USER_ID
 rocketchat.token=YOUR_TOKEN
 ```
 +
 {empty} +
 +
-Obtain the _Rocket.Chat_ token with 1 of these 3 options, and replace `YOUR_TOKEN`:
+To configure the _Rocket.Chat_ credentials, obtain them from the sequence of steps shown in the image below:
 +
-* *Option 1*: Try the link below:
+image::images/rchat-credentials-1.png[align="center", width=100%]
 +
 --
-WARNING: The link may fail if the cluster did not enable token resolution. +
-If it fails, choose [*Option 2*] or [*Option 3*].
---
-+
-- link:{invite-url}/token/rocketchat[Obtain _Rocket.Chat_ token,window="_blank"]
-+
-{empty} +
+From _Rocket.Chat_: 
 
-* *Option 2*: if you're sharing an App with the group, use the App's token your admin has provided.
-* *Option 3*: if you created your own App, use your App's `Bot User OAuth Token`
+. Start from the _"User Menu"_.
+. Then, click _"My Account"_.
+. Select _"Personal Access Tokens"_.
+. Type in a name for your token, for example `mytoken`.
+. Click the _Add_ button
+--
++
+image::images/rchat-credentials-2.png[align="center", width=100%]
++
+{blank}
++
+--
+[start=6]
+. Enter the password `{user-password}`.
+. Click _"Verify"_.
+. Your token and user id will be generated.
++
+Copy the values and configure your Camel parameters.
+--
 +
 {empty} +
 
@@ -514,14 +534,24 @@ Did you see the message in _Matrix_ showing up in _Rocket.Chat_?
 * *password:* `{user-password}`
 ****
 [type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank", , id="resources-codeready-url"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{openshift-host}/topology/ns/{namespace}[Topology View, window="_blank"]
+****
+[type=taskResource]
 .Matrix
 ****
-* link:{url-element}[Console, window="_blank", , id="resources-codeready-url"]
+* link:{url-element}[Matrix Web Client, window="_blank", , id="resources-codeready-url"]
 ****
 [type=taskResource]
 .Rocket.Chat
 ****
-* link:{url-rocketchat}/topology/ns/{namespace}[Console, window="_blank"]
+* link:{url-rocketchat}/topology/ns/{namespace}[Rocket.Chat Web Client, window="_blank"]
 ****
 
 The definitions that you have implemented can practically be taken 'as-is' into _OpenShift_. 
