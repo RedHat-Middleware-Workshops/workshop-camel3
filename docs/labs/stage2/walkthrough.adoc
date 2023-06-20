@@ -116,6 +116,10 @@ You can tell from the list above that this second lab suits very well the _Kuber
 
 . Close tabs
 +
+image::images/crw-close-tabs.png[align="left", width=50%]
++
+{blank}
++
 Before you start this second lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
 +
 {empty} +
@@ -157,15 +161,15 @@ mv stage1.properties stage2.properties
 sed -i 's/stage1/stage2/g' m2r.yaml
 <br> 
 ```
-+
-* **MacOS**
-+
-[subs=]
-```bash
-mv stage1.properties stage2.properties
-sed -i '' 's/stage1/stage2/g' m2r.yaml
-<br> 
-```
+// +
+// * **MacOS**
+// +
+// [subs=]
+// ```bash
+// mv stage1.properties stage2.properties
+// sed -i '' 's/stage1/stage2/g' m2r.yaml
+// <br> 
+// ```
 --
 +
 {blank}
