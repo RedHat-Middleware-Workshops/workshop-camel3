@@ -449,7 +449,7 @@ If you want to keep the `log-sink` activity, you can move it to the `steps` grou
 
 . Include your Rocket.Chat credentials in your configuration file.
 +
-Copy from below the parameter definitions `rocketchat.*`, paste them into your properties file, and configure their values with your _Rocket.Chat_ credentials, as per the instructions that follow.
+.. Copy from below the parameter definitions `rocketchat.*`, paste them into your properties file, and configure their values with your _Rocket.Chat_ credentials, as per the instructions that follow.
 +
 ----
 # On shutdown it reduces waiting time when stoping Camel's streaming listener
@@ -468,7 +468,7 @@ rocketchat.token=YOUR_TOKEN
 +
 {empty} +
 +
-To configure the _Rocket.Chat_ credentials, obtain them from the sequence of steps shown in the image below:
+.. To configure the _Rocket.Chat_ credentials, obtain them from the sequence of steps shown in the image below:
 +
 image::images/rchat-credentials-1.png[align="center", width=100%]
 +
