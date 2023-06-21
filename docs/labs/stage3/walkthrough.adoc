@@ -2,6 +2,11 @@
 :user-password: openshift
 :namespace: {user-username}
 
+:url-element: https://app.element.io
+:url-rocketchat: https://rocketchat-rocketchat.{openshift-app-host}
+:url-codeready: http://codeready-che.{openshift-app-host}/
+:url-devconsole: {openshift-host}/topology/ns/{namespace}
+
 ifdef::env-github[]
 endif::[]
 
@@ -89,6 +94,18 @@ image::images/standard-data-model.png[align="center", width=90%]
 [time=2]
 [id="setup"]
 == Setup the Lab working folder
+
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
 
 For those resuming work from a previous day, ensure you reconnect your `oc` client with _OpenShift_ by running the following login command:
 
@@ -222,6 +239,33 @@ Make sure the syntax of the commands are compatible with with your environment a
 [time=5]
 [id="matrix-rocketchat-to-kafka"]
 == Matrix/Rocket.Chat to Kafka
+
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+[type=taskResource]
+.Matrix
+****
+* link:{url-element}[Matrix Web Client, window="_blank"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}/topology/ns/{namespace}[Rocket.Chat Web Client, window="_blank"]
+****
 
 The two data flows we have created in previous labs are almost identical in terms of processing steps, those are:
 
@@ -385,11 +429,7 @@ spec:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: rocketchat-source
-    properties:
-      token:   "{{rocketchat.token}}"
-      channel: "{{rocketchat.channel.name}}"
-      delay: 2000
+      name: webhook-source
 
 
   steps:
@@ -400,7 +440,8 @@ spec:
       apiVersion: camel.apache.org/v1
       name: predicate-filter-action
     properties:
-      expression: "!$.botId || $.botId == null"
+      expression: $.text =~ /(?!\*.*@.*\*:).*/
+
 
   # JSON Transformation
   - ref:
@@ -434,9 +475,9 @@ Copy the snippet below and paste it into your new `r2k.jslt` file:
 +
 ```
 {
-	"timestamp": .ts,
+	"timestamp": .timestamp,
 	"source":"rocketchat", 
-	"user": .user, 
+	"user": .user_name, 
 	"text": .text
 }
 ```
@@ -456,6 +497,33 @@ Very straightforward, nothing else to be done here.
 [time=5]
 [id="kafka-to-matrix-rocketchat"]
 == Kafka to Matrix/Rocket.Chat
+
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+[type=taskResource]
+.Matrix
+****
+* link:{url-element}[Matrix Web Client, window="_blank"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}/topology/ns/{namespace}[Rocket.Chat Web Client, window="_blank"]
+****
 
 The processing steps still remain essentially the same:
 
@@ -688,20 +756,24 @@ Copy the snippet below and paste it into your new `k2r.jslt` file:
 +
 ```
 {
-    "channel":"YOUR_ROOM_ID",
+    "channel":"YOUR_ROOM",
     "text":"*"+.user+"@"+.source+"*: "+.text
 }
 ```
 +
 [IMPORTANT]
 ====
-Ensure you configure the _Rocket.Chat_ `channel` by replacing `YOUR_ROOM_ID` with your chat's room identifier.
+The field `channel` denotes the target room in _Rocket.Chat_ where messages will be pushed. +
+Make sure you replace `YOUR_ROOM` with your designated room, for example:
+
+* `user1` -> use `room1`
+* `user2` -> use `room2`
+* `userN` -> use `roomN`
 ====
 +
 [NOTE]
 ====
-* The field `channel` denotes the target room in _Rocket.Chat_ where messages will be pushed. Use your room ID in _Rocket.Chat_. +
-* The field `text` includes JsonPath rules extracting values from the input Standard data model.
+The field `text` includes JsonPath rules extracting values from the input Standard data model.
 ====
 {empty} +
 
@@ -714,6 +786,33 @@ And you're done with the _Kafka_ -> _Rocket.Chat_ changes.
 [time=8]
 [id="deploy-test"]
 == Deploy and test
+
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+[type=taskResource]
+.Matrix
+****
+* link:{url-element}[Matrix Web Client, window="_blank"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}/topology/ns/{namespace}[Rocket.Chat Web Client, window="_blank"]
+****
 
 We've covered a lot of ground. It would be normal to make mistakes. Hopefully the helper guide kept those to a minimum and, once deployed, you can see your integrations working in healthy state and delivering the expected outcome.
 
