@@ -83,21 +83,22 @@ and optionally:
 TIP: If you're unfamiliar with _Discord_, it is a well known chat platform, very popular among gamers, but increasingly embraced by enterprises to connect internal teams but also for external interactions with customers as a way to maintain close contact.
 
 
-[NOTE]
---
-If you have never used _Discord_ before, it's easy to register by using your email address (no phone numbers required).
-
-* link:https://discord.com/register[window="_blank"]
---
 
 {empty} +
 
-=== Join a Discord server.
+=== Join the lab's Discord server.
 
 To accelerate the onboarding process in _Discord_, we've created a shared server for anyone to freely join and use for the purpose of this enablement workshop. 
 
+TIP: You don't need an account in _Discord_ to join the server. Just follow the instructions below to join with what _Discord_ calls an _"Unclaimed Account"_, a sort of temporary account you can claim as yours afterwards.
 
-. Click on the link below to generate your invitation to _Discord_ (opens a new tab).
+TIP: If you prefer using an existing Discord account you may already have, please feel free to sign in with it instead of using an _"Unclaimed Account"_.
+
+{empty} +
+
+To join the lab's Discord server using a temporary account (Unclaimed account), follow the instructions below:
+
+. Click on the link below to obtain your invitation to _Discord_ (opens a new tab).
 +
 --
 - link:{invite-url}/invite/discord[Generate _Discord_ invite,window="_blank"]
@@ -109,7 +110,54 @@ To accelerate the onboarding process in _Discord_, we've created a shared server
 +
 image::images/invite-link.png[align="left", width=50%]
 
-. In the new tab, navigate as indicated to join the workshop's server in _Discord_.
+. In the new tab, follow the sequence of steps described below:
+
+.. In the invitation screen, you will be prompted to enter a `USERNAME`:
++
+image::images/discord-join-step1.png[align="center", width=80%]
++
+--
+. Type in a username, for example `{user-username}`. +
+You can also choose any other username of your liking.
+. Tick the agreement box.
+. Click the _Continue_ button.
+--
++
+{empty} +
+
+.. A _'Capcha'_ verification process will pop up to validate you are human:
++
+image::images/discord-join-step2.png[align="center", width=80%]
++
+--
+. Tick the box _"I'm a human"_.
+. Select the tiles accordingly.
+. Click the _Continue_ button.
+--
++
+{empty} +
+
+.. An age verification process will pop up. +
+The window will prompt you to enter your birthday. There's no need to enter a real one, just ensure the birthday matches an individual of 18+ years old.
++
+image::images/matrix-copy-room-id.png[align="center", width=100%]
++
+--
+. Select a month, day and year. For example:
+- `January`, `1`, `2000`
+. Then click _Done_.
+--
++
+{empty} +
+
+.. A final popup window will prompt you to claim the account. Simply ignore it by closing the popup
++
+image::images/matrix-copy-room-id.png[align="center", width=100%]
++
+--
+. Click the cross in the upper right corner.
+. You should then see on screen the _CamelWorkshop_ server.
+--
 
 {empty} +
 
@@ -125,6 +173,14 @@ To create your own server:
 . Click the `+` button (add a server).
 . select `Create My Own`.
 . Then select `For me and my friends` (private server). 
+
+{blank}
+
+You will also need to create your own _App_ (Bot) to send/fetch messages from the rooms in the server. You can find instructions on how to create your _App_ in the link below:
+
+====
+- link:https://github.com/RedHat-Middleware-Workshops/workshop-camel3/blob/v2.0/docs/labs/stage4/walkthrough.adoc#creating-your-own-app-for-discord/invite/discord[Create your own Discord App,window="_blank"]
+====
 --
 {empty} +
 
@@ -174,180 +230,6 @@ TIP: Some browsers misbehave, if the link below fails, simply scroll down to the
 
 {empty} +
 
-==== [[creating-your-own-app-for-discord]]Creating your own App for Discord
-
-. Connect to the following URL
-+
---
-* link:https://discord.com/developers[window="_blank"]
-+
-If you have never used _Discord_ before, register by using your email address (no phone numbers required).
---
-+
-{empty} +
-
-. Create an App
-+
-Once in, you'll see your applications dashboard with an empty list of apps (if never created one before).
-+
-image::images/discord-apps.png[align="left", width=90%,border-color="green", border-width="3"]
-+
-{empty} +
-
-.. Click the `New Application` button
-+
-image::images/discord-create-app.png[align="left", width=15%]
-+
-{empty} +
-
-.. Give it a name, for example `MyCamelApp`. +
-Click `Create`
-+
-Once the App created you'll be presented with its `General Information`
-+
-{empty} +
-
-.. Add bot
-+
-Select from the left menu:
-+
---
-* SETTINGS => Bot => Add Bot
-+
-Click `Yes, do it!`
---
-+
-{empty} +
-
-.. Reset token
-+
-Discord only shows the Bot token once, make sure you keep note of it.
-+
-Click `Reset Token`. +
-Then, click `Yes, do it!`
-+
-The new token will be shown on screen as follows:
-+
-image::images/discord-app-token.png[align="left", width=60%]
-+
-{empty} +
-+
-Copy and keep it safe, you'll need it when configuring Camel.
-+
-{empty} +
-+
-.. Enable _Message Content_ intent
-+
-For reference, look at the picture below:
-+
-image::images/discord-app-message-content.png[align="left", width=90%]
-+
-{empty} +
-+
-Scroll down to the `Privileged Gateway Intents` section and perform the following actions:
-+
---
-1. Enable the `MESSAGE CONTENT INTENT`.
-+
-1. Click `Save Changes` when the warning shows up
---
-+
-{empty} +
-
-. Grant permissions 
-+
-Select from the left menu:
-+
-* SETTINGS => OAuth2 => URL Generator
-+
-.. From `SCOPES` select:
-+
---
-{checkedbox} bot
---
-+
-This action will reveal `BOT PERMISSIONS`
-+
-{empty} +
-
-.. From `BOT PERMISSIONS` select:
-+
---
-|===
-|GENERAL PERMISSIONS 
-|{checkedbox} Read Messages / View Channels
-|===
---
-+
-{empty} +
-+
---
-|===
-|TEXT PERMISSIONS
-|{checkedbox} Send Messages
-|===
---
-+
-{empty} +
-+
-Selecting the permissions above shapes a generated URL presented below. +
-Scroll down to see the gerented URL, it should look as follows:
-+
-image::images/discord-app-generated-url.png[align="left", width=100%]
-+
-{empty} +
-+
-Click `Copy`
-+
-{empty} +
-
-. Authorize your App
-+
-Open a new tab in your browser and paste the generated URL in the address bar. +
--> The browser will load an authorization page. +
-+
-Select from the dropdown list the _Discord_ server you have previously created. +
-Then click `Continue`.
-+
-You then are presented with a summary of bot permissions to authorize, as per the picture below:
-+
-image::images/discord-app-auth.png[align="left", width=30%]
-+
-{empty} +
-+
-click `Authorize`. +
-Tick `I'm a human` {checkedbox}
-+
-When the authorization process is done you can close the tab.
-
-{empty} +
-
-Your App should now be visible as a member of the server, with offline status.
-
-image::images/discord-app-offline.png[align="left", width=20%]
-
-{empty} +
-
-In _Discord_, Apps that are member of a server, automatically become members of all the server channels (rooms).
-
-
-{empty} +
-{empty} +
-
-==== [[completion-checks]] End of task
-
-You completed the task !
-
-=== Completion checks
-
-[type=verification]
-Do you have an App available in _Discord_ (your own or shared)?
-
-[type=verification]
-Do you have the App's credentials to configure _Camel_?
-
-
-{empty} +
 
 
 [time=10]
@@ -448,7 +330,7 @@ channel=YOUR_ROOM_ID
 
 Ensure you configure with your _Discord_ values, and save changes.
 
-- token
+- `token`
 +
 Obtain the _Discord_ token with 1 of these 3 options, and replace `YOUR_TOKEN`:
 
@@ -462,8 +344,8 @@ If it fails, choose [*Option 2*] or [*Option 3*].
 +
 {empty} +
 
-** *Option 2*: if you're sharing an App with the group, use the App's token your admin has provided.
-** *Option 3*: if you created your own App, use your App's `Bot User OAuth Token`
+** *Option 2*: Ask your instructor/administrator for the token to use to connect to Discord.
+** *Option 3*: if you created your own _Discord_ App, use your App's `Bot User OAuth Token`
 
 {empty} +
 
