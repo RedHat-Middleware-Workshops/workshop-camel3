@@ -237,14 +237,6 @@ NOTE: The command includes a flag to find custom kamelets. The _Matrix_ kamelet 
 +
 [WARNING]
 --
-If the command above failed with the message `camel not found`, you may have instantiated the wrong terminal. Make sure you open the *Tools* terminal as per the picture below:
-
-image::images/tools-terminal.png[align="left", width=15%]
-
---
-+
-[WARNING]
---
 If the command above failed with the following output:
 
 ----
@@ -258,6 +250,14 @@ Run the following command and try again:
 ```bash
 jbang cache clear
 ```
+--
++
+[WARNING]
+--
+If the command above failed with the message `camel not found`, you may have instantiated the wrong terminal. Make sure you open the *Tools* terminal as per the picture below:
+
+image::images/tools-terminal.png[align="left", width=15%]
+
 --
 +
 {blank}

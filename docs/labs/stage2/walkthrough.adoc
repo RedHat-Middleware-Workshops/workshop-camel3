@@ -386,7 +386,7 @@ Copy the following message, then paste and send from _Matrix_:
 +
 {empty} +
 +
-The expected behaviour from the system is to observe the filter to block the message and therefore not be seen in Rocket.Chat.
+The expected behaviour from the system is to observe how the filter blocks the message and therefore to see it missing in Rocket.Chat.
 +
 {empty} +
 
@@ -567,7 +567,7 @@ Copy the snippet below and paste it into your new `r2m.jslt` file:
 +
 ```
 {
-    "text":"*"+.user_name+"@rocketchat*: "+.text
+  "text":"<b>"+.user_name+"@rocketchat</b>: "+.text
 }
 ```
 +
