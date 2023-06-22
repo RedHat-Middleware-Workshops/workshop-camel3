@@ -1,48 +1,39 @@
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: m2k
+  name: k2r
   annotations:
     trait.camel.apache.org/mount.resources: "configmap:stage3-transform"
     trait.camel.apache.org/mount.configs: "secret:stage3"
-
 spec:
+
   source:
     ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: matrix-source
-    properties:
-      token: "{{matrix.token}}"
-      room:  "{{matrix.room}}"
+      kind: KafkaTopic
+      apiVersion: kafka.strimzi.io/v1beta1
+      name: roomx
 
   steps:
-
   # Filter action to prevent death loops
   - ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
       name: predicate-filter-action
     properties:
-      expression: $.text =~ /(?!\*\*.*@.*\*\*:).*/
-
-
-  # Intended for deployment smoke test
-  - ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: test-action
-
-
+      expression: $.source != "rocketchat"
+      
   - ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: m2k.jslt
+      template: k2r.jslt
 
   sink:
     ref:
-      kind: KafkaTopic
-      apiVersion: kafka.strimzi.io/v1beta1
-      name: roomx
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: rocketchat-sink
+    properties:
+      userid: "{{rocketchat.userid}}"
+      token: "{{rocketchat.token}}"

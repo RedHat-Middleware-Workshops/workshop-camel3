@@ -7,7 +7,7 @@
       repeatCount: "1"
     steps:
       - setBody:
-          constant: '{"content": "Hello from Camel"}'
+         constant: '{"content": "Hello from Camel"}'
       - log: "${body}"
       - to:
           uri: "kamelet:discord-sink"

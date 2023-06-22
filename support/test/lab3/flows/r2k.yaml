@@ -11,11 +11,7 @@ spec:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: slack-source
-    properties:
-      token:   "{{slack.token}}"
-      channel: "{{slack.channel.name}}"
-      delay: 2000
+      name: webhook-source
 
 
   steps:
@@ -26,15 +22,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: predicate-filter-action
     properties:
-      expression: "!$.botId || $.botId == null"
-
-
-  # Intended for deployment smoke test
-  - ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: test-action
-
+      expression: $.text =~ /(?!\*.*@.*\*:).*/
 
   # JSON Transformation
   - ref:

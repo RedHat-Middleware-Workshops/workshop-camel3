@@ -1,47 +1,42 @@
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: r2m
+  name: m2r
   annotations:
-    trait.camel.apache.org/mount.configs: "secret:stage2"
     trait.camel.apache.org/mount.resources: "configmap:stage2-transform"
+    trait.camel.apache.org/mount.configs: "secret:stage2"
 spec:
 
   source:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: slack-source
+      name: matrix-source
     properties:
-      token:   "{{slack.token}}"
-      channel: "{{slack.channel.name}}"
-      delay: 2000
-
+      token: "{{matrix.token}}"
+      room:  "{{matrix.room}}"
 
   steps:
-
   # Filter action to prevent death loops
   - ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
       name: predicate-filter-action
     properties:
-      expression: "!$.botId || $.botId == null"
-
-  # JSON Transformation
+      expression: $.text =~ /(?!<b>.*@.*<\/b>:).*/
+      
   - ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: "{{transform.path:r2m.jslt}}"
-
+      template: m2r.jslt
 
   sink:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: matrix-sink
+      name: rocketchat-sink
     properties:
-      token: "{{matrix.token}}"
-      room: "{{matrix.room}}"
+      userid: "{{rocketchat.userid}}"
+      token: "{{rocketchat.token}}"

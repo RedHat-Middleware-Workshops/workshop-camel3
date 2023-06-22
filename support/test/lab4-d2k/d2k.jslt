@@ -1,7 +1,6 @@
 {
 	"timestamp": string(round(now())),
 	"source":"discord",
-	"user": $headers.ocpuser+"-"+.d.author.username,
-	"user-original": .d.author.username,
+	"user": .d.author.username,
 	"text": .d.content
 }

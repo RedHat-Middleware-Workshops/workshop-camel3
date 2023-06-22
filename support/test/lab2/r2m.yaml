@@ -1,20 +1,18 @@
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: m2r
+  name: r2m
   annotations:
-    trait.camel.apache.org/mount.resources: "configmap:stage2-transform"
     trait.camel.apache.org/mount.configs: "secret:stage2"
-
+    trait.camel.apache.org/mount.resources: "configmap:stage2-transform"
 spec:
+
   source:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: matrix-source
-    properties:
-      token: "{{matrix.token}}"
-      room:  "{{matrix.room}}"
+      name: webhook-source
+
 
   steps:
 
@@ -24,20 +22,22 @@ spec:
       apiVersion: camel.apache.org/v1
       name: predicate-filter-action
     properties:
-      expression: $.text =~ /(?!\*\*.*@.*\*\*:).*/
+      expression: $.text =~ /(?!\*.*@.*\*:).*/
 
-
+  # JSON Transformation
   - ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: m2r.jslt
+      template: "{{transform.path:r2m.jslt}}"
+
 
   sink:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: rocketchat-sink
+      name: matrix-sink
     properties:
-      token: "{{rocketchat.token}}"
+      token: "{{matrix.token}}"
+      room: "{{matrix.room}}"

@@ -5,8 +5,8 @@ metadata:
   annotations:
     trait.camel.apache.org/mount.resources: "configmap:stage1-transform"
     trait.camel.apache.org/mount.configs: "secret:stage1"
-
 spec:
+
   source:
     ref:
       kind: Kamelet
@@ -17,15 +17,6 @@ spec:
       room:  "{{matrix.room}}"
 
   steps:
-
-  # Filter action to prevent death loops
-  - ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: predicate-filter-action
-    properties:
-      expression: $.text =~ /(?!\*\*.*@.*\*\*:).*/
-
   - ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
@@ -33,16 +24,11 @@ spec:
     properties:
       template: m2r.jslt
 
-  # sink:
-  #   ref:
-  #     kind: Kamelet
-  #     apiVersion: camel.apache.org/v1
-  #     name: rocketchat-sink
-  #   properties:
-  #     token: "{{rocketchat.token}}"
-
   sink:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: log-sink
+      name: rocketchat-sink
+    properties:
+      userid: "{{rocketchat.userid}}"
+      token: "{{rocketchat.token}}"

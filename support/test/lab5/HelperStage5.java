@@ -9,8 +9,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.builder.RouteBuilder;
 
-import org.apache.camel.component.kafka.KafkaConstants;
-import org.apache.camel.component.kafka.KafkaManualCommit;
+// import org.apache.camel.component.kafka.KafkaConstants;
+// import org.apache.camel.component.kafka.KafkaManualCommit;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -89,10 +89,10 @@ public class HelperStage5 extends RouteBuilder {
 
                 // Manual Kafka commit
                 // Messages not commited will be retried and subsequent Cron runs
-                newExchange
-                    .getIn()
-                    .getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class)
-                    .commitSync();
+                // newExchange
+                //     .getIn()
+                //     .getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class)
+                //     .commitSync();
 
                 if (oldExchange == null) {
                     return newExchange;

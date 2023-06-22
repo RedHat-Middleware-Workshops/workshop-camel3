@@ -1,0 +1,6 @@
+{
+	"timestamp": .timestamp,
+	"source":"rocketchat",
+	"user": .user_name,
+	"text": .text
+}
