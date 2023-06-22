@@ -329,7 +329,7 @@ touch stage4.properties
 +
 ... Find your new folder in the project tree
 +
-image::images/crw-folder1.png[align="left", width=40%]
+image::images/crw-folder1.png[align="left", width=30%]
 +
 {blank}
 +
@@ -1064,7 +1064,7 @@ We've copied the same configuration file from the previous exercise since it con
 
 . Find your new folder in the project tree
 +
-image::images/crw-folder2.png[align="left", width=40%]
+image::images/crw-folder2.png[align="left", width=30%]
 +
 {blank}
 +
