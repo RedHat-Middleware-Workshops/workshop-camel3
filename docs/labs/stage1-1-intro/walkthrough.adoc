@@ -20,6 +20,15 @@ Part 1 (out of 2) introduces the first integration flow to implement and helps y
 
 {empty} +
 
+Prerequisites: +
+--
+* Ensure you have previously completed the following tiles:
++
+image::images/prereq.png[align="left", width=100%]
+
+{empty} +
+--
+
 Estimated time: +
 --
 * *10 mn* +
