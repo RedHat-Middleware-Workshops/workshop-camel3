@@ -194,6 +194,15 @@ cp ../support/labs/stage5/HelperStage5.java .<br>
 +
 {empty} +
 +
+.. Find your new folder in the project tree
++
+image::images/crw-folder.png[align="left", width=30%]
++
+{blank}
++
+Ensure you're working on folder `lab5`
++
+{empty} +
 .. Create a configuration file
 +
 ```bash
