@@ -321,25 +321,23 @@ cd lab4-k2d<br>
 +
 {empty} +
 +
-.. Find your new folder in the project tree
-+
-image::images/crw-folder.png[align="left", width=40%]
-+
-{blank}
-+
-Ensure you're working on folder `lab4`
-+
-{empty} +
-+
 .. Create a configuration file
 +
 ```bash
 touch stage4.properties
 ```
 +
+... Find your new folder in the project tree
++
+image::images/crw-folder1.png[align="left", width=40%]
++
+{blank}
++
+Ensure you're working on folder `lab4-k2d`
++
 {empty} +
 +
-Include your _Discord_ details:
+... Include in the new properties file your _Discord_ details:
 +
 ```properties
 # Discord credentials
@@ -368,7 +366,7 @@ If it fails, choose [*Option 2*] or [*Option 3*].
 {empty} +
 
 ** *Option 2*: Ask your instructor/administrator for the token to use to connect to Discord.
-
++
 [TIP]
 ====
 The workshop slides should contain the token values valid for today's session:
@@ -430,7 +428,7 @@ Use instead the parameter `repeatCount` (copy/replace from the snippet below):
 ----
     steps:
       - setBody:
-          constant: "Hello Camel from yaml"
+          simple: "Hello Camel from ${routeId}"
       - log: "${body}"
 ----
 +
@@ -447,7 +445,7 @@ TIP: the flag `dev` indicates to _Camel JBang_ to hot reload new definitions whe
 The output in your terminal should show, only once, the following:
 +
 ----
-... : Hello Camel from yaml
+... : Hello Camel from route1
 ----
 {empty} +
 
@@ -702,15 +700,15 @@ sed -i 's/channel/discord.channel/g' stage4.properties
 <br>
 ```
 +
-* **MacOS**
-+
-[subs=]
-```bash
-sed -i '' 's/token/discord.token/g' stage4.properties
-sed -i '' 's/channel/discord.channel/g' stage4.properties
-<br>
-```
-+
+// * **MacOS**
+// +
+// [subs=]
+// ```bash
+// sed -i '' 's/token/discord.token/g' stage4.properties
+// sed -i '' 's/channel/discord.channel/g' stage4.properties
+// <br>
+// ```
+// +
 {empty} +
 
 .. Run it
@@ -779,6 +777,16 @@ Produces events to _Discord_.
 
 === Process definition
 
+. Close tabs
++
+image::images/crw-close-tabs.png[align="left", width=50%]
++
+{blank}
++
+Before you start this new lab, make sure you close in your editor all the tabs (source files) from previous exercises.
++
+{empty} +
+
 . Setup the _Kamelet_ binding
 +
 Given the process is almost identical to the _Kafka_ to _Matrix_/_Rocket.Chat_ ones, we can use one of those as a base for our definition.
@@ -791,22 +799,23 @@ Run the following commands in your terminal:
 ```bash
 cp ../lab3/flows/k2r.yaml k2d.yaml
 sed -i 's/k2r/k2d/g'       k2d.yaml
-sed -i 's/rocketchat/discord/g' k2d.yaml
 sed -i 's/stage3/stage4/g' k2d.yaml
+sed -i 's/rocketchat/discord/g' k2d.yaml
+sed -i 's/userid/channel/g' k2d.yaml
 touch k2d.jslt<br>
 ```
 +
-* **MacOS**
-+
-[subs=]
-```bash
-cp ../lab3/flows/k2r.yaml k2d.yaml
-sed -i '' 's/k2r/k2d/g'       k2d.yaml
-sed -i '' 's/rocketchat/discord/g' k2d.yaml
-sed -i '' 's/stage3/stage4/g' k2d.yaml
-touch k2d.jslt<br>
-```
-+
+// * **MacOS**
+// +
+// [subs=]
+// ```bash
+// cp ../lab3/flows/k2r.yaml k2d.yaml
+// sed -i '' 's/k2r/k2d/g'       k2d.yaml
+// sed -i '' 's/rocketchat/discord/g' k2d.yaml
+// sed -i '' 's/stage3/stage4/g' k2d.yaml
+// touch k2d.jslt<br>
+// ```
+// +
 {empty} +
 +
 [NOTE]
@@ -817,33 +826,8 @@ The commands above modified the `k2d.yaml` binding with the following changes:
 * The filter blocks `discord` source events
 * Applies the `k2d.jslt` transformation (to be defined)
 * Uses the new _Discord sink Kamelet_
+** defines the `channel` property for _Discord_
 ====
-+
-{empty} +
-
-. Update the sink definition in `k2d.yaml`
-+
-One of the CLI commands in the previous step modified the _Rocket.Chat_ sink for a _Discord_ one. However, _Rocket.Chat_ only had one parameter (`token`), while _Discord_ requires two: `token` and `channel`.
-+
-Copy the `channel` parameter from the snipped below and paste it in the sink definition of your `k2d.yaml` file:
-+
-----
-  sink:
-    ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: discord-sink
-    properties:
-      token: "{{discord.token}}"
-----
-+
-```yaml
-      channel: "{{discord.channel}}"
-```
-+
-{empty} +
-+
-Save changes.
 +
 {empty} +
 
@@ -1047,10 +1031,13 @@ The _Camel_ developer needs to open a websocket connection and ensure the follow
 
 === Process definition
 
-
 . Close tabs
 +
-Before you start this lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
+image::images/crw-close-tabs.png[align="left", width=50%]
++
+{blank}
++
+Before you start this new lab, make sure you close in your editor all the tabs (source files) from previous exercises.
 +
 {empty} +
 
@@ -1075,6 +1062,15 @@ We've copied the same configuration file from the previous exercise since it con
 +
 {empty} +
 
+. Find your new folder in the project tree
++
+image::images/crw-folder2.png[align="left", width=40%]
++
+{blank}
++
+Ensure you're working on folder `lab4-d2k`
++
+{empty} +
 
 . Create your _Camel_ definition file
 +
