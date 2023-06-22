@@ -16,6 +16,17 @@ endif::[]
 
 Impersonate the Camel developer to complete Lab-1's Matrix to Rocket.Chat processing flow.
 
+{empty} +
+
+Prerequisites: +
+--
+* Ensure you have previously completed the following tiles:
++
+image::images/prereq.png[align="left", width=100%]
+
+{empty} +
+--
+
 Technical goals and milestones:
 
 * Development of a _no-code_ integration (_Kamelet_ binding)

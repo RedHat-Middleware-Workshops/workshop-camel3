@@ -18,7 +18,15 @@ endif::[]
 
 Open the architecture by decoupling the chat systems using streaming capabilities with AMQ Streams.
 
-{empty} + 
+
+Prerequisites: +
+--
+* Ensure you have previously completed the following tiles:
++
+image::images/prereq.png[align="left", width=100%]
+
+{empty} +
+--
 
 *Overview*
 

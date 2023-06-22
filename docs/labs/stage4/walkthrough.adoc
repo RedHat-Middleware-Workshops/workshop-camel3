@@ -14,6 +14,16 @@ endif::[]
 Use Camel K to integrate additional chat systems to the platform. 
 // toc::[]
 
+
+Prerequisites: +
+--
+* Ensure you have previously completed the following tiles:
++
+image::images/prereq.png[align="left", width=100%]
+
+{empty} +
+--
+
 // == Overview
 Up until now we have evolved a solution to interconnect _Matrix_ and _Rocket.Chat_, and crucially, with the addition of AMQ Streams, now the platform allows for new systems to easily integrate. In this new Lab we're going to add a new chat option: _Discord_.
 

@@ -18,7 +18,6 @@ endif::[]
 
 Part 1 (out of 2) introduces the first integration flow to implement and helps you to onboard onto the chat platforms.
 
-{empty} +
 
 Prerequisites: +
 --

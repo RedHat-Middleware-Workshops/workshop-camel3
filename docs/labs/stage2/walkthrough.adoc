@@ -18,7 +18,15 @@ endif::[]
 
 Enable two-way communication between Matrix and Rocket.Chat chat platforms.
 
-{empty} + 
+
+Prerequisites: +
+--
+* Ensure you have previously completed the following tiles:
++
+image::images/prereq.png[align="left", width=100%]
+
+{empty} +
+--
 
 *Overview*
 
