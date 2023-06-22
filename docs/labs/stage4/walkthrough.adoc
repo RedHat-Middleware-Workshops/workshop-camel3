@@ -97,11 +97,11 @@ TIP: If you're unfamiliar with _Discord_, it is a well known chat platform, very
 
 === Join the lab's Discord server.
 
-To accelerate the onboarding process in _Discord_, we've created a shared server for anyone to freely join and use for the purpose of this enablement workshop. 
+To accelerate the onboarding process in _Discord_, we've created a shared server for students to freely join and use to complete this enablement workshop. 
 
-TIP: You don't need an account in _Discord_ to join the server. Just follow the instructions below to join with what _Discord_ calls an _"Unclaimed Account"_, a sort of temporary account you can claim as yours afterwards.
+TIP: You don't need an account in _Discord_ to join the server. Just follow the instructions below to join with what _Discord_ calls an _"Unclaimed Account"_, a sort of temporary account you can claim as yours afterwards if you want.
 
-TIP: If you prefer using an existing Discord account you may already have, please feel free to sign in with it instead of using an _"Unclaimed Account"_.
+TIP: If you prefer using an existing _Discord_ account of yours, please feel free to sign in with it instead of using an _"Unclaimed Account"_.
 
 {empty} +
 
@@ -141,7 +141,7 @@ image::images/discord-join-step2.png[align="left", width=80%]
 --
 . Tick the box _"I'm a human"_.
 . Select the tiles accordingly.
-. Click the _Continue_ button.
+. Click the _Verify_ button.
 --
 +
 {empty} +
@@ -152,8 +152,12 @@ The window will prompt you to enter your birthday. There's no need to enter a re
 image::images/discord-join-step3.png[align="left", width=50%]
 +
 --
-. Select a month, day and year. For example:
+. Select a month, day and year. +
+For example:
 - `January`, `1`, `2000`
++
+{blank}
++
 . Then click _Done_.
 --
 +
