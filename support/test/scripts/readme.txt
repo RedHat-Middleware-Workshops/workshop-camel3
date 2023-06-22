@@ -36,6 +36,11 @@ How to run the test
    > configure below the number of users to simulate
      (attention: your cluster requires all users to be pre-provisioned)
 
+4) The test uses modified code ('lab' folders under 'test' folder)
+   > a special Kamelet 'test-action' is involved in this testing
+   > these modifications capture the running namespace as a variable in Camel
+   > allows the tester to see from which namespace a message (in the Chat platforms) comes from
+
 4) Configure the property files under
     ../../config
    

@@ -8,7 +8,8 @@ do
 	USER=user$i
 	echo ""
 	echo "Working on namespace $USER"
-	oc login -u $USER -p openshift
+	# oc login -u $USER -p openshift
+    oc project $USER
 
 
 	# Delete test kamelet if exists

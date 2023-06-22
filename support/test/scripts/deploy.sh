@@ -8,8 +8,9 @@ do
 	USER=user$i
 	echo ""
 	echo "Working on namespace $USER"
-	oc login -u $USER -p openshift
-
+	# oc login -u $USER -p openshift
+    oc project $USER
+	
 
 	oc delete kl test-action
 	oc apply -f ../kamelets/test-action.kamelet.yaml

@@ -24,7 +24,13 @@ spec:
       name: predicate-filter-action
     properties:
       expression: $.text =~ /(?!<b>.*@.*<\/b>:).*/
-      
+  
+  # Intended for deployment smoke test
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: test-action
+
   - ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1

@@ -1,6 +1,7 @@
 {
 	"timestamp": string(round(parse-time(.sent, "yyyy-MM-dd'T'HH:mm:ss.SSSX"))),
 	"source":"matrix",
-	"user": .fromUser.displayName,
+	"user": $headers.ocpuser+"-"+.fromUser.displayName,
+	"user-original": .fromUser.displayName,
 	"text": .text
 }

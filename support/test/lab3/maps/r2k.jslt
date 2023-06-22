@@ -1,6 +1,7 @@
 {
 	"timestamp": .timestamp,
 	"source":"rocketchat",
-	"user": .user_name,
+	"user": $headers.ocpuser+"-"+.user_name,
+	"user-original": .user_name,
 	"text": .text
 }

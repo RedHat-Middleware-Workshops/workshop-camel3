@@ -54,6 +54,10 @@
                     </when>
                     <when>
                         <jsonpath>$[?(@.t == "MESSAGE_CREATE" &amp;&amp; @.d.author.username != "camelbot")]</jsonpath>
+
+                        <!-- Intended for deployment smoke test -->
+                        <to uri="kamelet:test-action"/>
+
                         <to uri="jslt:d2k.jslt"/>
                         <to uri="direct:kafka-push"/>
                     </when>
