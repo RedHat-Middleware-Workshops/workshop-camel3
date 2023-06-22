@@ -11,6 +11,15 @@ endif::[]
 
 Use OpenShift Data Foundation to provide storage capabilities and services to the MessageHub platform.
 
+Prerequisites: +
+--
+* Ensure you have previously completed the following tiles:
++
+image::images/prereq.png[align="left", width=100%]
+
+{empty} +
+--
+
 All the lab stages you have completed so far have focussed on interconnecting independent instant messaging platforms. This lab however simulates the need to respond to government regulations (or policies alike) to meet legal and business data archival requirements.
 
 Adding _Kafka_ in the architecture was a strategical decision. Any type of message broker would have been qualified, except we chose _Kafka_ because of its ability to replay data streams.
@@ -164,7 +173,11 @@ The first step is to create a little prototype that will validate our _Camel_ ro
 
 . Close tabs
 +
-Before you start this lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
+image::images/crw-close-tabs.png[align="left", width=50%]
++
+{blank}
++
+Before you start this new lab, make sure you close in your editor all the tabs (source files) from previous exercises.
 +
 {empty} +
 

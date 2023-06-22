@@ -232,8 +232,14 @@ The commands above will:
 --
 {empty} +
 
-.. Locate your files in the project tree
-
+.. Find your new folder in the project tree
++
+image::images/crw-folder.png[align="left", width=40%]
++
+{blank}
++
+Ensure you're working on folder `lab2`
++
 {empty} +
 
 . Include the filter

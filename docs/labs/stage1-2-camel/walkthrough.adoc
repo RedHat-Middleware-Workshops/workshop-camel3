@@ -16,8 +16,6 @@ endif::[]
 
 Impersonate the Camel developer to complete Lab-1's Matrix to Rocket.Chat processing flow.
 
-{empty} +
-
 Prerequisites: +
 --
 * Ensure you have previously completed the following tiles:

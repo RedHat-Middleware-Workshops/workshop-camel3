@@ -143,6 +143,15 @@ We use Lab-2 as the base for this next stage.
 
 The following set of instructions prepare the set of files you will be working with: 
 
+. Close tabs
++
+image::images/crw-close-tabs.png[align="left", width=50%]
++
+{blank}
++
+Before you start this new lab, make sure you close in your editor all the tabs (source files) from previous exercises.
++
+{empty} +
 
 . Prepare Lab 3 folder
 +

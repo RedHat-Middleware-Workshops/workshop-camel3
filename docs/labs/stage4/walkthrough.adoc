@@ -14,7 +14,6 @@ endif::[]
 Use Camel K to integrate additional chat systems to the platform. 
 // toc::[]
 
-
 Prerequisites: +
 --
 * Ensure you have previously completed the following tiles:
@@ -313,10 +312,13 @@ image::images/camel-jbang.png[align="left", width=40%]
 
 The first step is to create a little prototype that will validate our _Camel_ route implementation.
 
-
 . Close tabs
 +
-Before you start this lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
+image::images/crw-close-tabs.png[align="left", width=50%]
++
+{blank}
++
+Before you start this new lab, make sure you close in your editor all the tabs (source files) from previous exercises.
 +
 {empty} +
 
@@ -329,6 +331,16 @@ cd /projects/MessageHub
 mkdir lab4-k2d
 cd lab4-k2d<br>
 ```
++
+{empty} +
++
+.. Find your new folder in the project tree
++
+image::images/crw-folder.png[align="left", width=40%]
++
+{blank}
++
+Ensure you're working on folder `lab4`
 +
 {empty} +
 +
