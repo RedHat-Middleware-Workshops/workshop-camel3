@@ -12,7 +12,7 @@ ifdef::env-github[]
 endif::[]
 
 [id='lab1-part2-camel']
-= Lab 1 - MessageHub - Be the Camel developer
+= Lab 1.part2 - MessageHub - Be the Camel developer
 
 Impersonate the Camel developer to complete Lab-1's Matrix to Rocket.Chat processing flow.
 
@@ -576,13 +576,13 @@ Did you see the message in _Matrix_ showing up in _Rocket.Chat_?
 
 Up until now you've only worked locally (in your dev UI and terminal). This phase has allowed you to prototype fast and produce code you feel confident with.
 
-As per the diagram below, the Camel developer can work at accelerated speed by editing sources and running locally.
+As per the diagram below, the _Camel_ developer can work at accelerated speed by editing sources and running locally.
 
 image::images/workflow-camel-user.png[align="center", width=80%]
 
 {empty} +
 
-Now that you have validated your code locally, you can proceed to deploy and run in OpenShift.
+Now that you have validated your code locally, you can proceed to deploy and run in _OpenShift_.
 
 The definitions that you have implemented can practically be taken 'as-is' into _OpenShift_. 
 
@@ -713,7 +713,7 @@ m2r    Creating
 +
 {empty} +
 
-.. Check the logs.
+.. Check the logs from your terminal.
 +
 You can use the `kamel` client to inspect the logs from the running pod where you integration `m2r` is deployed.
 +
@@ -731,6 +731,49 @@ After a while, when the operator deploys the integration, you should see Camel c
 ... : Apache Camel 3.14.2.redhat-00047 (camel-1) started in 1s193ms (build:0ms init:1s1ms start:192ms)
 ...
 ... : Opening connection to Matrix...
+... : Matrix HTTP Streaming started
+----
++
+{empty} +
+
+
+.. Check your deployment from the _Developer_ console
++
+Inspect in your link:{openshift-host}/topology/ns/{namespace}[OpenShift Developer view, window="_blank"] your pod is in healthy state and running:
++
+image::images/ocp-dev-pod-healthy.png[align="left", width=80%]
++
+TIP: You can zoom in/out the canvas by using your mouse scrolling function, and move it around by clicking and dragging the background.
++
+{empty} +
++
+NOTE: You will observe your project also includes a pre-deployed _AMQ Streams (Kafka)_ cluster. Later in the workshop, you will use this dedicated _Kafka_ cluster to stream data in and out.
++
+{empty} +
+
+.. Check the logs.
++
+You can open the logs of the _Camel_ instance by:
++
+--
+. Clicking in the pod's icon
+. From the right pane, click `Resources`
+. Click `View logs`
+--
++
+{blank}
++
+image::images/ocp-dev-pod-logs.png[align="left", width=90%]
++
+{blank}
++
+You should see _Camel_ connecting to _Matrix_ and indicating the stream has started:
++
+----
+... : Apache Camel 3.14.2.redhat-00047 (camel-1) started in 825ms (build:0ms init:708ms start:117ms)
+...
+... : Opening connection to Matrix...
+... : Matrix HTTP Streaming started
 ----
 +
 {empty} +

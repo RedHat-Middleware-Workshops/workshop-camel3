@@ -295,16 +295,12 @@ image::images/workflow-camel-user.png[align="center", width=80%]
 The way this user consumes _Camel_ is by selecting catalog _Kamelets_ and creating _Kamelet Bindings_ in YAML definitions. The user creates local YAML files and then pushes them to _OpenShift_. The _Camel K_ operator automates the process of building, creating images and deploying the integrations.
 +
 image::images/workflow-kube-user.png[align="center", width=80%]
-+
-{empty} +
-+
-NOTE: The YAML definitions are identical for both profiles. Although this first lab is targeted for the Kubernetes user, we also want to introduce how the Camel developer uses development tooling to accelerate the creation process.
 
 {empty} +
 
 You'll start working as the _Camel_ developer for your first task to familiarise yourself with the developer tools to run locally, and later you'll continue as the Kubernetes user, creating and deploying data flows directly on _OpenShift_.
 
-You've reached the end of Part 1. To complete Lab 1 by choosing the next tile on your main tutorial dashboard:
+You've reached the end of Part 1. Complete Lab 1 by choosing the next tile (part 2) on your main tutorial dashboard:
 
 image::images/continue-part-2.png[align="center", width=80%]
 
