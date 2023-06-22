@@ -54,9 +54,18 @@ Technical goals and milestones:
 
 [NOTE]
 --
-Given the first lab covered in detail the workflows for both personas (Kubernets/Camel user), consider yourself equipped with the knowledge and tools to choose your preferred development methodology going forward.
+In the first lab you impersonated the _Camel_ developer to create and deploy _Kamelet Bindings_. Later, you will create more advanced integrations using regular Camel DSL (_Domain Specific Language_).
+--
 
-From now on, we simplify the instructions with code snippets directly deployable in _OpenShift_. Feel free to modify the snippets accordingly if you'd like to test them locally (as a Camel expert). 
+In this second lab, you will work as a _Kubernetes_ user. Instead of running locally your code, you will directly push your definitions to OpenShift. 
+
+[NOTE]
+--
+As you progress with the lab, notice that working as a Kubernetes user, with Camel K, allows you to create and deploy data flows without any internal knowledge of Camel, as per the diagram below:
+
+image::images/workflow-kube-user.png[align="center", width=100%]
+
+You only need to define and configure sources, steps and sinks in Kamelet Binding definitions.
 --
 
 {empty} +
@@ -146,7 +155,8 @@ You can tell from the list above that this second lab suits very well the _Kuber
 
 === Process definition
 
-. Close tabs
+. Setup
+.. Close tabs
 +
 image::images/crw-close-tabs.png[align="left", width=50%]
 +
@@ -156,7 +166,7 @@ Before you start this second lab, make sure you close in your editor all the tab
 +
 {empty} +
 
-. Login to _OpenShift_ 
+.. Login to _OpenShift_ 
 +
 For those resuming work from a previous day, ensure you reconnect your `oc` client with _OpenShift_ by running the following login command:
 +
@@ -167,9 +177,9 @@ oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:
 +
 {empty} +
 
-. Create the skeleton
+.. Create the skeleton
 +
-.. Using the sources of _Stage1_ as a base, make a copy of your previous exercise, for example:
+... Using the sources of _Stage1_ as a base, make a copy of your previous exercise, for example:
 +
 [subs=]
 ```bash
@@ -180,7 +190,7 @@ cd lab2<br>
 +
 {empty} +
 
-.. Rename all occurrences of `stage1` to `stage2`.
+... Rename all occurrences of `stage1` to `stage2`.
 +
 Run the commands below in your terminal:
 +
@@ -212,6 +222,10 @@ The commands above will:
 * replace the annotations in the `m2r.yaml` file from `stage1` to `stage2` 
 * rename `stage1.properties` to `stage2.properties`
 --
+{empty} +
+
+.. Locate your files in the project tree
+
 {empty} +
 
 . Include the filter

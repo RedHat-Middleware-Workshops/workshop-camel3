@@ -12,7 +12,7 @@ ifdef::env-github[]
 endif::[]
 
 [id='lab1-part2-camel']
-= Lab 1.path1 - MessageHub - Be the Camel developer
+= Lab 1 - MessageHub - Be the Camel developer
 
 Impersonate the Camel developer to complete Lab-1's Matrix to Rocket.Chat processing flow.
 
@@ -573,6 +573,16 @@ Did you see the message in _Matrix_ showing up in _Rocket.Chat_?
 ****
 * link:{url-rocketchat}/topology/ns/{namespace}[Rocket.Chat Web Client, window="_blank"]
 ****
+
+Up until now you've only worked locally (in your dev UI and terminal). This phase has allowed you to prototype fast and produce code you feel confident with.
+
+As per the diagram below, the Camel developer can work at accelerated speed by editing sources and running locally.
+
+image::images/workflow-camel-user.png[align="center", width=80%]
+
+{empty} +
+
+Now that you have validated your code locally, you can proceed to deploy and run in OpenShift.
 
 The definitions that you have implemented can practically be taken 'as-is' into _OpenShift_. 
 

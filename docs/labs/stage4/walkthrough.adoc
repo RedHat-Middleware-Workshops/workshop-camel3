@@ -114,7 +114,7 @@ image::images/invite-link.png[align="left", width=50%]
 
 .. In the invitation screen, you will be prompted to enter a `USERNAME`:
 +
-image::images/discord-join-step1.png[align="center", width=80%]
+image::images/discord-join-step1.png[align="left", width=80%]
 +
 --
 . Type in a username, for example `{user-username}`. +
@@ -127,7 +127,7 @@ You can also choose any other username of your liking.
 
 .. A _'Capcha'_ verification process will pop up to validate you are human:
 +
-image::images/discord-join-step2.png[align="center", width=80%]
+image::images/discord-join-step2.png[align="left", width=80%]
 +
 --
 . Tick the box _"I'm a human"_.
@@ -140,7 +140,7 @@ image::images/discord-join-step2.png[align="center", width=80%]
 .. An age verification process will pop up. +
 The window will prompt you to enter your birthday. There's no need to enter a real one, just ensure the birthday matches an individual of 18+ years old.
 +
-image::images/matrix-copy-room-id.png[align="center", width=100%]
+image::images/discord-join-step3.png[align="left", width=50%]
 +
 --
 . Select a month, day and year. For example:
@@ -152,7 +152,7 @@ image::images/matrix-copy-room-id.png[align="center", width=100%]
 
 .. A final popup window will prompt you to claim the account. Simply ignore it by closing the popup
 +
-image::images/matrix-copy-room-id.png[align="center", width=100%]
+image::images/discord-join-step4.png[align="left", width=80%]
 +
 --
 . Click the cross in the upper right corner.
@@ -186,7 +186,21 @@ You will also need to create your own _App_ (Bot) to send/fetch messages from th
 
 
 === Join a Discord room (channel).
-. A number of rooms have been made available in the shared server for the workshop (room1, room2, ...roomX). Choose a room number that nobody uses to avoid noisy conversations.
+
+. Your dedicated _Discord_ room
++ 
+A number of rooms have been made available for this workshop. 
++
+To work on a room number that nobody uses and avoid noisy conversations, please choose a room matching your username. +
+For example, if your username is:
++
+--
+* `user1` -> use `room1`
+* `user2` -> use `room2`
+* `userN` -> use `roomN`
+--
++
+{empty} +
 +
 Alternatively, you can also create your own room (channel), use the prefix `room_`, for example:
 
