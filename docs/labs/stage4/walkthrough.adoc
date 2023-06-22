@@ -174,14 +174,15 @@ image::images/discord-join-step4.png[align="left", width=80%]
 
 {empty} +
 
-
 CAUTION: The server is open to the public, please be mindful of your actions, don't abuse the space.
 
-[NOTE]
---
-if you were unsuccessful joining the shared server provided, feel free to create you own _Discord_ server, you should be able to complete the workshop in the same manner.
+{empty} +
 
-To create your own server:
+[TIP]
+--
+You could create your own _Discord_ server, and be able to complete the workshop with the same below instructions.
+
+From _Discord_, to create your own server:
 
 . Click the `+` button (add a server).
 . select `Create My Own`.
@@ -189,7 +190,7 @@ To create your own server:
 
 {blank}
 
-You will also need to create your own _App_ (Bot) to send/fetch messages from the rooms in the server. You can find instructions on how to create your _App_ in the link below:
+You will need to create your own _App_ (Bot) to send/fetch messages from the rooms in the server. You can find instructions on how to create your _App_ following the link below:
 
 ====
 - link:https://github.com/RedHat-Middleware-Workshops/workshop-camel3/blob/v2.0/docs/labs/stage4/walkthrough.adoc#creating-your-own-app-for-discord/invite/discord[Create your own Discord App,window="_blank"]
@@ -231,29 +232,11 @@ To connect from _Camel_ to the chat platform, an App needs to be registered in _
 --
 To configure _Camel_ you will need the _Discord_ App credentials. Later, you will find the credentials following the lab instructions.
 --
-+
-[TIP]
---
-If you can't obtain the App's credentials, ask your classroom instructor/administrator. +
-The workshop slides should contain the token values valid today's session:
-
-image::images/apps-tokens.png[align="left", width=80%]
---
-+
-You can skip the next section (app creation) and directly jump to the end of this task.
-+
-TIP: Some browsers misbehave, if the link below fails, simply scroll down to the section they're pointing to.
-+
-** link:#completion-checks[Skip and go to end of task]
 
 {empty} +
 
-
-* If you are running the workshop on your own, you'll have to create an App in _Discord_. Click the link below to follow instructions on how to create your own App.
-+
-TIP: Some browsers misbehave, if the link below fails, simply scroll down to the section they're pointing to.
-+
-** link:#creating-your-own-app-for-discord[Creating your own App for Discord]
+[type=verification]
+Were you able to join the _Discord_ room successfully?
 
 {empty} +
 
@@ -373,19 +356,28 @@ Ensure you configure with your _Discord_ values, and save changes.
 - `token`
 +
 Obtain the _Discord_ token with 1 of these 3 options, and replace `YOUR_TOKEN`:
-
++
+=====
 ** *Option 1*: Try the link below:
 +
-
 WARNING: The link may fail if the cluster did not enable token resolution. +
 If it fails, choose [*Option 2*] or [*Option 3*].
-
++
 *** link:{invite-url}/token/discord[Obtain _Discord_ token,window="_blank"]
 +
 {empty} +
 
 ** *Option 2*: Ask your instructor/administrator for the token to use to connect to Discord.
+
+[TIP]
+====
+The workshop slides should contain the token values valid for today's session:
+
+image::images/apps-tokens.png[align="left", width=80%]
+
+====
 ** *Option 3*: if you created your own _Discord_ App, use your App's `Bot User OAuth Token`
+=====
 
 {empty} +
 
@@ -393,9 +385,9 @@ If it fails, choose [*Option 2*] or [*Option 3*].
 * `channel` +
 You can find the channel id in the address bar of your _Discord_ browser tab. The pattern is:
 +
-* http://discord.com/channels/SERVER_ID/CHANNEL_ID
+** \http://discord.com/channels/SERVER_ID/CHANNEL_ID
 +
-image::images/discord-room-id.png[align="left", width=100%]
+image::images/discord-room-id.png[align="left", width=80%]
 --
 +
 {empty} +
