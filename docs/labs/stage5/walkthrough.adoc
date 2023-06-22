@@ -2,6 +2,9 @@
 :user-password: openshift
 :namespace: {user-username}
 
+:url-codeready: http://codeready-che.{openshift-app-host}/
+:url-devconsole: {openshift-host}/topology/ns/{namespace}
+
 ifdef::env-github[]
 endif::[]
 
@@ -168,6 +171,22 @@ Review the notes above and study the sequence diagram again.
 [id="initialise"]
 == Initialise the lab exercise
 
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
 
 The first step is to create a little prototype that will validate our _Camel_ route implementation.
 
@@ -439,6 +458,23 @@ NOTE: Do not hesitate to navigate back to previous chapters to have a second loo
 {empty} +
 
 === Accelerated Development
+
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
 
 Although the code required is little, the end-to-end process is not a trivial one, it has various parts at play that need to be well coordinated. To accelerate the development phase, a good developer would want to prototype and test locally, iterating over the code until its implementation is fully validated.
 
@@ -771,6 +807,23 @@ Review the steps and try again.
 [time=2]
 [id="deploy-openshift"]
 == Deploy in OpenShift
+
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
 
 During the prototyping phase we used _Timer_ components to mock _Kafka_ events, and we bypassed the action of pushing the data to the Storage layer.
 

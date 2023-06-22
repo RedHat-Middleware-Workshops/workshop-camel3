@@ -4,6 +4,11 @@
 :namespace: {user-username}
 :invite-url: http://invite-webapp.{openshift-app-host}
 
+:url-element: https://app.element.io
+:url-rocketchat: https://rocketchat-rocketchat.{openshift-app-host}
+:url-codeready: http://codeready-che.{openshift-app-host}/
+:url-devconsole: {openshift-host}/topology/ns/{namespace}
+
 ifdef::env-github[]
 endif::[]
 
@@ -246,6 +251,24 @@ Were you able to join the _Discord_ room successfully?
 [id="kamelet-create"]
 == Part 1 - Create the Sink Kamelet
 
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+
+
 TIP: _Kamelets_ are [underline big]_**Camel**_ route snipp[underline big]**ets**. +
 A Kamelet encapsulates a normal _Camel_ route.
 
@@ -292,6 +315,15 @@ Obviously, developing this process is the task of an experienced _Camel_ develop
 The best approach to make rapid progress developing this _Kamelet_, is to use _Camel JBang_ in your local environment.
 
 image::images/camel-jbang.png[align="left", width=40%]
+
+{empty} +
+
+For those resuming work from a previous day, ensure you reconnect your `oc` client with _OpenShift_ by running the following login command:
+
+[source,bash,subs="attributes+"]
+----
+oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+----
 
 {empty} +
 
@@ -428,7 +460,7 @@ Use instead the parameter `repeatCount` (copy/replace from the snippet below):
 ----
     steps:
       - setBody:
-          simple: "Hello Camel from ${routeId}"
+          constant: "Hello Camel from yaml"
       - log: "${body}"
 ----
 +
@@ -445,7 +477,7 @@ TIP: the flag `dev` indicates to _Camel JBang_ to hot reload new definitions whe
 The output in your terminal should show, only once, the following:
 +
 ----
-... : Hello Camel from route1
+... : Hello Camel from yaml
 ----
 {empty} +
 
@@ -749,6 +781,33 @@ Press `ctrl`+`c` to stop _Camel JBang_.
 [id="kamelet-binding-create"]
 == Part 2 - Kafka ⇒ Discord
 
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+[type=taskResource]
+.Matrix
+****
+* link:{url-element}[Matrix Web Client, window="_blank"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}/topology/ns/{namespace}[Rocket.Chat Web Client, window="_blank"]
+****
+
 We have now the building block we were missing, we can now bind our _Discord_ _Kamelet_ to _Kafka_ to push chat conversations to _Discord_.
 
 === Process overview
@@ -963,6 +1022,33 @@ Inspect in the pod logs to troubleshoot.
 [time=5]
 [id="kamelet-binding-create"]
 == Part 3 - Discord ⇒ Kafka
+
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+[type=taskResource]
+.Matrix
+****
+* link:{url-element}[Matrix Web Client, window="_blank"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}/topology/ns/{namespace}[Rocket.Chat Web Client, window="_blank"]
+****
 
 In previous exercises we kept using _Kamelets_ to define processing flows. This task however requires more developer control.
 

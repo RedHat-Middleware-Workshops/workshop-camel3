@@ -234,7 +234,7 @@ The commands above will:
 
 .. Find your new folder in the project tree
 +
-image::images/crw-folder.png[align="left", width=40%]
+image::images/crw-folder.png[align="left", width=30%]
 +
 {blank}
 +
