@@ -77,6 +77,8 @@ In terms of implementation effort for this lab, your main task is to split each 
 - The _Matrix_ to _Rocket.Chat_ process into:
 . _Matrix_ to _Kafka_
 . _Kafka_ to _Rocket.Chat_
++
+{empty} +
 - The _Rocket.Chat_ to _Matrix_ process into:
 . _Rocket.Chat_ to _Kafka_
 . _Kafka_ to _Matrix_
@@ -131,10 +133,6 @@ oc delete klb m2r
 oc delete klb r2m
 <br>
 ```
-{empty} +
-
-Also, before you start this second lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
-
 {empty} +
 
 
@@ -308,14 +306,14 @@ image::images/processing-flow-chat2kafka.png[align="center", width=90%]
 There are 4 Kamelets in use:
 
 ====
-* *A source* +
+* *1 source* +
 Consumes events from _Matrix/Rocket.Chat_.
 
-* *Two actions* +
+* *2 actions* +
 One filters messages to prevent death loops. +
 One transforms _Matrix/Rocket.Chat_ events to the standard data model.
 
-* *A sink* +
+* *1 sink* +
 Produces events to _Kafka_.
 ====
 
@@ -566,14 +564,14 @@ image::images/processing-flow-kafka2chat.png[align="center", width=90%]
 There are 4 Kamelets in use:
 
 ====
-* *A source* +
+* *1 source* +
 Consumes events from _Kafka_.
 
-* *Two actions* +
+* *2 actions* +
 One filters messages to prevent death loops. +
 One transforms events from the standard data model to _Matrix/Rocket.Chat_.
 
-* *A sink* +
+* *1 sink* +
 Produces events to _Matrix/Rocket.Chat_.
 ====
 

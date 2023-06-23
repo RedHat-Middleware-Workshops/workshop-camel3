@@ -125,6 +125,8 @@ To join the lab's Discord server using a temporary account (Unclaimed account), 
 image::images/invite-link.png[align="left", width=50%]
 
 . In the new tab, follow the sequence of steps described below:
++
+IMPORTANT: Discord performs an age verification, ensure you enter a birth date for 18+ or older.
 
 .. In the invitation screen, you will be prompted to enter a `USERNAME`:
 +
@@ -185,7 +187,7 @@ CAUTION: The server is open to the public, please be mindful of your actions, do
 
 [TIP]
 --
-You could create your own _Discord_ server, and be able to complete the workshop with the same below instructions.
+As an alterative, you could create your own _Discord_ server, and be able to complete the workshop with the same below instructions.
 
 From _Discord_, to create your own server:
 
@@ -631,7 +633,18 @@ Open the file in your editor.
 
 . Define your Kamelet
 +
-.. Define metadata and parameters
+.. Define your Kamelet metadata and parameters
++
+(Copy and replace the `spec`, keep the _Kamelet_'s header/metadata.)
++
+----
+apiVersion: camel.apache.org/v1alpha1
+kind: Kamelet
+metadata:
+  name: discord-sink
+  labels:
+    camel.apache.org/kamelet.type: "sink"
+----
 +
 ```yaml
 spec:
@@ -666,6 +679,10 @@ spec:
 {empty} +
 +
 .. Include your prototype code
++
+(Copy/paste below `spec`, at the bottom of the _Kamelet_)
++
+NOTE: This snippet below is the one you have just tested locally.
 +
 ```yaml
       - remove-headers:
@@ -771,6 +788,8 @@ The second goal has been accomplished. image:images/emoji-clap.png[width=3%]
 Verify the snippet copy/paste actions were well followed.
 
 {empty} +
+
+Assuming all went well, you have now created your own _Discord Kamelet_, and used it in a _Camel_ route to push messages to _Discord_.
 
 Press `ctrl`+`c` to stop _Camel JBang_.
 

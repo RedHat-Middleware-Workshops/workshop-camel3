@@ -122,7 +122,7 @@ Luckily, you've already done all the necessary onboarding setup with both chat s
 This process is identical to the one you've already created in Lab 1, except there is situation you need to prevent. +
 Ask yourself the following question:
 
-* If the App in a chat room fires an event for each new message in a conversation, what would happen when interconnecting both Apps?
+* If the App (e.g. Camel) in a chat room fires an event for each new message in a conversation, what would happen when interconnecting both ends (apps)?
 
 {empty} +
 
@@ -143,14 +143,14 @@ image::images/processing-flow-g2s.png[align="center", width=80%]
 There are 4 Kamelets in use:
 
 ====
-* *A source* +
+* *1 source* +
 Consumes events from _Matrix_.
 
-* *Two actions* +
+* *2 actions* +
 One filters messages to prevent death loops. +
 One transforms _Matrix_ events to _Rocket.Chat_ events (in JSON format).
 
-* *A sink* +
+* *1 sink* +
 Produces events to _Rocket.Chat_.
 ====
 
@@ -265,7 +265,7 @@ Given our JSLT converts messages to the following format:
 
 * `username@system:`  message
 +
-(an example would be: *jon@matrix: hello*)
+(an example would be: *{user-username}@matrix: hello*)
 --
 +
 {empty} +
@@ -489,14 +489,14 @@ image::images/processing-flow-s2g.png[align="center", width=80%]
 There are 4 Kamelets in use:
 
 ====
-* *A source* +
+* *1 source* +
 Consumes events from _Rocket.Chat_.
 
-* *Two actions* +
+* *2 actions* +
 One filters messages to prevent death loops. +
 One transforms _Rocket.Chat_ events to _Matrix_ events (in JSON format).
 
-* *A sink* +
+* *1 sink* +
 Produces events to _Matrix_.
 ====
 
@@ -569,6 +569,7 @@ spec:
 [NOTE]
 --
 * The source Kamelet is now a _Webhook_
+** _Rocket.Chat_ has been pre-configured to push events to this particular _Kamelet Binding_, via its _Kubernetes_ service (once the integration deployed).
 * The sink Kamelet is now _Matrix_
 --
 +
@@ -671,19 +672,6 @@ Go to you Rocket.Chat's chat room and send a message, for example "Hello from Ro
 If all goes well your message should show up in Matrix.
 +
 image::images/stage2-msg-slack-gitter.png[align="left", width=80%]
-+
-[NOTE]
---
-You will notice two inmediate differences:
-
-* When pushing messages from _Camel_, _Matrix_ shows them as a user, not as an App. _Rocket.Chat_ on the other hand, does not allow Apps to impersonate users.
-* _Rocket.Chat_ does not provide the real user name, instead it provides its ID.
---
-+
-[NOTE]
---
-An interesting exercise would be to replace _Rocket.Chat_'s user ID by the real user name. We leave this task for a future more advanced scenario.
---
 +
 {empty} +
 

@@ -275,7 +275,7 @@ _Camel JBang_ will build a local runnable and start it. +
 In the output logs you should see _Camel_ connecting to _Matrix_, similar to the following:
 +
 ----
-... : Apache Camel 3.19.0 (m2r) started in 1s658ms (build:118ms init:1s323ms start:217ms JVM-uptime:3s)
+... : Apache Camel 3.20.1 (m2r) started in 1s658ms (build:118ms init:1s323ms start:217ms JVM-uptime:3s)
 ... : Opening connection to Matrix...
 ... : Matrix HTTP Streaming started
 ----
