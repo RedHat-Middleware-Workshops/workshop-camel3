@@ -1011,7 +1011,7 @@ messege.controller.cutoff.time = 15000
 
 .. Configure your S3 credentials
 +
-Ask the workshop's administrator for the following parameters:
+You need to obtain the following credentials to configure _Camel_:
 +
 --
 * S3's Access Key
@@ -1020,73 +1020,26 @@ Ask the workshop's administrator for the following parameters:
 +
 {blank}
 +
-Use the values above to update `accessKey` and `secretKey` from the configuration below:
+They have been made available in _Rocket.Chat_. +
+Find them in the `#general` channel:
++
+image::images/rc-s3-credentials.png[align="left", width=60%]
++
+--
+. Click on the `#general` channel.
+. Copy the credentials to configure _Camel_.
+--
++
+{empty} +
++
+Use the values above to update `accessKey` and `secretKey` in Camel's configuration file, as follows:
 +
 ----
-accessKey=YOUR_ACCESS_KEY\
-&secretKey=RAW(YOUR_SECRET_KEY)\
+accessKey=S3_ACCESS_KEY\
+&secretKey=RAW(S3_SECRET_KEY)\
 ----
 +
 NOTE: Make sure your secret key is defined inside the `RAW()` statement.
-+
-{empty} +
-+
-If you're running the workshop on your own and you have admin access in _OpenShift_, follow the instructions below to obtain the S3 access credentials:
-+
---
-. Extract admin user credentials
-+
-To login to the storage console, run the following commands to extract the admin's credentials:
-+
-```
-oc get secret noobaa-admin \
--n openshift-storage \
---template={{.data.email}} | base64 -d
-```
-+
-{blank}
-+
-The command above will obtain the `email`. 
-+
-```
-oc get secret noobaa-admin \
--n openshift-storage \
---template={{.data.password}} | base64 -d
-```
-+
-{blank}
-+
-The command above will obtain the `password`.
-+
-{empty} +
-+
-. Login to the storage console
-+
-Open the storage UI from the link below:
-+
-* link:https://noobaa-mgmt-openshift-storage.{openshift-app-host}/fe?skip-oauth[Storage admin console, window="_blank"]
-+
-{blank}
-+
-Enter the admin credentials (obtained above). +
-Click `Login`.
-+
-image::images/noobaa-login.png[align="left", width=40%]
-+
-{empty} +
-+
-. Obtain the Connection details
-+
-In the presented dashboard, click on `Connect Application`, as per the image below:
-+
-image::images/noobaa-connect-application.png[align="left", width=20%]
-+
-{blank}
-+
-Then, copy the `Access Key` and `Secret Key`:
-+
-image::images/noobaa-connect-application-tokens.png[align="left", width=40%]
---
 +
 {empty} +
 
@@ -1179,9 +1132,10 @@ NOTE: When no new Kafka messages are available, no aggregation occurs and theref
 
 === Viewing S3 object contents
 
-From the admin console above we can't visualise the contents of the S3 objects created.
 
-You can however use an online web based S3 browser to visualise the data, for example:
+When _Camel_ completes a run you should be able to see the S3 object in its bucket. Use an online web based S3 browser to visualise the data
+
+Open the S3 Browser from the link below:
 
 * link:https://www.filestash.app/s3-browser.html[https://www.filestash.app/s3-browser.html, window="_blank"]
 +
