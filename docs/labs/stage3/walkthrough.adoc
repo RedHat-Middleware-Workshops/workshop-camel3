@@ -409,7 +409,7 @@ Copy the snippet below and paste it into your new `m2k.jslt` file:
 [NOTE]
 ====
 * We include various fields to provide context.
-* We apply a format on the timestamp to match those from other sources.
+* We parse the timestamp to a numeric value.
 ====
 {empty} +
 
@@ -490,7 +490,7 @@ Copy the snippet below and paste it into your new `r2k.jslt` file:
 +
 ```
 {
-	"timestamp": .timestamp,
+	"timestamp": string(round(parse-time(.timestamp, "yyyy-MM-dd'T'HH:mm:ss.SSSX"))),
 	"source":"rocketchat", 
 	"user": .user_name, 
 	"text": .text
@@ -499,7 +499,8 @@ Copy the snippet below and paste it into your new `r2k.jslt` file:
 +
 [NOTE]
 ====
-We define the same common fields complying with our standard data model.
+* We define the same common fields complying with our standard data model.
+* We also parse the timestamp to a numeric value.
 ====
 {empty} +
 

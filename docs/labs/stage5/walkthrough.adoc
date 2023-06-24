@@ -25,7 +25,7 @@ image::images/prereq.png[align="left", width=100%]
 
 All the lab stages you have completed so far have focussed on interconnecting independent instant messaging platforms. This lab however simulates the need to respond to government regulations (or policies alike) to meet legal and business data archival requirements.
 
-Adding _Kafka_ in the architecture was a strategical decision. Any type of message broker would have been qualified, except we chose _Kafka_ because of its ability to replay data streams.
+Adding _Kafka_ in the architecture was a strategical decision. Any type of message broker would have qualified, except we chose _Kafka_ because of its ability to replay data streams.
 
 In the context explained, the plan is to process data streams from room conversations and transfer them to a storage layer dedicated to meet the data retention requirements.
 

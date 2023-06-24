@@ -838,14 +838,14 @@ image::images/processing-flow-kafka2discord.png[align="center", width=90%]
 There are 4 Kamelets in use:
 
 ====
-* *A source* +
+* *1 source* +
 Consumes events from _Kafka_.
 
-* *Two actions* +
+* *2 actions* +
 One filters messages to prevent death loops. +
 One transforms events from the standard data model to _Discord_.
 
-* *A sink* +
+* *1 sink* +
 Produces events to _Discord_.
 ====
 
@@ -867,7 +867,8 @@ Before you start this new lab, make sure you close in your editor all the tabs (
 
 . Setup the _Kamelet_ binding
 +
-Given the process is almost identical to the _Kafka_ to _Matrix_/_Rocket.Chat_ ones, we can use one of those as a base for our definition.
+Given the process is almost identical to the _Kafka_ to _Matrix_/_Rocket.Chat_ ones, we can use one of those as a base for our definition. +
+The commands below clones the _Kafka_ to _Rocket.Chat_ and modifies it to use _Discord_ instead.
 +
 Run the following commands in your terminal:
 +
@@ -1075,10 +1076,10 @@ _Camel K_ provides the following development options:
 
 ====
 * *Kamelets* +
-These are encapsulated _Camel_ routes that can be used in _Kamalet_ bindings and also directly with the _Camel_'s DSL (_Domain Specific Language_).
+These are like capsules containing _Camel_ routes that can be used in _Kamalet_ bindings and also invoked from _Camel_'s DSL (_Domain Specific Language_).
 
 * *Kamelet bindings* +
-No code definitions where Kamelets are bound together or to a platform resource (_Kafka/Knative_). _Camel K_ deploys them as a running integration instance as per their definition.
+Bindings are no-code definitions where _Kamelets_ are bound together or to a platform resource (_Kafka/Knative_). _Camel K_ deploys them as a running integration units.
 
 * *Camel DSL* +
 The _Camel_ language to define integration processes (routes). Using the DSL's EIPs (_Enterprise Integration Patterns_), the _Camel_ components (connectors) and _DataFormats_ (translators) the developer defines integrations with a very high level of control.
@@ -1086,7 +1087,7 @@ The _Camel_ language to define integration processes (routes). Using the DSL's E
 
 {empty} +
 
-_Discord_ implements the use of websockets to push notifications from the chat platform to the application. Websockets is a 2-way communication mechanism on top of HTTP. _Camel's_ DSL provides the necessary level of control to implement a _Discord_ listener.
+_Discord_ implements the use of websockets to push notifications from the chat platform to the application. A websocket is a 2-way communication protocol on top of HTTP. _Camel's_ DSL provides the necessary level of control to implement a _Discord_ listener.
 
 {empty} +
 
@@ -1099,14 +1100,14 @@ image::images/processing-flow-discord2kafka.png[align="center", width=90%]
 There are 4 steps involved:
 
 ====
-* *A websocket listener* +
+* *1 websocket listener* +
 Consumes events from _Discord_.
 
-* *Two actions* +
+* *2 actions* +
 One filters messages to prevent death loops. +
 One transforms events from _Discord_ to the standard data model.
 
-* *A Kafka producer* +
+* *1 Kafka producer* +
 Produces events to _Kafka_.
 ====
 
@@ -1247,7 +1248,7 @@ Replace in your `d2k.xml` the main _Camel_ route, by the following one:
 
 . Include a pulsating heartbeat process
 +
-Inlcude in your `d2k.xml` the following _Camel_ route:
+Inlcude in your `d2k.xml` the additional _Camel_ route:
 +
 ```xml
     <route id="heartbeat">
@@ -1272,7 +1273,7 @@ Inlcude in your `d2k.xml` the following _Camel_ route:
 
 . Include an event listener
 +
-Inlcude in your `d2k.xml` the following _Camel_ route:
+Inlcude in your `d2k.xml` the yet another _Camel_ route:
 +
 ```xml
     <route id="listener">
@@ -1326,9 +1327,9 @@ Not Using the correct bot name will cause feedback loops.
 {empty} +
 
 
-. Include an _Kafka_ publisher
+. Include a _Kafka_ publisher
 +
-Inlcude in your `d2k.xml` the following _Camel_ route:
+Inlcude in your `d2k.xml` the last _Camel_ route:
 +
 ```xml
     <route id="kafka-publisher">
@@ -1497,7 +1498,9 @@ If all goes well you should see in your terminal an output similar to:
 ... : message to push: {"timestamp":"1663927933","source":"discord","user":"bmesegue","text":"test Camel listener"}
 ... : JBang instance, bypassing kafka push
 ----
-
++
+NOTE: You can read the in the logs the message `bypassing kafka push`. The code you copied contains logic to bypass _Kafka_ when running locally with _Camel JBang_.
++
 {empty} +
 
 [type=verification]
