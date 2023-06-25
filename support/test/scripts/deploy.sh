@@ -35,6 +35,15 @@ do
 	-d camel-jslt \
 	-d camel-ahc-ws
 
+	# Deploy STORE
+	cd ../lab5
+	kamel run --name store \
+	store.xml \
+	HelperStage5.java \
+	--property file:$CONFIG_PATH/stage5.properties \
+	--trait cron.enabled=true \
+	--trait cron.schedule="0/1 * * * ?"
+
 	cd ../scripts
 
 done

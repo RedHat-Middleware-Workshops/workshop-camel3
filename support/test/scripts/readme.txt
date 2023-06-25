@@ -26,8 +26,9 @@ This folder contains scripts to test the environment.
 How to run the test
 -------------------
 
-1) The test only covers lab 3 and 4
+1) The test covers lab 3/4/5
    > Lab 3 and 4 integrate the platforms Matrix / RocketChat / Discord
+   > Lab 5 enables data archiving.
 
 2) You need to login in your terminal as 'admin'
    > the test scripts needs to test all user namespaces
@@ -41,8 +42,8 @@ How to run the test
    > these modifications capture the running namespace as a variable in Camel
    > allows the tester to see from which namespace a message (in the Chat platforms) comes from
 
-4) Configure the property files under
+5) Configure the property files under
     ../../config
    
-   You'll need to obtain the Matrix / RocketChat / Discord tokens and configure the properties.
-
+   > You'll need to obtain the Matrix / RocketChat / Discord tokens and configure the properties.
+   > You'll need to obtain the S3 access/secret keys (from Rocket.Chat #general channel).

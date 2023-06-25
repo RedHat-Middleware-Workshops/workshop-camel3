@@ -4,6 +4,7 @@
 
 :url-codeready: http://codeready-che.{openshift-app-host}/
 :url-devconsole: {openshift-host}/topology/ns/{namespace}
+:url-rocketchat: https://rocketchat-rocketchat.{openshift-app-host}
 
 ifdef::env-github[]
 endif::[]
@@ -824,6 +825,11 @@ Review the steps and try again.
 ****
 * link:{url-devconsole}[Topology View, window="_blank"]
 ****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}/topology/ns/{namespace}[Rocket.Chat Web Client, window="_blank"]
+****
 
 During the prototyping phase we used _Timer_ components to mock _Kafka_ events, and we bypassed the action of pushing the data to the Storage layer.
 
@@ -1113,11 +1119,11 @@ Ensure you select your bucket:
 - `chatrooms-{user-username}.bucket`
 --
 +
+{blank}
++
 You should find a CSV file (comma separated values) containing the exchanges you triggered between the different chat platforms.
 +
 image::images/s3-browser-data.png[align="left", width=100%]
-+
-{empty} +
 +
 --
 . Select your bucket: `chatrooms-{user-username}.bucket`
