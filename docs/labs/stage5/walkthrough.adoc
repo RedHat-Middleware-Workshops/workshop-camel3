@@ -1023,7 +1023,7 @@ You need to obtain the following credentials to configure _Camel_:
 They have been made available in _Rocket.Chat_. +
 Find them in the `#general` channel:
 +
-image::images/rc-s3-credentials.png[align="left", width=60%]
+image::images/rc-s3-credentials.png[align="left", width=80%]
 +
 --
 . Click on the `#general` channel.
@@ -1135,7 +1135,7 @@ NOTE: When no new Kafka messages are available, no aggregation occurs and theref
 
 When _Camel_ completes a run you should be able to see the S3 object in its bucket. Use an online web based S3 browser to visualise the data
 
-Open the S3 Browser from the link below:
+. Open the S3 Browser from the link below:
 
 * link:https://www.filestash.app/s3-browser.html[https://www.filestash.app/s3-browser.html, window="_blank"]
 +
@@ -1149,6 +1149,19 @@ https://s3-openshift-storage.{openshift-app-host}/
 image::images/s3-browser.png[align="left", width=40%]
 +
 {empty} +
+
+. Once connected, navigate to your data, as per the image below:
++
+image::images/s3-browser-data.png[align="left", width=100%]
++
+{empty} +
++
+You should find a CSV file (comma separated values) containing the exchanges between the different chat platforms.
++
+{empty} +
++
+NOTE: When no new Kafka messages are available, no aggregation occurs and therefore no upload to S3 takes place.
+
 
 Alternatively, you can very quickly create a Camel consumer to visually confirm the data was correctly uploaded. Here's how:
 
