@@ -1087,51 +1087,7 @@ After the first run (blue color), it will terminate and wait for the next run (g
 +
 {empty} +
 
-. Visualise the uploads in the Console UI
-+
-When _Camel_ completes a run you should be able to see in the UI console the S3 object in its bucket.
-+
-Open the storage UI from the link below:
-+
---
-* link:https://noobaa-mgmt-openshift-storage.{openshift-app-host}/fe?skip-oauth[Storage admin console, window="_blank"]
---
-+
-{blank}
-+
-Enter the admin credentials (ask for them to your workshop administrator). +
-Click `Login`.
-+
-image::images/noobaa-login.png[align="left", width=40%]
-+
-{blank}
-+
-Then from the left vertical menu, select `Buckets`:
-+
-image::images/noobaa-buckets.png[align="left", width=20%]
-+
-{blank}
-+
-Select your bucket (as defined in your _Camel_ process):
-+
-image::images/noobaa-bucket-user.png[align="left", width=90%]
-+
-{blank}
-+
-From the bucket view, select `Objects`, as per the picture below:
-+
-image::images/noobaa-objects.png[align="left", width=90%]
-+
-{blank}
-+
-You should then see (enclosed in red) the list of objects _Camel_ has uploaded, as many as runs where Kafka events where available.
-+
-NOTE: When no new Kafka messages are available, no aggregation occurs and therefore no upload to S3 takes place.
-
-{empty} +
-
 === Viewing S3 object contents
-
 
 When _Camel_ completes a run you should be able to see the S3 object in its bucket. Use an online web based S3 browser to visualise the data
 
@@ -1150,18 +1106,29 @@ image::images/s3-browser.png[align="left", width=40%]
 +
 {empty} +
 
-. Once connected, navigate to your data, as per the image below:
+. Once connected, navigate to your data, as per the image below: +
+Ensure you select your bucket:
++
+--
+- `chatrooms-{user-username}.bucket`
+--
++
+You should find a CSV file (comma separated values) containing the exchanges you triggered between the different chat platforms.
 +
 image::images/s3-browser-data.png[align="left", width=100%]
 +
 {empty} +
 +
-You should find a CSV file (comma separated values) containing the exchanges between the different chat platforms.
+--
+. Select your bucket: `chatrooms-{user-username}.bucket`
+. Navigate the folders and open the CSV file.
+--
 +
 {empty} +
 +
 NOTE: When no new Kafka messages are available, no aggregation occurs and therefore no upload to S3 takes place.
 
+{empty} +
 
 Alternatively, you can very quickly create a Camel consumer to visually confirm the data was correctly uploaded. Here's how:
 
