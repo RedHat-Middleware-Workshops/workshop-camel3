@@ -6,7 +6,7 @@
 :url-rocketchat: https://rocketchat-rocketchat.{openshift-app-host}
 
 // URLs
-:codeready-url: http://codeready-che.{openshift-app-host}/
+:codeready-url: http://devspaces.{openshift-app-host}/
 :invite-url: http://invite-webapp.{openshift-app-host}
 
 ifdef::env-github[]

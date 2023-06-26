@@ -2,7 +2,7 @@
 :user-password: openshift
 :namespace: {user-username}
 
-:url-codeready: http://codeready-che.{openshift-app-host}/
+:url-codeready: http://devspaces.{openshift-app-host}/
 :url-devconsole: {openshift-host}/topology/ns/{namespace}
 :url-rocketchat: https://rocketchat-rocketchat.{openshift-app-host}
 

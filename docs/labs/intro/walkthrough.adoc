@@ -3,7 +3,7 @@
 :namespace: {user-username}
 
 // URLs
-:codeready-url: http://codeready-che.{openshift-app-host}/
+:codeready-url: http://devspaces.{openshift-app-host}/
 
 ifdef::env-github[]
 endif::[]
