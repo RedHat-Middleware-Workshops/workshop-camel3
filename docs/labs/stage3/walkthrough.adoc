@@ -239,7 +239,7 @@ touch maps/k2m.jslt<br>
 +
 After executing the commands above, have a look in your editor's tree view to confirm it looks healthy. It should be similar to:
 +
-image::images/lab-setup.png[align="left", width=20%]
+image::images/lab-setup.png[align="left", width=30%]
 +
 {empty} +
 
