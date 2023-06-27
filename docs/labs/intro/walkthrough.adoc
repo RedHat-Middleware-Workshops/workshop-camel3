@@ -215,8 +215,6 @@ image::images/00-crw-dashboard.png[CodeReady Dashboard, role="integr8ly-img-resp
 
 This workshop provides a single, pre-configured workspace with plugins, source code, and even container images that have various Command-Line Interface (CLI) tools installed.
 
-{empty} +
-
 . Click the *Open* link for the workspace named `dayinthelife-workspace`.
 +
 image::images/001-open-workspace.png[Open CodeReady Workspace, role="integr8ly-img-responsive"]
@@ -254,17 +252,15 @@ These CLI tools are available directly inside your Workspace via tools container
 
 Access the *tools* container(s) like so:
 
-CAUTION: There are *TWO* terminal options available, make sure you select the one indicated in the picture below (*number 2 in red*).
-
 . Click on the _hamburger-icon_ button on the upper-left corner of your IDE.
 . Then, select *Terminal* -> *New Terminal*.
 +
 {blank}
 +
 image::images/02-crw-tools-container.png[Open Terminal, role="integr8ly-img-responsive"]
-
++
 {blank}
-
++
 A terminal window should open at the bottom of the screen. This terminal is attached to the running tools container and is also running on _OpenShift_. This is the place where you will issue most of the commands from this workshop.
 
 {empty} +

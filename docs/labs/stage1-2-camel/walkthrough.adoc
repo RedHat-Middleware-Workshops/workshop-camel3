@@ -261,14 +261,6 @@ jbang cache clear
 ```
 --
 +
-[WARNING]
---
-If the command above failed with the message `camel not found`, you may have instantiated the wrong terminal. Make sure you open the *Tools* terminal as per the picture below:
-
-image::images/tools-terminal.png[align="left", width=15%]
-
---
-+
 {blank}
 +
 _Camel JBang_ will build a local runnable and start it. +
