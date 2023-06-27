@@ -184,7 +184,14 @@ The development environment you use throughout the workshop is a web-hosted IDE 
 To access your development environment:
 
 . Click the link:{codeready-url}[Console, window="_blank"] link under the *Red Hat OpenShift Dev Spaces* in the *Resources* panel on the right.
-. Log in using your username (`{user-username}`) and password (`{user-password}`)
+. You'll be first prompted to choose OpenShift to login. +
+Click the button `Log in with OpenShift`:
++
+image:images/000-codeready-login-with-ocp.png[align="left", width=40%]
++
+{blank}
++
+. Then, log in using your username (`{user-username}`) and password (`{user-password}`)
 +
 image:images/000-codeready-login.png[OpenShift Dev Spaces Login, role="integr8ly-img-responsive"]
 +
@@ -215,7 +222,7 @@ This will start an instance of the workspace. Please wait a few moments while it
 . When the IDE appears:
 +
 --
-* ensure you click `Yes, I trust` when the following message shows on the bottom right corner:
+* ensure you click `Yes, I trust the authors` when the following message shows on your screen:
 +
 image::images/crw-trust-project.png[Trust Workshop Project, role="integr8ly-img-responsive", align="left", width=50%]
 +
