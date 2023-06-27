@@ -1463,18 +1463,6 @@ public class wsConfig extends RouteBuilder {
 * A filter method defines an instruction that adds the `Origin` header.
 --
 +
-[NOTE] 
---
-After some time, the IDE will highlight on screen many errors in red, as per the picture below:
-
-image::images/ide-errors-java.png[align="left", width=90%]
-
-{blank}
-
-Ignore the errors. +
-_Camel JBang_ and _Camel K_ will resolve dependencies automatically by analysing the code. The IDE is not able to find the packages because our _Camel_ sources are not packaged in a conventional _Maven_ project. 
---
-+
 {empty} +
 +
 Save changes.

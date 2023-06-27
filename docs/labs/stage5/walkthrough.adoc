@@ -427,7 +427,7 @@ In the code you'll find the following highlights:
 
 * On normal aggregations (old and new exchanges provided), the method appends the new data to the already aggregated data from preceding iterations (handed in the `oldExchange`).
 
-
+{empty} +
 
 [time=5]
 [id="create-camel-routes"]
@@ -492,8 +492,6 @@ You will first build your integration bypassing the endpoints, and when you're c
 {empty} +
 
 === Process definition
-
-
 
 . Create your _Camel_ definition file
 +
@@ -1140,7 +1138,7 @@ NOTE: When no new Kafka messages are available, no aggregation occurs and theref
 
 {empty} +
 
-Alternatively, you can very quickly create a Camel consumer to visually confirm the data was correctly uploaded. Here's how:
+Alternatively, you can very quickly create a _Camel_ consumer to visually confirm the data was correctly uploaded. Here's how:
 
 . Add a new `.view` property in `stage5.properties`
 +
