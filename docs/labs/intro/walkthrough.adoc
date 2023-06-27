@@ -183,8 +183,10 @@ The development environment you use throughout the workshop is a web-hosted IDE 
 
 To access your development environment:
 
-. Click the link:{codeready-url}[Console, window="_blank"] link under the *Red Hat OpenShift Dev Spaces* in the *Resources* panel on the right.
-. You'll be first prompted to choose OpenShift to login. +
+. Click this link:{codeready-url}[Console, window="_blank"] link. +
+(Also accessible from the *Resources* panel on the right, under *Red Hat OpenShift Dev Spaces*).
+
+. You'll be first prompted to choose _OpenShift_ to log in. +
 Click the button `Log in with OpenShift`:
 +
 image:images/000-codeready-login-with-ocp.png[align="left", width=40%]
@@ -194,6 +196,12 @@ image:images/000-codeready-login-with-ocp.png[align="left", width=40%]
 . Then, log in using your username (`{user-username}`) and password (`{user-password}`)
 +
 image:images/000-codeready-login.png[OpenShift Dev Spaces Login, role="integr8ly-img-responsive"]
++
+{empty} +
++
+. Next, authorise access, click `Allow selected permissions`
++
+image::images/00-crw-dashboard-auth.png[align="left", width=50%]
 +
 {empty} +
 +
@@ -209,7 +217,7 @@ This workshop provides a single, pre-configured workspace with plugins, source c
 
 {empty} +
 
-. Click the *Open* link for the workspace named `camel3-workshop-{user-username}`.
+. Click the *Open* link for the workspace named `dayinthelife-workspace`.
 +
 image::images/001-open-workspace.png[Open CodeReady Workspace, role="integr8ly-img-responsive"]
 +
@@ -221,30 +229,23 @@ This will start an instance of the workspace. Please wait a few moments while it
 
 . When the IDE appears:
 +
---
-* ensure you click `Yes, I trust the authors` when the following message shows on your screen:
+Ensure you click `Yes, I trust the authors` when the following message shows on your screen:
 +
 image::images/crw-trust-project.png[Trust Workshop Project, role="integr8ly-img-responsive", align="left", width=50%]
 +
-{blank}
-+
-* Ensure you close the following options:
-+
-image::images/crw-close-options.png[Close other suggestions, role="integr8ly-img-responsive", align="left", width=50%]
---
-+
 {empty} +
 
-. Close the welcome and README tab and the other open dialogs by clicking the *x*, then click on the Explorer (file) icon on the left side bar. The Explorer shows you the *MessageHub* folder with the required projects and lab files.
+. Close the `welcome` tab by clicking the *x*. +
+The Explorer shows you the *MESSAGE-HUB* folder where you will be working.
 +
 image::images/01-crw-welcome.png[CodeReady Welcome screen, role="integr8ly-img-responsive"]
 +
 [NOTE]
 ====
-This IDE is based on *CodeReady*, which is in turn is based on Microsoft VSCode. It will look familiar if you have already used it.
-
-You can close the _Problems_ and _Output_ views to clear space.
+This IDE is based on _Microsoft VSCode_. It will look familiar if you have already used it.
 ====
++
+{empty} +
 
 === Accessing a Terminal
 
@@ -255,8 +256,8 @@ Access the *tools* container(s) like so:
 
 CAUTION: There are *TWO* terminal options available, make sure you select the one indicated in the picture below (*number 2 in red*).
 
-. Click on the _My Workspace_ (cube) icon on the right side panel.
-. Click on *User Runtimes* -> *tools* -> *>_ New terminal*.
+. Click on the _hamburger-icon_ button on the upper-left corner of your IDE.
+. Then, select *Terminal* -> *New Terminal*.
 +
 {blank}
 +
@@ -264,18 +265,20 @@ image::images/02-crw-tools-container.png[Open Terminal, role="integr8ly-img-resp
 
 {blank}
 
-A terminal window should be open at the bottom of the screen. This terminal is attached to the running CodeReady container and is also running on OpenShift. This is the place where you will issue most of the commands from this workshop.
+A terminal window should open at the bottom of the screen. This terminal is attached to the running tools container and is also running on _OpenShift_. This is the place where you will issue most of the commands from this workshop.
 
 {empty} +
 
 === Login into OpenShift using the CLI
 
 . Open a terminal using the instructions from the previous section.
+
+
 . In the terminal tab, issue the following command:
 +
 [source,bash,subs="attributes+"]
 ----
-oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+oc project {namespace}
 ----
 +
 {blank}
@@ -285,36 +288,19 @@ oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:
 * To copy the content of snippets of code, as above, click on the copy button on the right side of snippet box.
 * Perform the same copy action for other snippets along the workshop to complete the exercises.
 ====
-. You should see something like the following (the project names may be different):
+
+. You should see something like the following:
 +
 [subs="attributes+"]
 ----
-Login successful.
-
-You have access to the following projects and can switch between them with 'oc project <projectname>':
-
-  * {user-username}
-    {user-username}-che
-    {user-username}-shared-475f
-    {user-username}-workshop-a14c
-
-Using project "user1".
-Welcome! See 'oc help' to get started.
+message-hub (main) $ oc project {user-username}
+Now using project "{user-username}" on server "https://172.30.0.1:443".
+message-hub (main) $ 
 ----
-+
-{blank}
-+
-image:images/002-terminal-cli-login.png[OC Login Command, role="integr8ly-img-responsive"]
 +
 {empty} +
-
-. Most of the work will be deploy to your own `{namespace}` project namespace. +
-Be sure to have it as a _working_ project by executing the following command:
 +
-[source,bash,subs="attributes+"]
-----
-oc project {namespace}
-----
+. Most of the work will be deployed into your own `{namespace}` project namespace.
 
 {empty} +
 
