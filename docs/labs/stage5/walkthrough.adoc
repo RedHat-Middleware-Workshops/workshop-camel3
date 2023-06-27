@@ -193,11 +193,15 @@ The first step is to create a little prototype that will validate our _Camel_ ro
 
 . Close tabs
 +
-image::images/crw-close-tabs.png[align="left", width=50%]
+image::images/crw-close-tabs.png[align="left", width=100%]
 +
 {blank}
 +
-Before you start this new lab, make sure you close in your editor all the tabs (source files) from previous exercises.
+Before you start this second lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
++
+1) Click on the file explorer's `...` button +
+2) Ensure your `Open Editors` is ticked [√] +
+3) Click the `Close all Editors` button.
 +
 {empty} +
 
