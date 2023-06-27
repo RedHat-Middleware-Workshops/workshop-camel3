@@ -70,7 +70,7 @@ The instructions below are divided in two segments:
 [type=taskResource]
 .Rocket.Chat
 ****
-* link:{url-rocketchat}/topology/ns/{namespace}[Rocket.Chat Web Client, window="_blank"]
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
 ****
 
 This workshop has been designed to attend two different user profiles:
@@ -572,7 +572,7 @@ Did you see the message in _Matrix_ showing up in _Rocket.Chat_?
 [type=taskResource]
 .Rocket.Chat
 ****
-* link:{url-rocketchat}/topology/ns/{namespace}[Rocket.Chat Web Client, window="_blank"]
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
 ****
 
 Up until now you've only worked locally (in your dev UI and terminal). This phase has allowed you to prototype fast and produce code you feel confident with.
@@ -651,14 +651,7 @@ spec:
 
 . Push configuration and resources to _OpenShift_
 +
-.. If you didn't log in yet to _OpenShift_, run the following command:
-+
-[source,bash,subs="attributes+"]
-----
-oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
-----
-+
-.. Make sure the _working_ project in _OpenShift_ is selected by executing the following command:
+.. For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
 +
 [source,bash,subs="attributes+"]
 ----

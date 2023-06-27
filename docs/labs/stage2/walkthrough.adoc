@@ -116,7 +116,7 @@ Luckily, you've already done all the necessary onboarding setup with both chat s
 [type=taskResource]
 .Rocket.Chat
 ****
-* link:{url-rocketchat}/topology/ns/{namespace}[Rocket.Chat Web Client, window="_blank"]
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
 ****
 
 This process is identical to the one you've already created in Lab 1, except there is situation you need to prevent. +
@@ -174,13 +174,13 @@ Before you start this second lab, make sure you close in your editor all the tab
 +
 {empty} +
 
-.. Login to _OpenShift_ 
+.. Select your _OpenShift_ project 
 +
-For those resuming work from a previous day, ensure you reconnect your `oc` client with _OpenShift_ by running the following login command:
+For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
 +
 [source,bash,subs="attributes+"]
 ----
-oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+oc project {namespace}
 ----
 +
 {empty} +
@@ -470,7 +470,7 @@ Inspect in the pod logs to troubleshoot.
 [type=taskResource]
 .Rocket.Chat
 ****
-* link:{url-rocketchat}/topology/ns/{namespace}[Rocket.Chat Web Client, window="_blank"]
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
 ****
 
 This process is equivalent to the previous one, but designed to enable the opposite data flow.

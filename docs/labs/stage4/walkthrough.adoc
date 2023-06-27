@@ -320,11 +320,11 @@ image::images/camel-jbang.png[align="left", width=40%]
 
 {empty} +
 
-For those resuming work from a previous day, ensure you reconnect your `oc` client with _OpenShift_ by running the following login command:
+For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
 
 [source,bash,subs="attributes+"]
 ----
-oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+oc project {namespace}
 ----
 
 {empty} +
@@ -824,7 +824,7 @@ Press `ctrl`+`c` to stop _Camel JBang_.
 [type=taskResource]
 .Rocket.Chat
 ****
-* link:{url-rocketchat}/topology/ns/{namespace}[Rocket.Chat Web Client, window="_blank"]
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
 ****
 
 We have now the building block we were missing, we can now bind our _Discord_ _Kamelet_ to _Kafka_ to push chat conversations to _Discord_.
@@ -934,13 +934,13 @@ And that's it, ready to be deployed.
 
 === Deploy and test
 
-. Login to _OpenShift_ 
+. Select your _OpenShift_ project
 +
-For those resuming work from a previous day, ensure you reconnect your `oc` client with _OpenShift_ by running the following login command:
+For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
 +
 [source,bash,subs="attributes+"]
 ----
-oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+oc project {namespace}
 ----
 +
 {empty} +
@@ -1067,7 +1067,7 @@ Inspect in the pod logs to troubleshoot.
 [type=taskResource]
 .Rocket.Chat
 ****
-* link:{url-rocketchat}/topology/ns/{namespace}[Rocket.Chat Web Client, window="_blank"]
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
 ****
 
 In previous exercises we kept using _Kamelets_ to define processing flows. This task however requires more developer control.
@@ -1523,13 +1523,13 @@ Press `ctrl`+`c` to stop _Camel JBang_.
 
 You have successfully tested your integration locally. It is time to deploy it in _OpenShift_.
 
-. Login to _OpenShift_ 
+. Select your _OpenShift_ project
 +
-For those resuming work from a previous day, ensure you reconnect your `oc` client with _OpenShift_ by running the following login command:
+For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
 +
 [source,bash,subs="attributes+"]
 ----
-oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+oc project {namespace}
 ----
 +
 {empty} +

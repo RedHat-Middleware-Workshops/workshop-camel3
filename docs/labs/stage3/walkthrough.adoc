@@ -117,11 +117,11 @@ image::images/standard-data-model.png[align="center", width=90%]
 * link:{url-codeready}[Console, window="_blank"]
 ****
 
-For those resuming work from a previous day, ensure you reconnect your `oc` client with _OpenShift_ by running the following login command:
+For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
 
 [source,bash,subs="attributes+"]
 ----
-oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+oc project {namespace}
 ----
 
 {empty} +
@@ -279,7 +279,7 @@ Make sure the syntax of the commands are compatible with with your environment a
 [type=taskResource]
 .Rocket.Chat
 ****
-* link:{url-rocketchat}/topology/ns/{namespace}[Rocket.Chat Web Client, window="_blank"]
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
 ****
 
 The two data flows we have created in previous labs are almost identical in terms of processing steps, those are:
@@ -538,7 +538,7 @@ Very straightforward, nothing else to be done here.
 [type=taskResource]
 .Rocket.Chat
 ****
-* link:{url-rocketchat}/topology/ns/{namespace}[Rocket.Chat Web Client, window="_blank"]
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
 ****
 
 The processing steps still remain essentially the same:
@@ -827,18 +827,18 @@ And you're done with the _Kafka_ -> _Rocket.Chat_ changes.
 [type=taskResource]
 .Rocket.Chat
 ****
-* link:{url-rocketchat}/topology/ns/{namespace}[Rocket.Chat Web Client, window="_blank"]
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
 ****
 
 We've covered a lot of ground. It would be normal to make mistakes. Hopefully the helper guide kept those to a minimum and, once deployed, you can see your integrations working in healthy state and delivering the expected outcome.
 
-. Login to _OpenShift_ 
+. Select your _OpenShift_ project
 +
-For those resuming work from a previous day, ensure you reconnect your `oc` client with _OpenShift_ by running the following login command:
+For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
 +
 [source,bash,subs="attributes+"]
 ----
-oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+oc project {namespace}
 ----
 +
 {empty} +
