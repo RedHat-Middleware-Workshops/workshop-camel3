@@ -1217,8 +1217,14 @@ In the Camel route above:
 Execute the following _Camel JBang_ command:
 +
 ```bash
-camel run view.xml stage5.properties
+camel run view.xml stage5.properties \
+--deps=mvn:org.apache.camel:camel-aws2-s3:3.19.0
 ```
++
+[NOTE] 
+--
+We include an explicit dependency (`3.19.0`) because the component is currently not behaving properly on its head version. This problem will be addressed and fixed.
+--
 +
 {empty} +
 +
