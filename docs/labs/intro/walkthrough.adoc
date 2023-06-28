@@ -211,7 +211,7 @@ image::images/00-crw-dashboard.png[CodeReady Dashboard, role="integr8ly-img-resp
 
 {empty} +
 
-=== Accessing your CodeReady Workspace
+=== Accessing your DevSpaces Workspace
 
 This workshop provides a single, pre-configured workspace with plugins, source code, and even container images that have various Command-Line Interface (CLI) tools installed.
 

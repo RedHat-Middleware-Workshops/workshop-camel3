@@ -212,7 +212,9 @@ From Matrix:
 . Then, click _"All settings"_
 . Select _"Help & About"_
 . Scroll to the very bottom, and click _"Access Token"_
-. Finally, click the _Copy_ button
+. Click the _Copy_ button
+
+Finally, paste the value you copied into the `matrix.token` parameter.
 --
 +
 {empty} +
@@ -227,7 +229,9 @@ From Matrix:
 . Start from the _"Room options"_.
 . Then, click _"Settings"_.
 . Select _"Advanced"_.
-. Finally, click the _Copy_ button of the _"Internal room ID"_.
+. Click the _Copy_ button of the _"Internal room ID"_.
+
+Finally, paste the value you copied into the `matrix.room` parameter.
 --
 +
 {empty} +
@@ -290,7 +294,7 @@ Your terminal should show the arrival of a _Matrix_ event similar to the followi
 {blank}
 +
 Hopefully you've been successful in capturing _Matrix_ messages with _Camel_. +
-Press `Ctrl`+`C` to stop _Camel_.
+To stop the running _Camel_ process, from your terminal, press `Ctrl`+`C`.
 +
 [TIP]
 --
