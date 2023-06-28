@@ -214,6 +214,8 @@ From Matrix:
 . Scroll to the very bottom, and click _"Access Token"_
 . Click the _Copy_ button
 
+{blank}
+
 Finally, paste the value you copied into the `matrix.token` parameter.
 --
 +
@@ -230,6 +232,8 @@ From Matrix:
 . Then, click _"Settings"_.
 . Select _"Advanced"_.
 . Click the _Copy_ button of the _"Internal room ID"_.
+
+{blank}
 
 Finally, paste the value you copied into the `matrix.room` parameter.
 --
