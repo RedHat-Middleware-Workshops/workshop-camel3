@@ -391,10 +391,25 @@ Ensure you configure with your _Discord_ values, and save changes.
 
 - `token`
 +
-Obtain the _Discord_ token with 1 of these 3 options, and replace `YOUR_TOKEN`:
+Obtain the _Discord_ token following one of the options listed below, and replace `YOUR_TOKEN`:
 +
 =====
-** *Option 1*: Try the link below:
+
+** *Option 1*: Try in _Rocket.Chat_:
++
+They may be available in _Rocket.Chat_. +
+Look in the `#general` channel:
++
+image::images/rc-discord-credentials.png[align="left", width=90%]
++
+=========
+. Click on the `#general` channel.
+. Copy the credentials to configure _Camel_.
+=========
++
+{empty} +
+
+** *Option 2*: Try the link below:
 +
 WARNING: The link may fail if the cluster did not enable token resolution. +
 If it fails, choose [*Option 2*] or [*Option 3*].
@@ -403,7 +418,7 @@ If it fails, choose [*Option 2*] or [*Option 3*].
 +
 {empty} +
 
-** *Option 2*: Ask your instructor/administrator for the token to use to connect to Discord.
+** *Option 3*: Ask your instructor/administrator for the token to use to connect to Discord.
 +
 [TIP]
 ====
@@ -412,7 +427,7 @@ The workshop slides should contain the token values valid for today's session:
 image::images/apps-tokens.png[align="left", width=80%]
 
 ====
-** *Option 3*: if you created your own _Discord_ App, use your App's `Bot User OAuth Token`
+** *Option 4*: if you created your own _Discord_ App, use your App's `Bot User OAuth Token`
 =====
 
 {empty} +
