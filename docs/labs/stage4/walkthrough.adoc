@@ -222,12 +222,6 @@ For example, if your username is:
 --
 +
 {empty} +
-+
-Alternatively, you can also create your own room (channel), use the prefix `room_`, for example:
-
-* `room_x`
-
-{empty} +
 
 === Connecting Camel to Discord
 
