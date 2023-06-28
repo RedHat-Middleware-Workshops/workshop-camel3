@@ -210,7 +210,7 @@ Before you start this second lab, make sure you close in your editor all the tab
 +
 [subs=]
 ```bash
-cd /projects/MessageHub
+cd /projects/message-hub
 mkdir lab5
 cd lab5
 cp ../support/labs/stage5/HelperStage5.java .<br>

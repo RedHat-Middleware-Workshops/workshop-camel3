@@ -162,7 +162,7 @@ Before you start this second lab, make sure you close in your editor all the tab
 +
 [subs=]
 ```bash
-cd /projects/MessageHub
+cd /projects/message-hub
 cp -r lab2 lab3
 cd lab3
 mv stage2.properties stage3.properties
@@ -173,7 +173,7 @@ grep -rl stage2 . | xargs sed -i 's/stage2/stage3/g'<br>
 // +
 // [subs=]
 // ```bash
-// cd /projects/MessageHub
+// cd /projects/message-hub
 // cp -r lab2 lab3
 // cd lab3
 // mv stage2.properties stage3.properties

@@ -352,7 +352,7 @@ Before you start this second lab, make sure you close in your editor all the tab
 +
 [subs=]
 ```bash
-cd /projects/MessageHub
+cd /projects/message-hub
 mkdir lab4-k2d
 cd lab4-k2d<br>
 ```
@@ -1165,7 +1165,7 @@ Execute the following commands to create your working folder and configuration:
 +
 [subs=]
 ```bash
-cd /projects/MessageHub
+cd /projects/message-hub
 mkdir lab4-d2k
 cd lab4-d2k
 cp ../lab4-k2d/stage4.properties .<br>

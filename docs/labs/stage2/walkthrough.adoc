@@ -195,7 +195,7 @@ oc project {namespace}
 +
 [subs=]
 ```bash
-cd /projects/MessageHub
+cd /projects/message-hub
 cp -r lab1 lab2
 cd lab2<br>
 ```
