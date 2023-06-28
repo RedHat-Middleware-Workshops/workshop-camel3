@@ -78,7 +78,7 @@ You only need to define and configure sources, steps and sinks in Kamelet Bindin
 
 {empty} +
 
-The picture billow illustrates two data flows interconnecting both chat systems, one for each direction of communication:
+The picture below illustrates two data flows interconnecting both chat systems, one for each direction of communication:
 
 // image::images/processing-flow.png[title="Data flow",align="center",title-align=center, width=80%]
 image::images/data-flow.png[align="center", width=80%]

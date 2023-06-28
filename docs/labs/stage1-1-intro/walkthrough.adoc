@@ -55,7 +55,7 @@ The way this user consumes _Camel_ is by selecting catalog _Kamelets_ and creati
 [id="scenario-intro"]
 == Scenario introduction
 
-The picture billow illustrates the data flow traversing our Camel instance:
+The picture below illustrates the data flow traversing our Camel instance:
 
 image::images/data-flow.png[align="center", width=80%]
 

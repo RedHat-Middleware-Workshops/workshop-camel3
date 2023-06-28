@@ -65,7 +65,7 @@ Technical goals and milestones:
 {empty} +
 
 
-The picture billow illustrates all chat systems communicating via _Kafka_, including the to-be-integrated _Discord_ system, and optionally (for those willing to go the extra mile) _Telegram_.
+The picture below illustrates all chat systems communicating via _Kafka_, including the to-be-integrated _Discord_ system, and optionally (for those willing to go the extra mile) _Telegram_.
 
 image::images/stage-overview-discord.png[align="center", width=80%]
 
