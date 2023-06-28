@@ -281,10 +281,10 @@ There are 3 Kamelets in use:
 Consumes events from _Matrix_.
 
 * *An action* +
-Transforms _Matrix_ events to _Slack_ events (in JSON format).
+Transforms _Matrix_ events to _Rocket.Chat_ events (in JSON format).
 
 * *A sink* +
-Produces events to _Slack_.
+Produces events to _Rocket.Chat_.
 ====
 
 
