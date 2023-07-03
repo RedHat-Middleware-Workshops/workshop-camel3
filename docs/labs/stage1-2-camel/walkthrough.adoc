@@ -342,6 +342,11 @@ Make sure you replace `YOUR_ROOM` with your designated room, for example:
 * `user2` -> use `room2`
 * `userN` -> use `roomN`
 ====
+Your JSLT content should look similar to the image below. The `channel` represents your target room in _Rocket.Chat_, in this example it targets 'room10'.
++
+image::images/jslt-room-config.png[align="left", width=60%]
++
+{blank}
 +
 [NOTE]
 ====
