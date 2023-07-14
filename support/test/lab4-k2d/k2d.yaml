@@ -5,8 +5,8 @@ metadata:
   annotations:
     trait.camel.apache.org/mount.resources: "configmap:stage4-transform"
     trait.camel.apache.org/mount.configs: "secret:stage4"
-
 spec:
+
   source:
     ref:
       kind: KafkaTopic
@@ -14,7 +14,6 @@ spec:
       name: roomx
 
   steps:
-
   # Filter action to prevent death loops
   - ref:
       kind: Kamelet
@@ -22,8 +21,7 @@ spec:
       name: predicate-filter-action
     properties:
       expression: $.source != "discord"
-
-
+      
   - ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
@@ -37,5 +35,5 @@ spec:
       apiVersion: camel.apache.org/v1
       name: discord-sink
     properties:
-      token: "{{discord.token}}"
       channel: "{{discord.channel}}"
+      token: "{{discord.token}}"

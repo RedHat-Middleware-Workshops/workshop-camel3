@@ -1,23 +1,36 @@
-:walkthrough: Gitter to Slack bridge ()
+:walkthrough: Matrix to Rocket.Chat bridge ()
 :user-password: openshift
 :namespace: {user-username}
+
+:url-element: https://app.element.io
+:url-rocketchat: https://rocketchat-rocketchat.{openshift-app-host}
+:url-codeready: http://devspaces.{openshift-app-host}/
+:url-devconsole: {openshift-host}/topology/ns/{namespace}
 
 ifdef::env-github[]
 endif::[]
 
-[id='lab3-gitter-kafka-slack']
-// = Lab 3 - Gitter ⇔ Kafka ⇔ Slack (via streams)
+[id='lab3-matrix-kafka-rocketchat']
+// = Lab 3 - Matrix ⇔ Kafka ⇔ Rocket.Chat (via streams)
 = Lab 3 - Decoupled Re-Architecture
 
 // = [[kubernetes-user]] The Kubernetes user deployment flow
 
 Open the architecture by decoupling the chat systems using streaming capabilities with AMQ Streams.
 
-{empty} + 
+
+Prerequisites: +
+--
+* Ensure you have previously completed the following tiles:
++
+image::images/prereq.png[align="left", width=100%]
+
+{empty} +
+--
 
 *Overview*
 
-Lab 1 and 2 enabled _Gitter_/_Slack_ conversations. However their connectivity was tightly coupled with dedicated data translations between both platforms. On this third lab we want to break them away to open up the architecture in order to welcome additional systems and services.
+Lab 1 and 2 enabled _Matrix_/_Rocket.Chat_ conversations. However their connectivity was tightly coupled with dedicated data translations between both platforms. On this third lab we want to break them away to open up the architecture in order to welcome additional systems and services.
 
 
 {empty} +
@@ -48,7 +61,7 @@ Technical goals and milestones:
 
 {empty} +
 
-The picture billow illustrates an asynchronous decoupled architecture, via a streaming platform (_Kafka_). This approach increases the number of data flows from two to four.
+The picture below illustrates an asynchronous decoupled architecture, via a streaming platform (_Kafka_). This approach increases the number of data flows from two to four.
 
 TIP: At first it seems unnecessary to double the number of data flows, but the benefits outweighs complexity, we gain an easily extensible architecture. In later labs you'll see new additions to the architecture.
 
@@ -61,21 +74,23 @@ image::images/data-flow.png[align="center", width=90%]
 
 In terms of implementation effort for this lab, your main task is to split each of your current data flows (from Lab-2) in two different parts:
 
-- The _Gitter_ to _Slack_ process into:
-. _Gitter_ to _Kafka_
-. _Kafka_ to _Slack_
-- The _Slack_ to _Gitter_ process into:
-. _Slack_ to _Kafka_
-. _Kafka_ to _Gitter_
+- The _Matrix_ to _Rocket.Chat_ process into:
+. _Matrix_ to _Kafka_
+. _Kafka_ to _Rocket.Chat_
++
+{empty} +
+- The _Rocket.Chat_ to _Matrix_ process into:
+. _Rocket.Chat_ to _Kafka_
+. _Kafka_ to _Matrix_
 
 {empty} +
 
 One fundamental architecture consideration is that if we want an easy to plugin platform where other communication systems or services need to plugin with ease, we should adopt a standard data model. It would establish a common interface for systems willing to integrate with the platform.
 
-This implies that instead of applying platform specific data transformations (eg. _Gitter_ data model to _Slack_ data model), we apply the following data transformations:
+This implies that instead of applying platform specific data transformations (eg. _Matrix_ data model to _Rocket.Chat_ data model), we apply the following data transformations:
 
-- System specific to standard data model (e.g. _Gitter_/_Slack_ to _Kafka_)
-- Standard data model to system specific (e.g. _Kafka_ to _Gitter_/_Slack_)
+- System specific to standard data model (e.g. _Matrix_/_Rocket.Chat_ to _Kafka_)
+- Standard data model to system specific (e.g. _Kafka_ to _Matrix_/_Rocket.Chat_)
 
 {empty} +
 
@@ -90,11 +105,23 @@ image::images/standard-data-model.png[align="center", width=90%]
 [id="setup"]
 == Setup the Lab working folder
 
-For those resuming work from a previous day, ensure you reconnect your `oc` client with _OpenShift_ by running the following login command:
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+
+For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
 
 [source,bash,subs="attributes+"]
 ----
-oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+oc project {namespace}
 ----
 
 {empty} +
@@ -102,14 +129,10 @@ oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:
 First of all, ensure you undeploy Lab2's _Kamelet_ bindings, otherwise they will enter in conflict with the ones we're about to create:
 [subs=]
 ```bash
-oc delete klb g2s
-oc delete klb s2g
+oc delete klb m2r
+oc delete klb r2m
 <br>
 ```
-{empty} +
-
-Also, before you start this second lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
-
 {empty} +
 
 
@@ -119,30 +142,44 @@ We use Lab-2 as the base for this next stage.
 The following set of instructions prepare the set of files you will be working with: 
 
 
+. Close tabs
++
+image::images/crw-close-tabs.png[align="left", width=100%]
++
+{blank}
++
+Before you start this second lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
++
+1) Click on the file explorer's `...` button +
+2) Ensure your `Open Editors` is ticked [√] +
+3) Click the `Close all Editors` button.
++
+{empty} +
+
 . Prepare Lab 3 folder
 +
 * **Linux**
 +
 [subs=]
 ```bash
-cd /projects/MessageHub
+cd /projects/message-hub
 cp -r lab2 lab3
 cd lab3
 mv stage2.properties stage3.properties
 grep -rl stage2 . | xargs sed -i 's/stage2/stage3/g'<br>
 ```
 +
-* **MacOS**
-+
-[subs=]
-```bash
-cd /projects/MessageHub
-cp -r lab2 lab3
-cd lab3
-mv stage2.properties stage3.properties
-grep -rl stage2 . | xargs sed -i '' 's/stage2/stage3/g'<br>
-```
-+
+// * **MacOS**
+// +
+// [subs=]
+// ```bash
+// cd /projects/message-hub
+// cp -r lab2 lab3
+// cd lab3
+// mv stage2.properties stage3.properties
+// grep -rl stage2 . | xargs sed -i '' 's/stage2/stage3/g'<br>
+// ```
+// +
 {empty} +
 
 . Split each YAML file in two:
@@ -151,10 +188,10 @@ grep -rl stage2 . | xargs sed -i '' 's/stage2/stage3/g'<br>
 +
 [subs=]
 ```bash
-mv g2s.yaml g2k.yaml
-cp g2k.yaml k2s.yaml
-mv s2g.yaml s2k.yaml
-cp s2k.yaml k2g.yaml
+mv m2r.yaml m2k.yaml
+cp m2k.yaml k2r.yaml
+mv r2m.yaml r2k.yaml
+cp r2k.yaml k2m.yaml
 mkdir flows
 mv *.yaml flows/<br>
 ```
@@ -167,22 +204,22 @@ mv *.yaml flows/<br>
 +
 [subs=]
 ```bash
-sed -i 's/g2s/g2k/g' flows/g2k.yaml
-sed -i 's/g2s/k2s/g' flows/k2s.yaml
-sed -i 's/s2g/s2k/g' flows/s2k.yaml
-sed -i 's/s2g/k2g/g' flows/k2g.yaml<br>
+sed -i 's/m2r/m2k/g' flows/m2k.yaml
+sed -i 's/m2r/k2r/g' flows/k2r.yaml
+sed -i 's/r2m/r2k/g' flows/r2k.yaml
+sed -i 's/r2m/k2m/g' flows/k2m.yaml<br>
 ```
 +
-* **MacOS**
-+
-[subs=]
-```bash
-sed -i '' 's/g2s/g2k/g' flows/g2k.yaml
-sed -i '' 's/g2s/k2s/g' flows/k2s.yaml
-sed -i '' 's/s2g/s2k/g' flows/s2k.yaml
-sed -i '' 's/s2g/k2g/g' flows/k2g.yaml<br>
-```
-+
+// * **MacOS**
+// +
+// [subs=]
+// ```bash
+// sed -i '' 's/m2r/m2k/g' flows/m2k.yaml
+// sed -i '' 's/m2r/k2r/g' flows/k2r.yaml
+// sed -i '' 's/r2m/r2k/g' flows/r2k.yaml
+// sed -i '' 's/r2m/k2m/g' flows/k2m.yaml<br>
+// ```
+// +
 {empty} +
 
 . Prepare JSLTs:
@@ -191,10 +228,10 @@ sed -i '' 's/s2g/k2g/g' flows/k2g.yaml<br>
 ```bash
 rm *.jslt
 mkdir maps
-touch maps/g2k.jslt
-touch maps/k2s.jslt
-touch maps/s2k.jslt
-touch maps/k2g.jslt<br>
+touch maps/m2k.jslt
+touch maps/k2r.jslt
+touch maps/r2k.jslt
+touch maps/k2m.jslt<br>
 ```
 {empty} +
 
@@ -202,7 +239,7 @@ touch maps/k2g.jslt<br>
 +
 After executing the commands above, have a look in your editor's tree view to confirm it looks healthy. It should be similar to:
 +
-image::images/lab-setup.png[align="left", width=20%]
+image::images/lab-setup.png[align="left", width=30%]
 +
 {empty} +
 
@@ -220,8 +257,35 @@ Make sure the syntax of the commands are compatible with with your environment a
 
 
 [time=5]
-[id="gitter-slack-to-kafka"]
-== Gitter/Slack to Kafka
+[id="matrix-rocketchat-to-kafka"]
+== Matrix/Rocket.Chat to Kafka
+
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+[type=taskResource]
+.Matrix
+****
+* link:{url-element}[Matrix Web Client, window="_blank"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
+****
 
 The two data flows we have created in previous labs are almost identical in terms of processing steps, those are:
 
@@ -232,13 +296,13 @@ The two data flows we have created in previous labs are almost identical in term
 
 {empty} +
 
-For the processes from _Gitter_/_Slack_ to _Kafka_, the steps remain the same, we just need to switch to the standard data model (step 3) and target _Kafka_ instead (step 4).
+For the processes from _Matrix_/_Rocket.Chat_ to _Kafka_, the steps remain the same, we just need to switch to the standard data model (step 3) and target _Kafka_ instead (step 4).
 
 {empty} +
 
 === Process overview
 
-The diagram below applies to the data flows (2 of them) from _Gitter_/_Slack_ respectively to _Kafka_:
+The diagram below applies to the data flows (2 of them) from _Matrix_/_Rocket.Chat_ respectively to _Kafka_:
 
 image::images/processing-flow-chat2kafka.png[align="center", width=90%]
 
@@ -247,14 +311,14 @@ image::images/processing-flow-chat2kafka.png[align="center", width=90%]
 There are 4 Kamelets in use:
 
 ====
-* *A source* +
-Consumes events from _Gitter/Slack_.
+* *1 source* +
+Consumes events from _Matrix/Rocket.Chat_.
 
-* *Two actions* +
+* *2 actions* +
 One filters messages to prevent death loops. +
-One transforms _Gitter/Slack_ events to the standard data model.
+One transforms _Matrix/Rocket.Chat_ events to the standard data model.
 
-* *A sink* +
+* *1 sink* +
 Produces events to _Kafka_.
 ====
 
@@ -265,11 +329,11 @@ As in lab 1 & 2, this one also fits the _Kubernetes_ user. We compose the defini
 
 {empty} +
 
-=== Gitter to Kafka
+=== Matrix to Kafka
 
 . Replace the sink to target _Kafka_
 +
-Open and edit your `g2k.yaml` file.
+Open and edit your `m2k.yaml` file.
 +
 The original definition remains intact except for the sink to be replaced by a _Kafka_ destination. +
 Copy the sink snippet down below and paste it in your _Kamelet Binding_:
@@ -278,7 +342,7 @@ Copy the sink snippet down below and paste it in your _Kamelet Binding_:
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: g2k
+  name: m2k
   annotations:
     trait.camel.apache.org/mount.configs: "secret:stage3"
     trait.camel.apache.org/mount.resources: "configmap:stage3-transform"
@@ -288,10 +352,10 @@ spec:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: gitter-source
+      name: matrix-source
     properties:
-      token: "{{gitter.token}}"
-      room:  "{{gitter.room}}"
+      token: "{{matrix.token}}"
+      room:  "{{matrix.room}}"
 
   steps:
     
@@ -308,7 +372,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: g2k.jslt
+      template: m2k.jslt
 
 ----
 +
@@ -336,12 +400,12 @@ Keep the name `roomx` for your _KafkaTopic_, do not change its value, it simplif
 
 . Define the JSLT transformation to the new standard data model.
 +
-Copy the snippet below and paste it into your new `g2k.jslt` file:
+Copy the snippet below and paste it into your new `m2k.jslt` file:
 +
 ```
 {
 	"timestamp": string(round(parse-time(.sent, "yyyy-MM-dd'T'HH:mm:ss.SSSX"))),
-	"source":"gitter", 
+	"source":"matrix", 
 	"user": .fromUser.displayName, 
 	"text": .text
 }
@@ -350,23 +414,23 @@ Copy the snippet below and paste it into your new `g2k.jslt` file:
 [NOTE]
 ====
 * We include various fields to provide context.
-* We apply a format on the timestamp to match those from other sources.
+* We parse the timestamp to a numeric value.
 ====
 {empty} +
 
-And that's all it takes for this first data flow between _Gitter_ and _Kafka_.
+And that's all it takes for this first data flow between _Matrix_ and _Kafka_.
 
 {empty} +
 
 
 
-=== Slack to Kafka
+=== Rocket.Chat to Kafka
 
-Very similar changes apply for the _Slack_ -> _Kafka_ flow.
+Very similar changes apply for the _Rocket.Chat_ -> _Kafka_ flow.
 
 . Replace the sink to target _Kafka_
 +
-Open and edit your `s2k.yaml` file.
+Open and edit your `r2k.yaml` file.
 +
 The original definition remains intact except for the sink to be replaced by a _Kafka_ destination. +
 Copy the sink snippet down below and paste it in your _Kamelet Binding_:
@@ -375,7 +439,7 @@ Copy the sink snippet down below and paste it in your _Kamelet Binding_:
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: s2k
+  name: r2k
   annotations:
     trait.camel.apache.org/mount.configs: "secret:stage3"
     trait.camel.apache.org/mount.resources: "configmap:stage3-transform"
@@ -385,11 +449,7 @@ spec:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: slack-source
-    properties:
-      token:   "{{slack.token}}"
-      channel: "{{slack.channel.name}}"
-      delay: 2000
+      name: webhook-source
 
 
   steps:
@@ -400,7 +460,8 @@ spec:
       apiVersion: camel.apache.org/v1
       name: predicate-filter-action
     properties:
-      expression: "!$.botId || $.botId == null"
+      expression: $.text =~ /(?!\*.*@.*\*:).*/
+
 
   # JSON Transformation
   - ref:
@@ -408,7 +469,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: "{{transform.path:s2k.jslt}}"
+      template: "{{transform.path:r2k.jslt}}"
 ----
 +
 ```yaml
@@ -430,20 +491,21 @@ Keep the name `roomx` for your _KafkaTopic_, do not change its value, it simplif
 
 . Define the JSLT transformation to the new standard data model.
 +
-Copy the snippet below and paste it into your new `s2k.jslt` file:
+Copy the snippet below and paste it into your new `r2k.jslt` file:
 +
 ```
 {
-	"timestamp": .ts,
-	"source":"slack", 
-	"user": .user, 
+	"timestamp": string(round(parse-time(.timestamp, "yyyy-MM-dd'T'HH:mm:ss.SSSX"))),
+	"source":"rocketchat", 
+	"user": .user_name, 
 	"text": .text
 }
 ```
 +
 [NOTE]
 ====
-We define the same common fields complying with our standard data model.
+* We define the same common fields complying with our standard data model.
+* We also parse the timestamp to a numeric value.
 ====
 {empty} +
 
@@ -454,8 +516,35 @@ Very straightforward, nothing else to be done here.
 
 
 [time=5]
-[id="kafka-to-gitter-slack"]
-== Kafka to Gitter/Slack
+[id="kafka-to-matrix-rocketchat"]
+== Kafka to Matrix/Rocket.Chat
+
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+[type=taskResource]
+.Matrix
+****
+* link:{url-element}[Matrix Web Client, window="_blank"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
+****
 
 The processing steps still remain essentially the same:
 
@@ -466,13 +555,13 @@ The processing steps still remain essentially the same:
 
 {empty} +
 
-The main differences are that we are consuming events from _Kafka_ (step 1) and that we have to translate events (step 3) from the standard data model to the target specific model (e.g. _Gitter_, _Slack_, other)
+The main differences are that we are consuming events from _Kafka_ (step 1) and that we have to translate events (step 3) from the standard data model to the target specific model (e.g. _Matrix_, _Rocket.Chat_, other)
 
 {empty} +
 
 === Process overview
 
-The diagram below applies to the data flows (2 of them) from _Kafka_ to Gitter/Slack respectively:
+The diagram below applies to the data flows (2 of them) from _Kafka_ to Matrix/Rocket.Chat respectively:
 
 image::images/processing-flow-kafka2chat.png[align="center", width=90%]
 
@@ -481,26 +570,26 @@ image::images/processing-flow-kafka2chat.png[align="center", width=90%]
 There are 4 Kamelets in use:
 
 ====
-* *A source* +
+* *1 source* +
 Consumes events from _Kafka_.
 
-* *Two actions* +
+* *2 actions* +
 One filters messages to prevent death loops. +
-One transforms events from the standard data model to _Gitter/Slack_.
+One transforms events from the standard data model to _Matrix/Rocket.Chat_.
 
-* *A sink* +
-Produces events to _Gitter/Slack_.
+* *1 sink* +
+Produces events to _Matrix/Rocket.Chat_.
 ====
 
 {empty} +
 
 
 
-=== Kafka to Gitter
+=== Kafka to Matrix
 
 . Modify the Kamelet Binding
 +
-Open and edit your `k2g.yaml` file.
+Open and edit your `k2m.yaml` file.
 +
 Two modifications are required:
 +
@@ -517,7 +606,7 @@ Copy the corresponding snippets and replace in your _Kamelet Binding_:
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: k2g
+  name: k2m
   annotations:
     trait.camel.apache.org/mount.configs: "secret:stage3"
     trait.camel.apache.org/mount.resources: "configmap:stage3-transform"
@@ -544,7 +633,7 @@ spec:
 ----
 +
 ```yaml
-      expression: $.source != "gitter"
+      expression: $.source != "matrix"
 ```
 +
 ----
@@ -554,24 +643,24 @@ spec:
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: "{{transform.path:k2g.jslt}}"
+      template: "{{transform.path:k2m.jslt}}"
 
 
   sink:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: gitter-sink
+      name: matrix-sink
     properties:
-      token: "{{gitter.token}}"
-      room: "{{gitter.room}}"
+      token: "{{matrix.token}}"
+      room: "{{matrix.room}}"
 ----
 +
 {empty} +
 +
 [NOTE]
 ====
-The filter definition is specifically blocking events coming from _Gitter_ itself. As now _Kafka_ sits in the middle, we are simultaneously producing and consuming _Kafka_ events from/to _Gitter_, which can cause event loops. 
+The filter definition is specifically blocking events coming from _Matrix_ itself. As now _Kafka_ sits in the middle, we are simultaneously producing and consuming _Kafka_ events from/to _Matrix_, which can cause event loops. 
 ====
 +
 [TIP]
@@ -580,9 +669,9 @@ The source definition in a _Kamelet Binding_ can either be a _Kamelet_ source fr
 ====
 {empty} +
 
-. Define the JSLT transformation (Standard -> Gitter).
+. Define the JSLT transformation (Standard -> Matrix).
 +
-Copy the snippet below and paste it into your new `k2g.jslt` file:
+Copy the snippet below and paste it into your new `k2m.jslt` file:
 +
 ```
 {
@@ -596,20 +685,20 @@ We're mapping values from the Standard data model
 ====
 {empty} +
 
-Again, very simple updates, nothing else required for the _Kafka_ -> _Gitter_ process.
+Again, very simple updates, nothing else required for the _Kafka_ -> _Matrix_ process.
 
 {empty} +
 
 
 
-=== Kafka to Slack
+=== Kafka to Rocket.Chat
 
-Very similar changes apply for the _Kafka_ -> _Slack_ flow.
+Very similar changes apply for the _Kafka_ -> _Rocket.Chat_ flow.
 
 
 . Modify the Kamelet Binding
 +
-Open and edit your `k2s.yaml` file.
+Open and edit your `k2r.yaml` file.
 +
 Two modifications are required:
 +
@@ -626,7 +715,7 @@ Copy the corresponding snippets and replace in your _Kamelet Binding_:
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: k2s
+  name: k2r
   annotations:
     trait.camel.apache.org/mount.configs: "secret:stage3"
     trait.camel.apache.org/mount.resources: "configmap:stage3-transform"
@@ -653,7 +742,7 @@ spec:
 ----
 +
 ```yaml
-      expression: $.source != "slack"
+      expression: $.source != "rocketchat"
 ```
 +
 ----
@@ -662,50 +751,54 @@ spec:
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: k2s.jslt
+      template: k2r.jslt
 
   sink:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: slack-sink
+      name: rocketchat-sink
     properties:
-      token: "{{slack.token}}"
+      token: "{{rocketchat.token}}"
 ----
 +
 {empty} +
 +
 [NOTE]
 ====
-The filter definition is specifically blocking events coming from _Slack_ itself. As now _Kafka_ sits in the middle, we are simultaneously producing and consuming _Kafka_ events from/to _Slack_, which can cause event loops. 
+The filter definition is specifically blocking events coming from _Rocket.Chat_ itself. As now _Kafka_ sits in the middle, we are simultaneously producing and consuming _Kafka_ events from/to _Rocket.Chat_, which can cause event loops. 
 ====
 +
 {empty} +
 
-. Define the JSLT transformation (Standard -> _Slack_).
+. Define the JSLT transformation (Standard -> _Rocket.Chat_).
 +
-Copy the snippet below and paste it into your new `k2s.jslt` file:
+Copy the snippet below and paste it into your new `k2r.jslt` file:
 +
 ```
 {
-    "channel":"YOUR_ROOM_ID",
+    "channel":"YOUR_ROOM",
     "text":"*"+.user+"@"+.source+"*: "+.text
 }
 ```
 +
 [IMPORTANT]
 ====
-Ensure you configure the _Slack_ `channel` by replacing `YOUR_ROOM_ID` with your chat's room identifier.
+The field `channel` denotes the target room in _Rocket.Chat_ where messages will be pushed. +
+Make sure you replace `YOUR_ROOM` with your designated room, for example:
+
+* `user1` -> use `room1`
+* `user2` -> use `room2`
+* `userN` -> use `roomN`
 ====
 +
 [NOTE]
 ====
-* The field `channel` denotes the target room in _Slack_ where messages will be pushed. Use your room ID in _Slack_. +
-* The field `text` includes JsonPath rules extracting values from the input Standard data model.
+The field `text` includes JsonPath rules extracting values from the input Standard data model.
 ====
 {empty} +
 
-And you're done with the _Kafka_ -> _Slack_ changes.
+And you're done with the _Kafka_ -> _Rocket.Chat_ changes.
 
 
 {empty} +
@@ -715,15 +808,42 @@ And you're done with the _Kafka_ -> _Slack_ changes.
 [id="deploy-test"]
 == Deploy and test
 
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+[type=taskResource]
+.Matrix
+****
+* link:{url-element}[Matrix Web Client, window="_blank"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
+****
+
 We've covered a lot of ground. It would be normal to make mistakes. Hopefully the helper guide kept those to a minimum and, once deployed, you can see your integrations working in healthy state and delivering the expected outcome.
 
-. Login to _OpenShift_ 
+. Select your _OpenShift_ project
 +
-For those resuming work from a previous day, ensure you reconnect your `oc` client with _OpenShift_ by running the following login command:
+For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
 +
 [source,bash,subs="attributes+"]
 ----
-oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+oc project {namespace}
 ----
 +
 {empty} +
@@ -789,10 +909,10 @@ oc apply -f kafka/room_x.yaml
 +
 [source, subs=]
 ----
-oc apply -f flows/g2k.yaml
-oc apply -f flows/k2s.yaml
-oc apply -f flows/s2k.yaml
-oc apply -f flows/k2g.yaml<br>
+oc apply -f flows/m2k.yaml
+oc apply -f flows/k2r.yaml
+oc apply -f flows/r2k.yaml
+oc apply -f flows/k2m.yaml<br>
 ----
 +
 NOTE: Be patient, this action will take some time to complete as the operator needs to download all related dependencies, build the applications and create the images before the integrations can be deployed.
@@ -813,10 +933,10 @@ When the pods are ready, the command should return:
 +
 ----
 NAME   PHASE   REPLICAS
-g2k    Ready   1
-k2g    Ready   1
-k2s    Ready   1
-s2k    Ready   1
+m2k    Ready   1
+k2m    Ready   1
+k2r    Ready   1
+r2k    Ready   1
 ----
 +
 {empty} +
@@ -829,9 +949,9 @@ image::images/topology-view.png[align="left", width=80%]
 
 . Send messages to test the system.
 +
-.. Go to you _Gitter_'s room and send a message, for example `Hello from Gitter`.
+.. Go to you _Matrix_'s room and send a message, for example `Hello from Matrix`.
 
-.. Then go to you _Slack_'s room and send a message, for example `Hello from Slack`.
+.. Then go to you _Rocket.Chat_'s room and send a message, for example `Hello from Rocket.Chat`.
 +
 If all goes well you should see something similar to the picture below:
 +
@@ -843,7 +963,7 @@ image::images/stage3-msg-chat-test.png[align="left", width=90%]
 {empty} +
 
 [type=verification]
-Did you see the message going from _Gitter_ to _Slack_?
+Did you see the message going from _Matrix_ to _Rocket.Chat_?
 
 [type=verificationSuccess]
 Very good !
@@ -853,7 +973,7 @@ Inspect in the pod logs to troubleshoot.
 
 
 [type=verification]
-Did you see the message going from _Slack_ to _Gitter_?
+Did you see the message going from _Rocket.Chat_ to _Matrix_?
 
 [type=verificationSuccess]
 Very good !

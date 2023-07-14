@@ -1,0 +1,46 @@
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: r2k
+  annotations:
+    trait.camel.apache.org/mount.configs: "secret:stage3"
+    trait.camel.apache.org/mount.resources: "configmap:stage3-transform"
+spec:
+
+  source:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: webhook-source
+
+
+  steps:
+
+  # Filter action to prevent death loops
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: predicate-filter-action
+    properties:
+      expression: $.text =~ /(?!\*.*@.*\*:).*/
+
+  # Intended for deployment smoke test
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: test-action
+
+  # JSON Transformation
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: jslt-action
+    properties:
+      template: "{{transform.path:r2k.jslt}}"
+
+
+  sink:
+    ref:
+      kind: KafkaTopic
+      apiVersion: kafka.strimzi.io/v1beta1
+      name: roomx

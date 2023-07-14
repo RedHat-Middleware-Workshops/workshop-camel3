@@ -1,15 +1,29 @@
-:walkthrough: Gitter to Slack bridge ()
+:walkthrough: Matrix to Rocket.Chat bridge ()
 :user-password: openshift
 :namespace: {user-username}
 :invite-url: http://invite-webapp.{openshift-app-host}
+
+:url-element: https://app.element.io
+:url-rocketchat: https://rocketchat-rocketchat.{openshift-app-host}
+:url-codeready: http://devspaces.{openshift-app-host}/
+:url-devconsole: {openshift-host}/topology/ns/{namespace}
 
 ifdef::env-github[]
 endif::[]
 
 [id='lab1-part2-camel']
-= Lab 1.path1 - MessageHub - Be the Camel developer
+= Lab 1.part2 - MessageHub - Be the Camel developer
 
-Impersonate the Camel developer to complete Lab-1's Gitter to Slack processing flow.
+Impersonate the Camel developer to complete Lab-1's Matrix to Rocket.Chat processing flow.
+
+Prerequisites: +
+--
+* Ensure you have previously completed the following tiles:
++
+image::images/prereq.png[align="left", width=100%]
+
+{empty} +
+--
 
 Technical goals and milestones:
 
@@ -32,6 +46,35 @@ The instructions below are divided in two segments:
 [id="local"]
 == Local development 
 
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+[type=taskResource]
+.Matrix
+****
+* link:{url-element}[Matrix Web Client, window="_blank"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
+****
+
+This workshop has been designed to attend two different user profiles:
+
 For reference, here's again the processing flow to implement:
 
 image::images/processing-flow.png[align="center", width=80%]
@@ -40,20 +83,20 @@ You will include 3 Kamelets:
 
 ====
 * *A source* +
-Consumes events from _Gitter_.
+Consumes events from _Matrix_.
 
 * *An action* +
-Transforms _Gitter_ events to _Slack_ events (in JSON format).
+Transforms _Matrix_ events to _Rocket.Chat_ events (in JSON format).
 
 * *A sink* +
-Produces events to _Slack_.
+Produces events to _Rocket.Chat_.
 ====
 
 {empty} +
 
 [IMPORTANT] 
 --
-You need to already be onboarded into _Gitter_ and _Slack_. +
+You need to already be onboarded into _Matrix_ and _Rocket.Chat_. +
 Ensure you have previously completed: 
 
 - *_Lab 1.intro - MessageHub - Scenario and Onboarding_*.
@@ -69,15 +112,20 @@ image::images/camel-jbang.png[align="left", width=40%]
 
 TIP: Camel JBang is an upstream tool for _Camel_. It is not supported yet by Red Hat but it is an extremely useful tool for all things Camel. It simplifies many of the common tasks a Camel developer undergoes. 
 
-. Create a folder and resources where you will work
+. From your UI terminal...
 +
-For example:
+image::images/crw-terminal.png[align="left", width=100%]
++
+{blank}
++
+Create a folder and resources where you will work. +
+Copy and paste in your terminal the following:
 +
 [source, subs=]
 ----
 mkdir lab1
 cd lab1
-touch g2s.yaml
+touch m2r.yaml
 touch stage1.properties<br>
 ----
 +
@@ -87,44 +135,47 @@ NOTE: The commands above also create the file sources you need for the exercise.
 
 . Create the definitions
 +
-.. Open the `g2s.yaml` file in your editor.
+.. Open the `m2r.yaml` file in your editor.
 +
 Select from your project tree:
 +
-* MessageHub -> Lab1 -> g2s.yaml
+* MessageHub -> Lab1 -> m2r.yaml
 +
 image::images/crw-open-yaml.png[align="left", width=50%]
 +
 {empty} +
 
-.. To start with, we will simply consume Gitter messages and log them. We select the following 2 Kamelets to bind:
+.. To start with, we will simply consume Matrix messages and log them. We select the following 2 Kamelets to bind:
 +
 --
-- gitter-source
+- matrix-source
 - log-sink
 --
 +
-NOTE: The `gitter-source` _Kamelet_ is not provided out of the box by Camel K. It has been specifically created and deployed for this workshop.
+NOTE: The `matrix-source` _Kamelet_ is not provided out of the box by Camel K. It has been specifically created and deployed for this workshop.
 +
 {empty} +
 +
-Include in your YAML file `g2s.yaml` (gitter to slack) the following definition:
+Include in your YAML file `m2r.yaml` (matrix to rocketchat) the following definition:
 +
 ```yaml
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: g2s
+  name: m2r
+  # paste annotations here (when instructed)
 spec:
 
   source:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: gitter-source
+      name: matrix-source
     properties:
-      token: "{{gitter.token}}"
-      room:  "{{gitter.room}}"
+      token: "{{matrix.token}}"
+      room:  "{{matrix.room}}"
+
+  # paste JSLT action here (when instructed)
 
   sink:
     ref:
@@ -132,6 +183,8 @@ spec:
       apiVersion: camel.apache.org/v1
       name: log-sink 
 ```
++
+NOTE: The `matrix-source` kamelet is implemented following the specification of the Matrix Sync API (new Matrix's API) to consume events from the server. To know more, read its API documentation here: https://spec.matrix.org/v1.6/client-server-api/#syncing
 +
 {empty} +
 +
@@ -141,19 +194,49 @@ spec:
 # On shutdown it reduces waiting time when stoping Camel's streaming listener
 camel.main.shutdownTimeout = 5
 
-# Gitter credentials
-gitter.token=YOUR_ACCESS_TOKEN
-gitter.room=YOUR_ROOM_ID
+# Matrix credentials
+matrix.token=YOUR_ACCESS_TOKEN
+matrix.room=YOUR_ROOM_ID
 ```
 +
 {empty} +
 +
-[IMPORTANT]
-====
-Ensure you replace `YOUR_ACCESS_TOKEN` and `YOUR_ROOM_ID` with the values you obtained from the _Gitter_ onboarding process.
-====
+... To configure the `matrix.token` parameter, obtain its value from  the sequence of steps shown in the image below:
 +
-NOTE: The `gitter-source` kamelet is implemented following the specification of the Matrix Sync API (new Gitter's API) to consume events from the server. To know more, read its API documentation here: https://spec.matrix.org/v1.6/client-server-api/#syncing
+image::images/matrix-copy-token.png[align="center", width=100%]
++
+--
+From Matrix: 
+
+. Start from the _"User Menu"_
+. Then, click _"All settings"_
+. Select _"Help & About"_
+. Scroll to the very bottom, and click _"Access Token"_
+. Click the _Copy_ button
+
+{blank}
+
+Finally, paste the value you copied into the `matrix.token` parameter.
+--
++
+{empty} +
++
+... To configure the `matrix.room` parameter, obtain its value from the sequence of steps shown in the image below:
++
+image::images/matrix-copy-room-id.png[align="center", width=100%]
++
+--
+From Matrix: 
+
+. Start from the _"Room options"_.
+. Then, click _"Settings"_.
+. Select _"Advanced"_.
+. Click the _Copy_ button of the _"Internal room ID"_.
+
+{blank}
+
+Finally, paste the value you copied into the `matrix.room` parameter.
+--
 +
 {empty} +
 
@@ -167,47 +250,55 @@ camel run * --local-kamelet-dir=../support/deploy/kamelets
 +
 NOTE: Observe the simplicity of the command `camel run \*`. The wildcard `*` allows _Camel JBang_ to automatically scan the folder and recognise the type of each file found (code, properties, resource, etc.).
 +
-NOTE: The command includes a flag to find custom kamelets. The _Gitter_ kamelet has been created for this workshop and does not come out-of-the-box from the default _Camel_ catalog.
+NOTE: The command includes a flag to find custom kamelets. The _Matrix_ kamelet has been created for this workshop and does not come out-of-the-box from the default _Camel_ catalog.
 +
 [WARNING]
 --
-If the command above failed with the message `camel not found`, you may have instantiated the wrong terminal. Make sure you open the *Tools* terminal as per the picture below:
+If the command above failed with the following output:
 
-image::images/tools-terminal.png[align="left", width=15%]
+----
+[jbang] [ERROR] Could not download https://github.com/apache/camel/blob/HEAD/jbang-catalog.json
+[jbang] Run with --verbose for more details
+----
 
+{blank}
+
+Run the following command and try again:
+```bash
+jbang cache clear
+```
 --
 +
 {blank}
 +
 _Camel JBang_ will build a local runnable and start it. +
-In the output logs you should see _Camel_ connecting to _Gitter_, similar to the following:
+In the output logs you should see _Camel_ connecting to _Matrix_, similar to the following:
 +
 ----
-... : Apache Camel 3.19.0 (g2s) started in 1s658ms (build:118ms init:1s323ms start:217ms JVM-uptime:3s)
-... : Opening connection to Gitter...
-... : Gitter HTTP Streaming started
+... : Apache Camel 3.20.1 (m2r) started in 1s658ms (build:118ms init:1s323ms start:217ms JVM-uptime:3s)
+... : Opening connection to Matrix...
+... : Matrix HTTP Streaming started
 ----
 +
 {empty} +
 +
-Now, from the _Gitter_ chat room, send a message, for example `Hello Camel`.
+Now, from the _Matrix_ chat room, send a message, for example `Hello Camel`.
 +
 image::images/gitter-send-message.png[align="left", width=60%]
 +
 {blank}
 +
-Your terminal should show the arrival of a _Gitter_ event similar to the following JSON payload:
+Your terminal should show the arrival of a _Matrix_ event similar to the following JSON payload:
 +
+[subs="attributes+"]
 ----
-{"fromUser":{"username":"bmesegue","displayName":"bmesegue"},"text":"Hello Camel","sent":"2023-02-21T10:15:17.000Z"}
+{"fromUser":{"username":"{user-username}","displayName":"{user-username}"},"text":"Hello Camel","sent":"2023-06-19T10:10:20.000Z"}
 ----
-+
-CAUTION: If your terminal does not log JSON events (as above), you might be sending messages from the _Matrix_ server instead of the _Gitter_ server. Ensure you connect to the _Gitter_ server when you login to the platform from your browser. Follow carefully the instructions in the section *Gitter platform onboarding* where the login process is described in detail.
 +
 {blank}
 +
-Hopefully you've been successful in capturing _Gitter_ messages with _Camel_. +
-Press `Ctrl`+`C` to stop _Camel_.
+Hopefully you've been successful in capturing _Matrix_ messages with _Camel_. +
+To stop the running _Camel_ process, from your terminal, press `Ctrl`+`C`.
 +
 [TIP]
 --
@@ -219,16 +310,16 @@ _Camel JBang_ also implements the following very handy commands when running mul
 +
 {empty} +
 
-. Now we need to extend the _Kamelet Binding_ definition to include data transformation that matches the JSON structure the target system (_Slack_) expects.
+. Now we need to extend the _Kamelet Binding_ definition to include data transformation that matches the JSON structure the target system (_Rocket.Chat_) expects.
 +
 We choose from the Kamelet Catalog the JSLT action to transform the body.
 +
 TIP: JSLT is a very convenient transformer to manipulate JSON payloads. It's inspired in XSLT (XML Transformation) to define stylesheets containing transformation rules for JSON.
 +
-Create the JSLT file `g2s.jslt` with the command:
+Create the JSLT file `m2r.jslt` with the command:
 +
 ```bash
-touch g2s.jslt
+touch m2r.jslt
 ```
 +
 {blank}
@@ -237,15 +328,29 @@ Open the new file in your editor and copy/paste the following definition:
 +
 ```
 {
-    "channel":"TO_BE_DEFINED",
-    "text":"*"+.fromUser.username+"@gitter*: "+.text
+    "channel":"YOUR_ROOM",
+    "text":"*"+.fromUser.username+"@matrix*: "+.text
 }
 ```
 +
+[IMPORTANT]
+====
+The field `channel` denotes the target room in _Rocket.Chat_ where messages will be pushed. +
+Make sure you replace `YOUR_ROOM` with your designated room, for example:
+
+* `user1` -> use `room1`
+* `user2` -> use `room2`
+* `userN` -> use `roomN`
+====
+Your JSLT content should look similar to the image below. The `channel` represents your target room in _Rocket.Chat_, in this example it targets 'room10'.
++
+image::images/jslt-room-config.png[align="left", width=80%]
++
+{blank}
++
 [NOTE]
 ====
-* The field `channel` denotes the target room in _Slack_ where messages will be pushed. For now we use a temporary value. +
-* The field `text` includes JsonPath rules extracting values from the input Gitter event.
+The field `text` includes JsonPath rules extracting values from the input Matrix event.
 ====
 {empty} +
 
@@ -266,17 +371,17 @@ Following the above illustration, copy and paste the snippet from below into you
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: g2s
+  name: m2r
 spec:
 
   source:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: gitter-source
+      name: matrix-source
     properties:
-      token: "{{gitter.token}}"
-      room:  "{{gitter.room}}"
+      token: "{{matrix.token}}"
+      room:  "{{matrix.room}}"
 ----
 +
 ```yaml
@@ -286,7 +391,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: g2s.jslt
+      template: m2r.jslt
 ```
 +
 ----
@@ -306,38 +411,39 @@ camel run * --local-kamelet-dir=../support/deploy/kamelets
 ```
 {empty} +
 
-. From Gitter send another chat message and inspect your terminal output. +
+. From Matrix send another chat message and inspect your terminal output. +
 You should see an incoming event now transformed and looking similar to this:
 +
+[subs="attributes+"]
 ----
-{"channel":"TO_BE_DEFINED","text":"*bmesegue@gitter*: Hello Camel"}
+{"channel":"room1","text":"*{user-username}@matrix*: Hello Camel"}
 ----
 +
 {empty} +
 +
-At this stage you're ready to replace the `log-sink` by the real one, the `slack-sink` _Kamelet_.
+At this stage you're ready to replace the `log-sink` by the real one, the `rocketchat-sink` _Kamelet_.
 +
 {empty} +
 
-. [[step-slack-sink]]Replace your Log sink Kamelet by the Slack one.
+. [[step-rocketchat-sink]]Replace your Log sink Kamelet by the Rocket.Chat one.
 +
-Copy from below the `slack-sink` definition, and replace your old `log-sink` code.
+Copy from below the `rocketchat-sink` definition, and replace your old `log-sink` code.
 +
 ----
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: g2s
+  name: m2r
 spec:
 
   source:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: gitter-source
+      name: matrix-source
     properties:
-      token: "{{gitter.token}}"
-      room:  "{{gitter.room}}"
+      token: "{{matrix.token}}"
+      room:  "{{matrix.room}}"
 
   steps:
   - ref:
@@ -345,7 +451,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: g2s.jslt
+      template: m2r.jslt
 ----
 +
 ```yaml
@@ -353,9 +459,10 @@ spec:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: slack-sink
+      name: rocketchat-sink
     properties:
-      token: "{{slack.token}}"
+      userid: "{{rocketchat.userid}}"
+      token: "{{rocketchat.token}}"
 ```
 +
 {blank}
@@ -374,75 +481,53 @@ If you want to keep the `log-sink` activity, you can move it to the `steps` grou
 +
 {empty} +
 
-. Configure your target Slack `channel`
+. Include your Rocket.Chat credentials in your configuration file.
 +
-Previously we defined a dummy value in our JSLT transformation (where the `channel` field is defined). Now we need to replace the dummy value with the real one.
-+
-.. Open in Slack the room details
-+
-image::images/slack-room-details.png[align="left", width=20%]
-+
-{empty} +
-
-.. Copy the Channel ID at the bottom of the details frame
-+
-image::images/slack-room-details-channel-id.png[align="left", width=30%]
-+
-{empty} +
-
-.. Paste its value in your JSLT mapping. It should you similar to the following:
-+
-```
-{
-    "channel":"C04QBN33NUW",
-    "text":"*"+.fromUser.username+"@gitter*: "+.text
-}
-```
-+
-IMPORTANT: The above `channel` is an example, make sure you replace `C04QBN33NUW` with your _Channel ID_.
-+
-{empty} +
-+
-Slack will read the `channel` field (target room), from the JSON payload we send, to know where to place the message. +
-+
-{empty} +
-
-. Include your Slack token in your configuration file.
-+
-Copy from below the parameter definition `slack.token`, paste it into your properties file, and configure its value with your Slack access token value.
+.. Copy from below the parameter definitions `rocketchat.*`, paste them into your properties file, and configure their values with your _Rocket.Chat_ credentials, as per the instructions that follow.
 +
 ----
 # On shutdown it reduces waiting time when stoping Camel's streaming listener
 camel.main.shutdownTimeout = 5
 
-# Gitter credentials
-gitter.token=2d482bdf092e0e2299832b1f38d9560243083894
-gitter.room=6317569e6da03739849c519a
+# Matrix credentials
+matrix.token=2d482bdf092e0e2299832b1f38d9560243083894
+matrix.room=6317569e6da03739849c519a
 ----
 +
 ```properties
-# Slack
-# credentials
-slack.token=YOUR_TOKEN
+# Rocket.Chat credentials
+rocketchat.token=YOUR_TOKEN
+rocketchat.userid=YOUR_USER_ID
 ```
 +
 {empty} +
 +
-Obtain the _Slack_ token with 1 of these 3 options, and replace `YOUR_TOKEN`:
+.. To configure the _Rocket.Chat_ credentials, obtain them from the sequence of steps shown in the image below:
 +
-* *Option 1*: Try the link below:
+image::images/rchat-credentials-1.png[align="center", width=100%]
 +
 --
-WARNING: The link may fail if the cluster did not enable token resolution. +
-If it fails, choose [*Option 2*] or [*Option 3*].
---
-+
-- link:{invite-url}/token/slack[Obtain _Slack_ token,window="_blank"]
-+
-{empty} +
+From _Rocket.Chat_: 
 
-* *Option 2*: if you're sharing an App with the group, use the App's token your admin has provided.
-* *Option 3*: if you created your own App, use your App's `Bot User OAuth Token`
+. Start from the _"User Menu"_.
+. Then, click _"My Account"_.
+. Select _"Personal Access Tokens"_.
+. Type in a name for your token, for example `mytoken`.
+. Click the _Add_ button
+--
++
+image::images/rchat-credentials-2.png[align="center", width=100%]
++
+{blank}
++
+--
+[start=6]
+. Enter the password `{user-password}`.
+. Click _"Verify"_.
+. Your token and user id will be generated.
++
+Copy the values and configure your Camel parameters.
+--
 +
 {empty} +
 
@@ -453,7 +538,7 @@ camel run * --local-kamelet-dir=../support/deploy/kamelets
 ```
 {empty} +
 
-. One more time, from _Gitter_ send one last message. If all goes well you should see the message listed in your _Slack_ chat window
+. One more time, from _Matrix_ send one last message. If all goes well you should see the message listed in your _Rocket.Chat_ chat window
 +
 image::images/stage1-msg-gitter-slack.png[align="left", width=80%]
 +
@@ -465,16 +550,53 @@ Press `Ctrl`+`C` to stop your Camel instance.
 +
 {empty} +
 +
-We can consider the local development done. We have a full data flow definition that routes messages from _Gitter_ to _Slack_. The next step is to deploy the definition in _OpenShift_
+We can consider the local development done. We have a full data flow definition that routes messages from _Matrix_ to _Rocket.Chat_. The next step is to deploy the definition in _OpenShift_
 
 {empty} +
 
 [type=verification]
-Did you see the message in _Gitter_ showing up in _Slack_?
+Did you see the message in _Matrix_ showing up in _Rocket.Chat_?
 
 [time=5]
 [id="openshift"]
 == Deployment in OpenShift
+
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+[type=taskResource]
+.Matrix
+****
+* link:{url-element}[Matrix Web Client, window="_blank"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
+****
+
+Up until now you've only worked locally (in your dev UI and terminal). This phase has allowed you to prototype fast and produce code you feel confident with.
+
+As per the diagram below, the _Camel_ developer can work at accelerated speed by editing sources and running locally.
+
+image::images/workflow-camel-user.png[align="center", width=80%]
+
+{empty} +
+
+Now that you have validated your code locally, you can proceed to deploy and run in _OpenShift_.
 
 The definitions that you have implemented can practically be taken 'as-is' into _OpenShift_. 
 
@@ -499,7 +621,7 @@ Copy from below the `annotations` snippet and include it in your _Kamelet Bindin
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: g2s
+  name: m2r
 ----
 +
 ```yaml
@@ -515,10 +637,10 @@ spec:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: gitter-source
+      name: matrix-source
     properties:
-      token: "{{gitter.token}}"
-      room:  "{{gitter.room}}"
+      token: "{{matrix.token}}"
+      room:  "{{matrix.room}}"
 
   steps:
   - ref:
@@ -526,15 +648,15 @@ spec:
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: g2s.jslt
+      template: m2r.jslt
 
   sink:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: slack-sink
+      name: rocketchat-sink
     properties:
-      token: "{{slack.token}}"
+      token: "{{rocketchat.token}}"
 ----
 +
 {empty} +
@@ -542,14 +664,7 @@ spec:
 
 . Push configuration and resources to _OpenShift_
 +
-.. If you didn't log in yet to _OpenShift_, run the following command:
-+
-[source,bash,subs="attributes+"]
-----
-oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
-----
-+
-.. Make sure the _working_ project in _OpenShift_ is selected by executing the following command:
+.. For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
 +
 [source,bash,subs="attributes+"]
 ----
@@ -569,7 +684,7 @@ oc create secret generic stage1 --from-file=stage1.properties
 .. Create a _ConfigMap_ containing your JSLT mapping. Run the following `oc` command:
 +
 ```bash
-oc create cm stage1-transform --from-file=g2s.jslt
+oc create cm stage1-transform --from-file=m2r.jslt
 ```
 {empty} +
 
@@ -577,7 +692,7 @@ oc create cm stage1-transform --from-file=g2s.jslt
 .. Run the following `oc` command to deploy the integration:
 +
 ```bash
-oc apply -f g2s.yaml
+oc apply -f m2r.yaml
 ```
 +
 {empty} +
@@ -600,29 +715,72 @@ While Camel K builds the integration, the command above shows:
 +
 ----
 NAME   PHASE      REPLICAS
-g2s    Creating   
+m2r    Creating   
 ----
++
+{empty} +
+
+.. Check the logs from your terminal.
++
+You can use the `kamel` client to inspect the logs from the running pod where you integration `m2r` is deployed.
++
+Run the command:
++
+```bash
+kamel logs m2r
+```
++
+{empty} +
++
+After a while, when the operator deploys the integration, you should see Camel connecting to Matrix and starting the streaming listener:
++
+----
+... : Apache Camel 3.14.2.redhat-00047 (camel-1) started in 1s193ms (build:0ms init:1s1ms start:192ms)
+...
+... : Opening connection to Matrix...
+... : Matrix HTTP Streaming started
+----
++
+{empty} +
+
+
+.. Check your deployment from the _Developer_ console
++
+Inspect in your link:{openshift-host}/topology/ns/{namespace}[OpenShift Developer view, window="_blank"] your pod is in healthy state and running:
++
+image::images/ocp-dev-pod-healthy.png[align="left", width=80%]
++
+TIP: You can zoom in/out the canvas by using your mouse scrolling function, and move it around by clicking and dragging the background.
++
+{empty} +
++
+NOTE: You will observe your project also includes a pre-deployed _AMQ Streams (Kafka)_ cluster. Later in the workshop, you will use this dedicated _Kafka_ cluster to stream data in and out.
 +
 {empty} +
 
 .. Check the logs.
 +
-You can use the `kamel` client to inspect the logs from the running pod where you integration `g2s` is deployed.
+You can open the logs of the _Camel_ instance by:
 +
-Run the command:
+--
+. Clicking in the pod's icon
+. From the right pane, click `Resources`
+. Click `View logs`
+--
 +
-```bash
-kamel logs g2s
-```
+{blank}
 +
-{empty} +
+image::images/ocp-dev-pod-logs.png[align="left", width=90%]
 +
-After a while, when the operator deploys the integration, you should see Camel connecting to Gitter and starting the streaming listener:
+{blank}
++
+You should see _Camel_ connecting to _Matrix_ and indicating the stream has started:
 +
 ----
-... : Apache Camel 3.14.2.redhat-00047 (camel-1) started in 1s193ms (build:0ms init:1s1ms start:192ms)
+... : Apache Camel 3.14.2.redhat-00047 (camel-1) started in 825ms (build:0ms init:708ms start:117ms)
 ...
-... : Opening connection to Gitter...
+... : Opening connection to Matrix...
+... : Matrix HTTP Streaming started
 ----
 +
 {empty} +
@@ -630,7 +788,7 @@ After a while, when the operator deploys the integration, you should see Camel c
 
 . Test your deployment
 +
-One more time, from Gitter send one last message. If all goes well you should see the message listed in your Slack chat window
+One more time, from Matrix send one last message. If all goes well you should see the message listed in your Rocket.Chat chat window
 +
 image::images/stage1-msg-gitter-slack.png[align="left", width=80%]
 +
@@ -639,7 +797,7 @@ image::images/stage1-msg-gitter-slack.png[align="left", width=80%]
 
 
 [type=verification]
-Did you see the message going from _Gitter_ to _Slack_?
+Did you see the message going from _Matrix_ to _Rocket.Chat_?
 
 [type=verificationSuccess]
 You've successfully completed stage 1 !!

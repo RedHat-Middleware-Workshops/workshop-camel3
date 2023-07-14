@@ -4,6 +4,11 @@
 :namespace: {user-username}
 :invite-url: http://invite-webapp.{openshift-app-host}
 
+:url-element: https://app.element.io
+:url-rocketchat: https://rocketchat-rocketchat.{openshift-app-host}
+:url-codeready: http://devspaces.{openshift-app-host}/
+:url-devconsole: {openshift-host}/topology/ns/{namespace}
+
 ifdef::env-github[]
 endif::[]
 
@@ -14,8 +19,17 @@ endif::[]
 Use Camel K to integrate additional chat systems to the platform. 
 // toc::[]
 
+Prerequisites: +
+--
+* Ensure you have previously completed the following tiles:
++
+image::images/prereq.png[align="left", width=100%]
+
+{empty} +
+--
+
 // == Overview
-Up until now we have evolved a solution to interconnect _Gitter_ and _Slack_, and crucially, with the addition of AMQ Streams, now the platform allows for new systems to easily integrate. In this new Lab we're going to add a new chat option: _Discord_.
+Up until now we have evolved a solution to interconnect _Matrix_ and _Rocket.Chat_, and crucially, with the addition of AMQ Streams, now the platform allows for new systems to easily integrate. In this new Lab we're going to add a new chat option: _Discord_.
 
 _Discord_ is a well known chat platform, very popular among gamers, but increasingly embraced by enterprises to connect internal teams but also for external interactions with customers as a way to maintain close contact.
 
@@ -51,7 +65,7 @@ Technical goals and milestones:
 {empty} +
 
 
-The picture billow illustrates all chat systems communicating via _Kafka_, including the to-be-integrated _Discord_ system, and optionally (for those willing to go the extra mile) _Telegram_.
+The picture below illustrates all chat systems communicating via _Kafka_, including the to-be-integrated _Discord_ system, and optionally (for those willing to go the extra mile) _Telegram_.
 
 image::images/stage-overview-discord.png[align="center", width=80%]
 
@@ -83,21 +97,22 @@ and optionally:
 TIP: If you're unfamiliar with _Discord_, it is a well known chat platform, very popular among gamers, but increasingly embraced by enterprises to connect internal teams but also for external interactions with customers as a way to maintain close contact.
 
 
-[NOTE]
---
-If you have never used _Discord_ before, it's easy to register by using your email address (no phone numbers required).
-
-* link:https://discord.com/register[window="_blank"]
---
 
 {empty} +
 
-=== Join a Discord server.
+=== Join the lab's Discord server.
 
-To accelerate the onboarding process in _Discord_, we've created a shared server for anyone to freely join and use for the purpose of this enablement workshop. 
+To accelerate the onboarding process in _Discord_, we've created a shared server for students to freely join and use to complete this enablement workshop. 
 
+TIP: You don't need an account in _Discord_ to join the server. Just follow the instructions below to join with what _Discord_ calls an _"Unclaimed Account"_, a sort of temporary account you can claim as yours afterwards if you want.
 
-. Click on the link below to generate your invitation to _Discord_ (opens a new tab).
+TIP: If you prefer using an existing _Discord_ account of yours, please feel free to sign in with it instead of using an _"Unclaimed Account"_.
+
+{empty} +
+
+To join the lab's Discord server using a temporary account (Unclaimed account), follow the instructions below:
+
+. Click on the link below to obtain your invitation to _Discord_ (opens a new tab).
 +
 --
 - link:{invite-url}/invite/discord[Generate _Discord_ invite,window="_blank"]
@@ -109,33 +124,103 @@ To accelerate the onboarding process in _Discord_, we've created a shared server
 +
 image::images/invite-link.png[align="left", width=50%]
 
-. In the new tab, navigate as indicated to join the workshop's server in _Discord_.
+. In the new tab, follow the sequence of steps described below:
++
+IMPORTANT: Discord performs an age verification, ensure you enter a birth date for 18+ or older.
+
+.. In the invitation screen, you will be prompted to enter a `USERNAME`:
++
+image::images/discord-join-step1.png[align="left", width=80%]
++
+--
+. Type in a username, for example `{user-username}`. +
+You can also choose any other username of your liking.
+. Tick the agreement box.
+. Click the _Continue_ button.
+--
++
+{empty} +
+
+.. A _'Capcha'_ verification process will pop up to validate you are human:
++
+image::images/discord-join-step2.png[align="left", width=80%]
++
+--
+. Tick the box _"I'm a human"_.
+. Select the tiles accordingly.
+. Click the _Verify_ button.
+--
++
+{empty} +
+
+.. An age verification process will pop up. +
+The window will prompt you to enter your birthday. There's no need to enter a real one, just ensure the birthday matches an individual of 18+ years old.
++
+image::images/discord-join-step3.png[align="left", width=50%]
++
+--
+. Select a month, day and year. +
+For example:
+- `January`, `1`, `2000`
++
+{blank}
++
+. Then click _Done_.
+--
++
+{empty} +
+
+.. A final popup window will prompt you to claim the account. Simply ignore it by closing the popup
++
+image::images/discord-join-step4.png[align="left", width=80%]
++
+--
+. Click the cross in the upper right corner.
+. You should then see on screen the _CamelWorkshop_ server.
+--
 
 {empty} +
 
-
 CAUTION: The server is open to the public, please be mindful of your actions, don't abuse the space.
 
-[NOTE]
---
-if you were unsuccessful joining the shared server provided, feel free to create you own _Discord_ server, you should be able to complete the workshop in the same manner.
+{empty} +
 
-To create your own server:
+[TIP]
+--
+As an alterative, you could create your own _Discord_ server, and be able to complete the workshop with the same below instructions.
+
+From _Discord_, to create your own server:
 
 . Click the `+` button (add a server).
 . select `Create My Own`.
 . Then select `For me and my friends` (private server). 
+
+{blank}
+
+You will need to create your own _App_ (Bot) to send/fetch messages from the rooms in the server. You can find instructions on how to create your _App_ following the link below:
+
+====
+- link:https://github.com/RedHat-Middleware-Workshops/workshop-camel3/blob/v2.0/docs/labs/stage4/walkthrough.adoc#creating-your-own-app-for-discord/invite/discord[Create your own Discord App,window="_blank"]
+====
 --
 {empty} +
 
 
 === Join a Discord room (channel).
-. A number of rooms have been made available in the shared server for the workshop (room1, room2, ...roomX). Choose a room number that nobody uses to avoid noisy conversations.
+
+. Your dedicated _Discord_ room
++ 
+A number of rooms have been made available for this workshop. 
 +
-Alternatively, you can also create your own room (channel), use the prefix `room_`, for example:
-
-* `room_x`
-
+To work on a room number that nobody uses and avoid noisy conversations, please choose a room matching your username. +
+For example, if your username is:
++
+--
+* `user1` -> use `room1`
+* `user2` -> use `room2`
+* `userN` -> use `roomN`
+--
++
 {empty} +
 
 === Connecting Camel to Discord
@@ -148,211 +233,37 @@ To connect from _Camel_ to the chat platform, an App needs to be registered in _
 --
 To configure _Camel_ you will need the _Discord_ App credentials. Later, you will find the credentials following the lab instructions.
 --
-+
-[TIP]
---
-If you can't obtain the App's credentials, ask your classroom instructor/administrator. +
-The workshop slides should contain the token values valid today's session:
-
-image::images/apps-tokens.png[align="left", width=80%]
---
-+
-You can skip the next section (app creation) and directly jump to the end of this task.
-+
-TIP: Some browsers misbehave, if the link below fails, simply scroll down to the section they're pointing to.
-+
-** link:#completion-checks[Skip and go to end of task]
 
 {empty} +
-
-
-* If you are running the workshop on your own, you'll have to create an App in _Discord_. Click the link below to follow instructions on how to create your own App.
-+
-TIP: Some browsers misbehave, if the link below fails, simply scroll down to the section they're pointing to.
-+
-** link:#creating-your-own-app-for-discord[Creating your own App for Discord]
-
-{empty} +
-
-==== [[creating-your-own-app-for-discord]]Creating your own App for Discord
-
-. Connect to the following URL
-+
---
-* link:https://discord.com/developers[window="_blank"]
-+
-If you have never used _Discord_ before, register by using your email address (no phone numbers required).
---
-+
-{empty} +
-
-. Create an App
-+
-Once in, you'll see your applications dashboard with an empty list of apps (if never created one before).
-+
-image::images/discord-apps.png[align="left", width=90%,border-color="green", border-width="3"]
-+
-{empty} +
-
-.. Click the `New Application` button
-+
-image::images/discord-create-app.png[align="left", width=15%]
-+
-{empty} +
-
-.. Give it a name, for example `MyCamelApp`. +
-Click `Create`
-+
-Once the App created you'll be presented with its `General Information`
-+
-{empty} +
-
-.. Add bot
-+
-Select from the left menu:
-+
---
-* SETTINGS => Bot => Add Bot
-+
-Click `Yes, do it!`
---
-+
-{empty} +
-
-.. Reset token
-+
-Discord only shows the Bot token once, make sure you keep note of it.
-+
-Click `Reset Token`. +
-Then, click `Yes, do it!`
-+
-The new token will be shown on screen as follows:
-+
-image::images/discord-app-token.png[align="left", width=60%]
-+
-{empty} +
-+
-Copy and keep it safe, you'll need it when configuring Camel.
-+
-{empty} +
-+
-.. Enable _Message Content_ intent
-+
-For reference, look at the picture below:
-+
-image::images/discord-app-message-content.png[align="left", width=90%]
-+
-{empty} +
-+
-Scroll down to the `Privileged Gateway Intents` section and perform the following actions:
-+
---
-1. Enable the `MESSAGE CONTENT INTENT`.
-+
-1. Click `Save Changes` when the warning shows up
---
-+
-{empty} +
-
-. Grant permissions 
-+
-Select from the left menu:
-+
-* SETTINGS => OAuth2 => URL Generator
-+
-.. From `SCOPES` select:
-+
---
-{checkedbox} bot
---
-+
-This action will reveal `BOT PERMISSIONS`
-+
-{empty} +
-
-.. From `BOT PERMISSIONS` select:
-+
---
-|===
-|GENERAL PERMISSIONS 
-|{checkedbox} Read Messages / View Channels
-|===
---
-+
-{empty} +
-+
---
-|===
-|TEXT PERMISSIONS
-|{checkedbox} Send Messages
-|===
---
-+
-{empty} +
-+
-Selecting the permissions above shapes a generated URL presented below. +
-Scroll down to see the gerented URL, it should look as follows:
-+
-image::images/discord-app-generated-url.png[align="left", width=100%]
-+
-{empty} +
-+
-Click `Copy`
-+
-{empty} +
-
-. Authorize your App
-+
-Open a new tab in your browser and paste the generated URL in the address bar. +
--> The browser will load an authorization page. +
-+
-Select from the dropdown list the _Discord_ server you have previously created. +
-Then click `Continue`.
-+
-You then are presented with a summary of bot permissions to authorize, as per the picture below:
-+
-image::images/discord-app-auth.png[align="left", width=30%]
-+
-{empty} +
-+
-click `Authorize`. +
-Tick `I'm a human` {checkedbox}
-+
-When the authorization process is done you can close the tab.
-
-{empty} +
-
-Your App should now be visible as a member of the server, with offline status.
-
-image::images/discord-app-offline.png[align="left", width=20%]
-
-{empty} +
-
-In _Discord_, Apps that are member of a server, automatically become members of all the server channels (rooms).
-
-
-{empty} +
-{empty} +
-
-==== [[completion-checks]] End of task
-
-You completed the task !
-
-=== Completion checks
 
 [type=verification]
-Do you have an App available in _Discord_ (your own or shared)?
-
-[type=verification]
-Do you have the App's credentials to configure _Camel_?
-
+Were you able to join the _Discord_ room successfully?
 
 {empty} +
+
 
 
 [time=10]
 [id="kamelet-create"]
 == Part 1 - Create the Sink Kamelet
+
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+
 
 TIP: _Kamelets_ are [underline big]_**Camel**_ route snipp[underline big]**ets**. +
 A Kamelet encapsulates a normal _Camel_ route.
@@ -403,14 +314,30 @@ image::images/camel-jbang.png[align="left", width=40%]
 
 {empty} +
 
+For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
+
+[source,bash,subs="attributes+"]
+----
+oc project {namespace}
+----
+
+{empty} +
+
 ==== Prototype the Camel route
 
 The first step is to create a little prototype that will validate our _Camel_ route implementation.
 
-
 . Close tabs
 +
-Before you start this lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
+image::images/crw-close-tabs.png[align="left", width=100%]
++
+{blank}
++
+Before you start this second lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
++
+1) Click on the file explorer's `...` button +
+2) Ensure your `Open Editors` is ticked [√] +
+3) Click the `Close all Editors` button.
 +
 {empty} +
 
@@ -419,7 +346,7 @@ Before you start this lab, make sure you close in your editor all the tabs (sour
 +
 [subs=]
 ```bash
-cd /projects/MessageHub
+cd /projects/message-hub
 mkdir lab4-k2d
 cd lab4-k2d<br>
 ```
@@ -432,9 +359,17 @@ cd lab4-k2d<br>
 touch stage4.properties
 ```
 +
+... Find your new folder in the project tree
++
+image::images/crw-folder1.png[align="left", width=30%]
++
+{blank}
++
+Ensure you're working on folder `lab4-k2d`
++
 {empty} +
 +
-Include your _Discord_ details:
+... Include in the new properties file your _Discord_ details:
 +
 ```properties
 # Discord credentials
@@ -448,22 +383,46 @@ channel=YOUR_ROOM_ID
 
 Ensure you configure with your _Discord_ values, and save changes.
 
-- token
+- `token`
 +
-Obtain the _Discord_ token with 1 of these 3 options, and replace `YOUR_TOKEN`:
-
-** *Option 1*: Try the link below:
+Obtain the _Discord_ token following one of the options listed below, and replace `YOUR_TOKEN`:
 +
+=====
 
+** *Option 1*: Try in _Rocket.Chat_:
++
+They may be available in _Rocket.Chat_. +
+Look in the `#general` channel:
++
+image::images/rc-discord-credentials.png[align="left", width=90%]
++
+=========
+. Click on the `#general` channel.
+. Copy the credentials to configure _Camel_.
+=========
++
+{empty} +
+
+** *Option 2*: Try the link below:
++
 WARNING: The link may fail if the cluster did not enable token resolution. +
 If it fails, choose [*Option 2*] or [*Option 3*].
-
++
 *** link:{invite-url}/token/discord[Obtain _Discord_ token,window="_blank"]
 +
 {empty} +
 
-** *Option 2*: if you're sharing an App with the group, use the App's token your admin has provided.
-** *Option 3*: if you created your own App, use your App's `Bot User OAuth Token`
+** *Option 3*: Ask your instructor/administrator for the token to use to connect to Discord.
++
+[TIP]
+====
+The workshop slides should contain the token values valid for today's session:
+
+image::images/apps-tokens.png[align="left", width=80%]
+
+====
+** *Option 4*: if you created your own _Discord_ App, use your App's `Bot User OAuth Token`
+=====
 
 {empty} +
 
@@ -471,9 +430,9 @@ If it fails, choose [*Option 2*] or [*Option 3*].
 * `channel` +
 You can find the channel id in the address bar of your _Discord_ browser tab. The pattern is:
 +
-* http://discord.com/channels/SERVER_ID/CHANNEL_ID
+** \http://discord.com/channels/SERVER_ID/CHANNEL_ID
 +
-image::images/discord-room-id.png[align="left", width=100%]
+image::images/discord-room-id.png[align="left", width=80%]
 --
 +
 {empty} +
@@ -687,7 +646,18 @@ Open the file in your editor.
 
 . Define your Kamelet
 +
-.. Define metadata and parameters
+.. Define your Kamelet metadata and parameters
++
+(Copy and replace the `spec`, keep the _Kamelet_'s header/metadata.)
++
+----
+apiVersion: camel.apache.org/v1alpha1
+kind: Kamelet
+metadata:
+  name: discord-sink
+  labels:
+    camel.apache.org/kamelet.type: "sink"
+----
 +
 ```yaml
 spec:
@@ -722,6 +692,10 @@ spec:
 {empty} +
 +
 .. Include your prototype code
++
+(Copy/paste below `spec`, at the bottom of the _Kamelet_)
++
+NOTE: This snippet below is the one you have just tested locally.
 +
 ```yaml
       - remove-headers:
@@ -788,15 +762,15 @@ sed -i 's/channel/discord.channel/g' stage4.properties
 <br>
 ```
 +
-* **MacOS**
-+
-[subs=]
-```bash
-sed -i '' 's/token/discord.token/g' stage4.properties
-sed -i '' 's/channel/discord.channel/g' stage4.properties
-<br>
-```
-+
+// * **MacOS**
+// +
+// [subs=]
+// ```bash
+// sed -i '' 's/token/discord.token/g' stage4.properties
+// sed -i '' 's/channel/discord.channel/g' stage4.properties
+// <br>
+// ```
+// +
 {empty} +
 
 .. Run it
@@ -828,6 +802,8 @@ Verify the snippet copy/paste actions were well followed.
 
 {empty} +
 
+Assuming all went well, you have now created your own _Discord Kamelet_, and used it in a _Camel_ route to push messages to _Discord_.
+
 Press `ctrl`+`c` to stop _Camel JBang_.
 
 {empty} +
@@ -836,6 +812,33 @@ Press `ctrl`+`c` to stop _Camel JBang_.
 [time=5]
 [id="kamelet-binding-create"]
 == Part 2 - Kafka ⇒ Discord
+
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+[type=taskResource]
+.Matrix
+****
+* link:{url-element}[Matrix Web Client, window="_blank"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
+****
 
 We have now the building block we were missing, we can now bind our _Discord_ _Kamelet_ to _Kafka_ to push chat conversations to _Discord_.
 
@@ -848,14 +851,14 @@ image::images/processing-flow-kafka2discord.png[align="center", width=90%]
 There are 4 Kamelets in use:
 
 ====
-* *A source* +
+* *1 source* +
 Consumes events from _Kafka_.
 
-* *Two actions* +
+* *2 actions* +
 One filters messages to prevent death loops. +
 One transforms events from the standard data model to _Discord_.
 
-* *A sink* +
+* *1 sink* +
 Produces events to _Discord_.
 ====
 
@@ -865,9 +868,24 @@ Produces events to _Discord_.
 
 === Process definition
 
+. Close tabs
++
+image::images/crw-close-tabs.png[align="left", width=100%]
++
+{blank}
++
+Before you start this second lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
++
+1) Click on the file explorer's `...` button +
+2) Ensure your `Open Editors` is ticked [√] +
+3) Click the `Close all Editors` button.
++
+{empty} +
+
 . Setup the _Kamelet_ binding
 +
-Given the process is almost identical to the _Kafka_ to _Gitter_/_Slack_ ones, we can use one of those as a base for our definition.
+Given the process is almost identical to the _Kafka_ to _Matrix_/_Rocket.Chat_ ones, we can use one of those as a base for our definition. +
+The commands below clones the _Kafka_ to _Rocket.Chat_ and modifies it to use _Discord_ instead.
 +
 Run the following commands in your terminal:
 +
@@ -875,24 +893,25 @@ Run the following commands in your terminal:
 +
 [subs=]
 ```bash
-cp ../lab3/flows/k2s.yaml k2d.yaml
-sed -i 's/k2s/k2d/g'       k2d.yaml
-sed -i 's/slack/discord/g' k2d.yaml
+cp ../lab3/flows/k2r.yaml k2d.yaml
+sed -i 's/k2r/k2d/g'       k2d.yaml
 sed -i 's/stage3/stage4/g' k2d.yaml
+sed -i 's/rocketchat/discord/g' k2d.yaml
+sed -i 's/userid/channel/g' k2d.yaml
 touch k2d.jslt<br>
 ```
 +
-* **MacOS**
-+
-[subs=]
-```bash
-cp ../lab3/flows/k2s.yaml k2d.yaml
-sed -i '' 's/k2s/k2d/g'       k2d.yaml
-sed -i '' 's/slack/discord/g' k2d.yaml
-sed -i '' 's/stage3/stage4/g' k2d.yaml
-touch k2d.jslt<br>
-```
-+
+// * **MacOS**
+// +
+// [subs=]
+// ```bash
+// cp ../lab3/flows/k2r.yaml k2d.yaml
+// sed -i '' 's/k2r/k2d/g'       k2d.yaml
+// sed -i '' 's/rocketchat/discord/g' k2d.yaml
+// sed -i '' 's/stage3/stage4/g' k2d.yaml
+// touch k2d.jslt<br>
+// ```
+// +
 {empty} +
 +
 [NOTE]
@@ -903,33 +922,8 @@ The commands above modified the `k2d.yaml` binding with the following changes:
 * The filter blocks `discord` source events
 * Applies the `k2d.jslt` transformation (to be defined)
 * Uses the new _Discord sink Kamelet_
+** defines the `channel` property for _Discord_
 ====
-+
-{empty} +
-
-. Update the sink definition in `k2d.yaml`
-+
-One of the CLI commands in the previous step modified the _Slack_ sink for a _Discord_ one. However, _Slack_ only had one parameter (`token`), while _Discord_ requires two: `token` and `channel`.
-+
-Copy the `channel` parameter from the snipped below and paste it in the sink definition of your `k2d.yaml` file:
-+
-----
-  sink:
-    ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: discord-sink
-    properties:
-      token: "{{discord.token}}"
-----
-+
-```yaml
-      channel: "{{discord.channel}}"
-```
-+
-{empty} +
-+
-Save changes.
 +
 {empty} +
 
@@ -957,13 +951,13 @@ And that's it, ready to be deployed.
 
 === Deploy and test
 
-. Login to _OpenShift_ 
+. Select your _OpenShift_ project
 +
-For those resuming work from a previous day, ensure you reconnect your `oc` client with _OpenShift_ by running the following login command:
+For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
 +
 [source,bash,subs="attributes+"]
 ----
-oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+oc project {namespace}
 ----
 +
 {empty} +
@@ -1028,9 +1022,9 @@ k2d    Ready   1
 
 . Send messages to test the system.
 +
-.. Go to your _Gitter_'s room and send a message, for example `Hello from Gitter`.
+.. Go to your _Matrix_'s room and send a message, for example `Hello from Matrix`.
 
-.. Then go to your _Slack_'s room and send a message, for example `Hello from Slack`.
+.. Then go to your _Rocket.Chat_'s room and send a message, for example `Hello from Rocket.Chat`.
 +
 If all goes well you should see something similar to the picture below:
 +
@@ -1042,7 +1036,7 @@ image::images/stage4-msg-k2d-test.png[align="left", width=90%]
 {empty} +
 
 [type=verification]
-Did you see the message going from _Gitter_ to _Discord_?
+Did you see the message going from _Matrix_ to _Discord_?
 
 [type=verificationSuccess]
 Very good !
@@ -1052,7 +1046,7 @@ Inspect in the pod logs to troubleshoot.
 
 
 [type=verification]
-Did you see the message going from _Slack_ to _Discord_?
+Did you see the message going from _Rocket.Chat_ to _Discord_?
 
 [type=verificationSuccess]
 Very good !
@@ -1066,16 +1060,43 @@ Inspect in the pod logs to troubleshoot.
 [id="kamelet-binding-create"]
 == Part 3 - Discord ⇒ Kafka
 
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+[type=taskResource]
+.Matrix
+****
+* link:{url-element}[Matrix Web Client, window="_blank"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
+****
+
 In previous exercises we kept using _Kamelets_ to define processing flows. This task however requires more developer control.
 
 _Camel K_ provides the following development options:
 
 ====
 * *Kamelets* +
-These are encapsulated _Camel_ routes that can be used in _Kamalet_ bindings and also directly with the _Camel_'s DSL (_Domain Specific Language_).
+These are like capsules containing _Camel_ routes that can be used in _Kamalet_ bindings and also invoked from _Camel_'s DSL (_Domain Specific Language_).
 
 * *Kamelet bindings* +
-No code definitions where Kamelets are bound together or to a platform resource (_Kafka/Knative_). _Camel K_ deploys them as a running integration instance as per their definition.
+Bindings are no-code definitions where _Kamelets_ are bound together or to a platform resource (_Kafka/Knative_). _Camel K_ deploys them as a running integration units.
 
 * *Camel DSL* +
 The _Camel_ language to define integration processes (routes). Using the DSL's EIPs (_Enterprise Integration Patterns_), the _Camel_ components (connectors) and _DataFormats_ (translators) the developer defines integrations with a very high level of control.
@@ -1083,7 +1104,7 @@ The _Camel_ language to define integration processes (routes). Using the DSL's E
 
 {empty} +
 
-_Discord_ implements the use of websockets to push notifications from the chat platform to the application. Websockets is a 2-way communication mechanism on top of HTTP. _Camel's_ DSL provides the necessary level of control to implement a _Discord_ listener.
+_Discord_ implements the use of websockets to push notifications from the chat platform to the application. A websocket is a 2-way communication protocol on top of HTTP. _Camel's_ DSL provides the necessary level of control to implement a _Discord_ listener.
 
 {empty} +
 
@@ -1096,14 +1117,14 @@ image::images/processing-flow-discord2kafka.png[align="center", width=90%]
 There are 4 steps involved:
 
 ====
-* *A websocket listener* +
+* *1 websocket listener* +
 Consumes events from _Discord_.
 
-* *Two actions* +
+* *2 actions* +
 One filters messages to prevent death loops. +
 One transforms events from _Discord_ to the standard data model.
 
-* *A Kafka producer* +
+* *1 Kafka producer* +
 Produces events to _Kafka_.
 ====
 
@@ -1133,10 +1154,17 @@ The _Camel_ developer needs to open a websocket connection and ensure the follow
 
 === Process definition
 
-
 . Close tabs
 +
-Before you start this lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
+image::images/crw-close-tabs.png[align="left", width=100%]
++
+{blank}
++
+Before you start this second lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
++
+1) Click on the file explorer's `...` button +
+2) Ensure your `Open Editors` is ticked [√] +
+3) Click the `Close all Editors` button.
 +
 {empty} +
 
@@ -1146,7 +1174,7 @@ Execute the following commands to create your working folder and configuration:
 +
 [subs=]
 ```bash
-cd /projects/MessageHub
+cd /projects/message-hub
 mkdir lab4-d2k
 cd lab4-d2k
 cp ../lab4-k2d/stage4.properties .<br>
@@ -1161,6 +1189,15 @@ We've copied the same configuration file from the previous exercise since it con
 +
 {empty} +
 
+. Find your new folder in the project tree
++
+image::images/crw-folder2.png[align="left", width=30%]
++
+{blank}
++
+Ensure you're working on folder `lab4-d2k`
++
+{empty} +
 
 . Create your _Camel_ definition file
 +
@@ -1232,7 +1269,7 @@ Replace in your `d2k.xml` the main _Camel_ route, by the following one:
 
 . Include a pulsating heartbeat process
 +
-Inlcude in your `d2k.xml` the following _Camel_ route:
+Inlcude in your `d2k.xml` the additional _Camel_ route:
 +
 ```xml
     <route id="heartbeat">
@@ -1257,7 +1294,7 @@ Inlcude in your `d2k.xml` the following _Camel_ route:
 
 . Include an event listener
 +
-Inlcude in your `d2k.xml` the following _Camel_ route:
+Inlcude in your `d2k.xml` the yet another _Camel_ route:
 +
 ```xml
     <route id="listener">
@@ -1311,9 +1348,9 @@ Not Using the correct bot name will cause feedback loops.
 {empty} +
 
 
-. Include an _Kafka_ publisher
+. Include a _Kafka_ publisher
 +
-Inlcude in your `d2k.xml` the following _Camel_ route:
+Inlcude in your `d2k.xml` the last _Camel_ route:
 +
 ```xml
     <route id="kafka-publisher">
@@ -1435,18 +1472,6 @@ public class wsConfig extends RouteBuilder {
 * A filter method defines an instruction that adds the `Origin` header.
 --
 +
-[NOTE] 
---
-After some time, the IDE will highlight on screen many errors in red, as per the picture below:
-
-image::images/ide-errors-java.png[align="left", width=90%]
-
-{blank}
-
-Ignore the errors. +
-_Camel JBang_ and _Camel K_ will resolve dependencies automatically by analysing the code. The IDE is not able to find the packages because our _Camel_ sources are not packaged in a conventional _Maven_ project. 
---
-+
 {empty} +
 +
 Save changes.
@@ -1482,7 +1507,9 @@ If all goes well you should see in your terminal an output similar to:
 ... : message to push: {"timestamp":"1663927933","source":"discord","user":"bmesegue","text":"test Camel listener"}
 ... : JBang instance, bypassing kafka push
 ----
-
++
+NOTE: You can read the in the logs the message `bypassing kafka push`. The code you copied contains logic to bypass _Kafka_ when running locally with _Camel JBang_.
++
 {empty} +
 
 [type=verification]
@@ -1505,13 +1532,13 @@ Press `ctrl`+`c` to stop _Camel JBang_.
 
 You have successfully tested your integration locally. It is time to deploy it in _OpenShift_.
 
-. Login to _OpenShift_ 
+. Select your _OpenShift_ project
 +
-For those resuming work from a previous day, ensure you reconnect your `oc` client with _OpenShift_ by running the following login command:
+For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
 +
 [source,bash,subs="attributes+"]
 ----
-oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+oc project {namespace}
 ----
 +
 {empty} +
@@ -1577,14 +1604,14 @@ kamel logs d2k
 .. Go to your _Discord's_ room and send a message. +
 For example, type `Hello from Discord`.
 +
-If all goes well you should see the message displayed both in Slack and Gitter, as the picture shown below:
+If all goes well you should see the message displayed both in Rocket.Chat and Matrix, as the picture shown below:
 +
 image::images/stage4-msg-d2k-test-ocp.png[align="left", width=90%]
 +
 {empty} +
 
 [type=verification]
-Did you see the message displayed in _Slack_?
+Did you see the message displayed in _Rocket.Chat_?
 
 [type=verificationSuccess]
 Very good !
@@ -1594,7 +1621,7 @@ Inspect in the pod logs to troubleshoot.
 
 
 [type=verification]
-Did you see the message displayed in _Gitter_?
+Did you see the message displayed in _Matrix_?
 
 [type=verificationSuccess]
 Very good !

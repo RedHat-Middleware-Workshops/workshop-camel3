@@ -1,0 +1,4 @@
+{
+    "channel":"room1",
+    "text":"*"+.fromUser.username+"@matrix*: "+.text
+}

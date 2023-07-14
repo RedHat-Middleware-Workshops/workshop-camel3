@@ -1,7 +1,0 @@
-{
-	"timestamp": .ts,
-	"source":"slack",
-	"user": $headers.ocpuser+"-"+.user,
-	"user-original": .user,
-	"text": .text
-}

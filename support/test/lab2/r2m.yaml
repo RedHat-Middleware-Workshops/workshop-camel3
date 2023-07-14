@@ -1,0 +1,43 @@
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: r2m
+  annotations:
+    trait.camel.apache.org/mount.configs: "secret:stage2"
+    trait.camel.apache.org/mount.resources: "configmap:stage2-transform"
+spec:
+
+  source:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: webhook-source
+
+
+  steps:
+
+  # Filter action to prevent death loops
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: predicate-filter-action
+    properties:
+      expression: $.text =~ /(?!\*.*@.*\*:).*/
+
+  # JSON Transformation
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: jslt-action
+    properties:
+      template: "{{transform.path:r2m.jslt}}"
+
+
+  sink:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: matrix-sink
+    properties:
+      token: "{{matrix.token}}"
+      room: "{{matrix.room}}"

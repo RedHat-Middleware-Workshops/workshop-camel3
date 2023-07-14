@@ -2,6 +2,10 @@
 :user-password: openshift
 :namespace: {user-username}
 
+:url-codeready: http://devspaces.{openshift-app-host}/
+:url-devconsole: {openshift-host}/topology/ns/{namespace}
+:url-rocketchat: https://rocketchat-rocketchat.{openshift-app-host}
+
 ifdef::env-github[]
 endif::[]
 
@@ -11,9 +15,18 @@ endif::[]
 
 Use OpenShift Data Foundation to provide storage capabilities and services to the MessageHub platform.
 
+Prerequisites: +
+--
+* Ensure you have previously completed the following tiles:
++
+image::images/prereq.png[align="left", width=100%]
+
+{empty} +
+--
+
 All the lab stages you have completed so far have focussed on interconnecting independent instant messaging platforms. This lab however simulates the need to respond to government regulations (or policies alike) to meet legal and business data archival requirements.
 
-Adding _Kafka_ in the architecture was a strategical decision. Any type of message broker would have been qualified, except we chose _Kafka_ because of its ability to replay data streams.
+Adding _Kafka_ in the architecture was a strategical decision. Any type of message broker would have qualified, except we chose _Kafka_ because of its ability to replay data streams.
 
 In the context explained, the plan is to process data streams from room conversations and transfer them to a storage layer dedicated to meet the data retention requirements.
 
@@ -159,12 +172,36 @@ Review the notes above and study the sequence diagram again.
 [id="initialise"]
 == Initialise the lab exercise
 
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
 
 The first step is to create a little prototype that will validate our _Camel_ route implementation.
 
 . Close tabs
 +
-Before you start this lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
+image::images/crw-close-tabs.png[align="left", width=100%]
++
+{blank}
++
+Before you start this second lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
++
+1) Click on the file explorer's `...` button +
+2) Ensure your `Open Editors` is ticked [√] +
+3) Click the `Close all Editors` button.
 +
 {empty} +
 
@@ -173,7 +210,7 @@ Before you start this lab, make sure you close in your editor all the tabs (sour
 +
 [subs=]
 ```bash
-cd /projects/MessageHub
+cd /projects/message-hub
 mkdir lab5
 cd lab5
 cp ../support/labs/stage5/HelperStage5.java .<br>
@@ -181,6 +218,15 @@ cp ../support/labs/stage5/HelperStage5.java .<br>
 +
 {empty} +
 +
+.. Find your new folder in the project tree
++
+image::images/crw-folder.png[align="left", width=30%]
++
+{blank}
++
+Ensure you're working on folder `lab5`
++
+{empty} +
 .. Create a configuration file
 +
 ```bash
@@ -381,7 +427,7 @@ In the code you'll find the following highlights:
 
 * On normal aggregations (old and new exchanges provided), the method appends the new data to the already aggregated data from preceding iterations (handed in the `oldExchange`).
 
-
+{empty} +
 
 [time=5]
 [id="create-camel-routes"]
@@ -418,6 +464,23 @@ NOTE: Do not hesitate to navigate back to previous chapters to have a second loo
 
 === Accelerated Development
 
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+
 Although the code required is little, the end-to-end process is not a trivial one, it has various parts at play that need to be well coordinated. To accelerate the development phase, a good developer would want to prototype and test locally, iterating over the code until its implementation is fully validated.
 
 Another very useful technique to simplify the development cycle, is to bypass (or mock) the endpoints the process integrates with: in this case _Kafka_ as the source of events, and _S3_ as the storage layer.
@@ -429,8 +492,6 @@ You will first build your integration bypassing the endpoints, and when you're c
 {empty} +
 
 === Process definition
-
-
 
 . Create your _Camel_ definition file
 +
@@ -750,6 +811,28 @@ Review the steps and try again.
 [id="deploy-openshift"]
 == Deploy in OpenShift
 
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
+****
+
 During the prototyping phase we used _Timer_ components to mock _Kafka_ events, and we bypassed the action of pushing the data to the Storage layer.
 
 Let's put in place the real components and deploy in OpenShift.
@@ -763,13 +846,13 @@ Now we intend to run the code with _Red Hat Camel K_ which is a version behind. 
 
 {empty} +
 
-. Login to _OpenShift_ 
+. Select your _OpenShift_ project
 +
-For those resuming work from a previous day, ensure you reconnect your `oc` client with _OpenShift_ by running the following login command:
+For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
 +
 [source,bash,subs="attributes+"]
 ----
-oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+oc project {namespace}
 ----
 +
 {empty} +
@@ -936,7 +1019,7 @@ messege.controller.cutoff.time = 15000
 
 .. Configure your S3 credentials
 +
-Ask the workshop's administrator for the following parameters:
+You need to obtain the following credentials to configure _Camel_:
 +
 --
 * S3's Access Key
@@ -945,73 +1028,26 @@ Ask the workshop's administrator for the following parameters:
 +
 {blank}
 +
-Use the values above to update `accessKey` and `secretKey` from the configuration below:
+They have been made available in _Rocket.Chat_. +
+Find them in the `#general` channel:
++
+image::images/rc-s3-credentials.png[align="left", width=80%]
++
+--
+. Click on the `#general` channel.
+. Copy the credentials to configure _Camel_.
+--
++
+{empty} +
++
+Use the values above to update `accessKey` and `secretKey` in Camel's configuration file, as follows:
 +
 ----
-accessKey=YOUR_ACCESS_KEY\
-&secretKey=RAW(YOUR_SECRET_KEY)\
+accessKey=S3_ACCESS_KEY\
+&secretKey=RAW(S3_SECRET_KEY)\
 ----
 +
 NOTE: Make sure your secret key is defined inside the `RAW()` statement.
-+
-{empty} +
-+
-If you're running the workshop on your own and you have admin access in _OpenShift_, follow the instructions below to obtain the S3 access credentials:
-+
---
-. Extract admin user credentials
-+
-To login to the storage console, run the following commands to extract the admin's credentials:
-+
-```
-oc get secret noobaa-admin \
--n openshift-storage \
---template={{.data.email}} | base64 -d
-```
-+
-{blank}
-+
-The command above will obtain the `email`. 
-+
-```
-oc get secret noobaa-admin \
--n openshift-storage \
---template={{.data.password}} | base64 -d
-```
-+
-{blank}
-+
-The command above will obtain the `password`.
-+
-{empty} +
-+
-. Login to the storage console
-+
-Open the storage UI from the link below:
-+
-* link:https://noobaa-mgmt-openshift-storage.{openshift-app-host}/fe?skip-oauth[Storage admin console, window="_blank"]
-+
-{blank}
-+
-Enter the admin credentials (obtained above). +
-Click `Login`.
-+
-image::images/noobaa-login.png[align="left", width=40%]
-+
-{empty} +
-+
-. Obtain the Connection details
-+
-In the presented dashboard, click on `Connect Application`, as per the image below:
-+
-image::images/noobaa-connect-application.png[align="left", width=20%]
-+
-{blank}
-+
-Then, copy the `Access Key` and `Secret Key`:
-+
-image::images/noobaa-connect-application-tokens.png[align="left", width=40%]
---
 +
 {empty} +
 
@@ -1059,54 +1095,11 @@ After the first run (blue color), it will terminate and wait for the next run (g
 +
 {empty} +
 
-. Visualise the uploads in the Console UI
-+
-When _Camel_ completes a run you should be able to see in the UI console the S3 object in its bucket.
-+
-Open the storage UI from the link below:
-+
---
-* link:https://noobaa-mgmt-openshift-storage.{openshift-app-host}/fe?skip-oauth[Storage admin console, window="_blank"]
---
-+
-{blank}
-+
-Enter the admin credentials (ask for them to your workshop administrator). +
-Click `Login`.
-+
-image::images/noobaa-login.png[align="left", width=40%]
-+
-{blank}
-+
-Then from the left vertical menu, select `Buckets`:
-+
-image::images/noobaa-buckets.png[align="left", width=20%]
-+
-{blank}
-+
-Select your bucket (as defined in your _Camel_ process):
-+
-image::images/noobaa-bucket-user.png[align="left", width=90%]
-+
-{blank}
-+
-From the bucket view, select `Objects`, as per the picture below:
-+
-image::images/noobaa-objects.png[align="left", width=90%]
-+
-{blank}
-+
-You should then see (enclosed in red) the list of objects _Camel_ has uploaded, as many as runs where Kafka events where available.
-+
-NOTE: When no new Kafka messages are available, no aggregation occurs and therefore no upload to S3 takes place.
-
-{empty} +
-
 === Viewing S3 object contents
 
-From the admin console above we can't visualise the contents of the S3 objects created.
+When _Camel_ completes a run you should be able to see the S3 object in its bucket. Use an online web based S3 browser to visualise the data
 
-You can however use an online web based S3 browser to visualise the data, for example:
+. Open the S3 Browser from the link below:
 
 * link:https://www.filestash.app/s3-browser.html[https://www.filestash.app/s3-browser.html, window="_blank"]
 +
@@ -1121,7 +1114,31 @@ image::images/s3-browser.png[align="left", width=40%]
 +
 {empty} +
 
-Alternatively, you can very quickly create a Camel consumer to visually confirm the data was correctly uploaded. Here's how:
+. Once connected, navigate to your data, as per the image below: +
+Ensure you select your bucket:
++
+--
+- `chatrooms-{user-username}.bucket`
+--
++
+{blank}
++
+You should find a CSV file (comma separated values) containing the exchanges you triggered between the different chat platforms.
++
+image::images/s3-browser-data.png[align="left", width=100%]
++
+--
+. Select your bucket: `chatrooms-{user-username}.bucket`
+. Navigate the folders and open the CSV file.
+--
++
+{empty} +
++
+NOTE: When no new Kafka messages are available, no aggregation occurs and therefore no upload to S3 takes place.
+
+{empty} +
+
+Alternatively, you can very quickly create a _Camel_ consumer to visually confirm the data was correctly uploaded. Here's how:
 
 . Add a new `.view` property in `stage5.properties`
 +
@@ -1202,8 +1219,14 @@ In the Camel route above:
 Execute the following _Camel JBang_ command:
 +
 ```bash
-camel run view.xml stage5.properties
+camel run view.xml stage5.properties \
+--deps=mvn:org.apache.camel:camel-aws2-s3:3.19.0
 ```
++
+[NOTE] 
+--
+We include an explicit dependency (`3.19.0`) because the component is currently not behaving properly on its head version. This problem will be addressed and fixed.
+--
 +
 {empty} +
 +

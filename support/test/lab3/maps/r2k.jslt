@@ -1,0 +1,7 @@
+{
+	"timestamp": string(round(parse-time(.timestamp, "yyyy-MM-dd'T'HH:mm:ss.SSSX"))),
+	"source":"rocketchat",
+	"user": $headers.ocpuser+"-"+.user_name,
+	"user-original": .user_name,
+	"text": .text
+}

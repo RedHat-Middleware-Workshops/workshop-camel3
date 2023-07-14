@@ -1,0 +1,45 @@
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: m2k
+  annotations:
+    trait.camel.apache.org/mount.resources: "configmap:stage3-transform"
+    trait.camel.apache.org/mount.configs: "secret:stage3"
+spec:
+
+  source:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: matrix-source
+    properties:
+      token: "{{matrix.token}}"
+      room:  "{{matrix.room}}"
+
+  steps:
+  # Filter action to prevent death loops
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: predicate-filter-action
+    properties:
+      expression: $.text =~ /(?!<b>.*@.*<\/b>:).*/
+  
+  # Intended for deployment smoke test
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: test-action
+
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: jslt-action
+    properties:
+      template: m2k.jslt
+
+  sink:
+    ref:
+      kind: KafkaTopic
+      apiVersion: kafka.strimzi.io/v1beta1
+      name: roomx

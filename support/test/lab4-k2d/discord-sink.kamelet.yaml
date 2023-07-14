@@ -4,7 +4,6 @@ metadata:
   name: discord-sink
   labels:
     camel.apache.org/kamelet.type: "sink"
-
 spec:
   definition:
     title: "Discord Sink"

@@ -1,23 +1,36 @@
-:walkthrough: Gitter to Slack bridge ()
+:walkthrough: Matrix to Rocket.Chat bridge ()
 :user-password: openshift
 :namespace: {user-username}
+
+:url-element: https://app.element.io
+:url-rocketchat: https://rocketchat-rocketchat.{openshift-app-host}
+:url-codeready: http://devspaces.{openshift-app-host}/
+:url-devconsole: {openshift-host}/topology/ns/{namespace}
 
 ifdef::env-github[]
 endif::[]
 
-[id='lab2-gitter-slack-two-ways']
-// = Lab 2 - Gitter ⇔ Slack (two ways)
+[id='lab2-matrix-rocketchat-two-ways']
+// = Lab 2 - Matrix ⇔ Rocket.Chat (two ways)
 = Lab 2 - Enable two way interactions
 
 // = [[kubernetes-user]] The Kubernetes user deployment flow
 
-Enable two-way communication between Gitter and Slack chat platforms.
+Enable two-way communication between Matrix and Rocket.Chat chat platforms.
 
-{empty} + 
+
+Prerequisites: +
+--
+* Ensure you have previously completed the following tiles:
++
+image::images/prereq.png[align="left", width=100%]
+
+{empty} +
+--
 
 *Overview*
 
-Lab 1 enabled a _Gitter_ to _Slack_ data flow. On this second lab we want the flow to work in both directions so that users from both chat platforms can exchange messages and have a conversation.
+Lab 1 enabled a _Matrix_ to _Rocket.Chat_ data flow. On this second lab we want the flow to work in both directions so that users from both chat platforms can exchange messages and have a conversation.
 
 {empty} + 
 
@@ -49,14 +62,23 @@ Technical goals and milestones:
 
 [NOTE]
 --
-Given the first lab covered in detail the workflows for both personas (Kubernets/Camel user), consider yourself equipped with the knowledge and tools to choose your preferred development methodology going forward.
+In the first lab you impersonated the _Camel_ developer to create and deploy _Kamelet Bindings_. Later, you will create more advanced integrations using regular Camel DSL (_Domain Specific Language_).
+--
 
-From now on, we simplify the instructions with code snippets directly deployable in _OpenShift_. Feel free to modify the snippets accordingly if you'd like to test them locally (as a Camel expert). 
+In this second lab, you will work as a _Kubernetes_ user. Instead of running locally your code, you will directly push your definitions to OpenShift. 
+
+[NOTE]
+--
+As you progress with the lab, notice that working as a Kubernetes user, with Camel K, allows you to create and deploy data flows without any internal knowledge of Camel, as per the diagram below:
+
+image::images/workflow-kube-user.png[align="center", width=100%]
+
+You only need to define and configure sources, steps and sinks in Kamelet Binding definitions.
 --
 
 {empty} +
 
-The picture billow illustrates two data flows interconnecting both chat systems, one for each direction of communication:
+The picture below illustrates two data flows interconnecting both chat systems, one for each direction of communication:
 
 // image::images/processing-flow.png[title="Data flow",align="center",title-align=center, width=80%]
 image::images/data-flow.png[align="center", width=80%]
@@ -67,17 +89,44 @@ Luckily, you've already done all the necessary onboarding setup with both chat s
 
 
 [time=5]
-[id="g2s"]
-== Gitter to Slack
+[id="m2r"]
+== Matrix to Rocket.Chat
+
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+[type=taskResource]
+.Matrix
+****
+* link:{url-element}[Matrix Web Client, window="_blank"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
+****
 
 This process is identical to the one you've already created in Lab 1, except there is situation you need to prevent. +
 Ask yourself the following question:
 
-* If the App in a chat room fires an event for each new message in a conversation, what would happen when interconnecting both Apps?
+* If the App (e.g. Camel) in a chat room fires an event for each new message in a conversation, what would happen when interconnecting both ends (apps)?
 
 {empty} +
 
-Obviously, the interaction between both platforms would enter in a ping-pong effect between the App in Gitter and the App in Slack.
+Obviously, the interaction between both platforms would enter in a ping-pong effect between the App in Matrix and the App in Rocket.Chat.
 
 image::images/death-loop.png[align="center", width=60%]
 
@@ -94,15 +143,15 @@ image::images/processing-flow-g2s.png[align="center", width=80%]
 There are 4 Kamelets in use:
 
 ====
-* *A source* +
-Consumes events from _Gitter_.
+* *1 source* +
+Consumes events from _Matrix_.
 
-* *Two actions* +
+* *2 actions* +
 One filters messages to prevent death loops. +
-One transforms _Gitter_ events to _Slack_ events (in JSON format).
+One transforms _Matrix_ events to _Rocket.Chat_ events (in JSON format).
 
-* *A sink* +
-Produces events to _Slack_.
+* *1 sink* +
+Produces events to _Rocket.Chat_.
 ====
 
 {empty} +
@@ -114,37 +163,46 @@ You can tell from the list above that this second lab suits very well the _Kuber
 
 === Process definition
 
-. Close tabs
+. Setup
+.. Close tabs
++
+image::images/crw-close-tabs.png[align="left", width=100%]
++
+{blank}
 +
 Before you start this second lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
 +
+1) Click on the file explorer's `...` button +
+2) Ensure your `Open Editors` is ticked [√] +
+3) Click the `Close all Editors` button.
++
 {empty} +
 
-. Login to _OpenShift_ 
+.. Select your _OpenShift_ project 
 +
-For those resuming work from a previous day, ensure you reconnect your `oc` client with _OpenShift_ by running the following login command:
+For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
 +
 [source,bash,subs="attributes+"]
 ----
-oc login -u {user-username} -p {user-password} https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true
+oc project {namespace}
 ----
 +
 {empty} +
 
-. Create the skeleton
+.. Create the skeleton
 +
-.. Using the sources of _Stage1_ as a base, make a copy of your previous exercise, for example:
+... Using the sources of _Stage1_ as a base, make a copy of your previous exercise, for example:
 +
 [subs=]
 ```bash
-cd /projects/MessageHub
+cd /projects/message-hub
 cp -r lab1 lab2
 cd lab2<br>
 ```
 +
 {empty} +
 
-.. Rename all occurrences of `stage1` to `stage2`.
+... Rename all occurrences of `stage1` to `stage2`.
 +
 Run the commands below in your terminal:
 +
@@ -154,18 +212,18 @@ Run the commands below in your terminal:
 [subs=]
 ```bash
 mv stage1.properties stage2.properties
-sed -i 's/stage1/stage2/g' g2s.yaml
+sed -i 's/stage1/stage2/g' m2r.yaml
 <br> 
 ```
-+
-* **MacOS**
-+
-[subs=]
-```bash
-mv stage1.properties stage2.properties
-sed -i '' 's/stage1/stage2/g' g2s.yaml
-<br> 
-```
+// +
+// * **MacOS**
+// +
+// [subs=]
+// ```bash
+// mv stage1.properties stage2.properties
+// sed -i '' 's/stage1/stage2/g' m2r.yaml
+// <br> 
+// ```
 --
 +
 {blank}
@@ -173,9 +231,19 @@ sed -i '' 's/stage1/stage2/g' g2s.yaml
 The commands above will:
 +
 --
-* replace the annotations in the `g2s.yaml` file from `stage1` to `stage2` 
+* replace the annotations in the `m2r.yaml` file from `stage1` to `stage2` 
 * rename `stage1.properties` to `stage2.properties`
 --
+{empty} +
+
+.. Find your new folder in the project tree
++
+image::images/crw-folder.png[align="left", width=30%]
++
+{blank}
++
+Ensure you're working on folder `lab2`
++
 {empty} +
 
 . Include the filter
@@ -194,14 +262,14 @@ From the  _link:https://camel.apache.org/camel-kamelets/next/index.html[Kamelet 
 +
 This _Kamelet_ action applies a _JsonPath_ expression where we can use a regular expression operator to match the blocking pattern. 
 +
-The challenge with _Gitter_, contrary to other chat platforms, is that there's no field (within the incoming event) indicating if the message is from a human or an app. To distinguish one from the other, we need to come up with a pattern that works for us.
+The challenge with _Matrix_, contrary to other chat platforms, is that there's no field (within the incoming event) indicating if the message is from a human or an app. To distinguish one from the other, we need to come up with a pattern that works for us.
 +
 --
 Given our JSLT converts messages to the following format:
 
 * `username@system:`  message
 +
-(an example would be: *jon@gitter: hello*)
+(an example would be: *{user-username}@matrix: hello*)
 --
 +
 {empty} +
@@ -213,7 +281,7 @@ With all the above in mind, let's include a `filter-action` _Kamelet_, as an add
 Find in your editor's file tree, and open to edit:
 +
 --
-* *_MessageHub_* -> *_lab2_* -> *`g2s.yaml`*
+* *_MessageHub_* -> *_lab2_* -> *`m2r.yaml`*
 --
 +
 {empty} +
@@ -224,7 +292,7 @@ Copy the filter snippet below and paste it in your _Kamelet_ Binding:
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: g2s
+  name: m2r
   annotations:
     trait.camel.apache.org/mount.configs: "secret:stage2"
     trait.camel.apache.org/mount.resources: "configmap:stage2-transform"
@@ -234,10 +302,10 @@ spec:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: gitter-source
+      name: matrix-source
     properties:
-      token: "{{gitter.token}}"
-      room:  "{{gitter.room}}"
+      token: "{{matrix.token}}"
+      room:  "{{matrix.room}}"
 
   steps:
 ----
@@ -258,20 +326,20 @@ spec:
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: g2s.jslt
+      template: m2r.jslt
 
   sink:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: slack-sink
+      name: rocketchat-sink
     properties:
-      token: "{{slack.token}}"
+      token: "{{rocketchat.token}}"
 ----
 +
 {empty} +
 +
-In the filter above you'll notice the expression picks the `$.text` JSON field and evaluates it against the regular expression that takes in account the _HTML_ `<b>` tags _Gitter_ uses to render rich content.
+In the filter above you'll notice the expression picks the `$.text` JSON field and evaluates it against the regular expression that takes in account the _HTML_ `<b>` tags _Matrix_ uses to render rich content.
 +
 {empty} + 
 
@@ -282,7 +350,7 @@ Run the following `oc` command:
 +
 [source, subs=]
 ----
-oc create cm stage2-transform --from-file=g2s.jslt
+oc create cm stage2-transform --from-file=m2r.jslt
 oc create secret generic stage2 --from-file=stage2.properties
 <br>
 ----
@@ -292,7 +360,7 @@ oc create secret generic stage2 --from-file=stage2.properties
 .. Run the following `oc` command to deploy the integration:
 +
 ```bash
-oc apply -f g2s.yaml
+oc apply -f m2r.yaml
 ```
 +
 NOTE: Be patient, this action will take some time to complete as the operator needs to download all the filter's maven dependencies, build the application and create the image before the integration can be deployed.
@@ -313,9 +381,9 @@ During the time you see _Camel K_ building and deploying the new version, the ou
 +
 ----
 NAME   PHASE      REPLICAS
-g2s    Creating 
-g2s    Ready      2
-g2s    Ready      1
+m2r    Creating 
+m2r    Ready      2
+m2r    Ready      1
 ----
 +
 {blank}
@@ -332,9 +400,9 @@ From the link:{openshift-host}/topology/ns/{namespace}[web console's topology vi
 
 . Test the filter (part 1)
 +
-Now, from _Gitter_'s chat room, send a message, for example `go through`.
+Now, from _Matrix_'s chat room, send a message, for example `go through`.
 +
-If all goes well your message should show up in _Slack_'s chat room.
+If all goes well your message should show up in _Rocket.Chat_'s chat room.
 +
 {empty} +
 +
@@ -342,15 +410,15 @@ If all goes well your message should show up in _Slack_'s chat room.
 . Test the filter (part 2)
 +
 Now, let's fake a message pretending it is generated by _Camel_. +
-Copy the following message, then paste and send from _Gitter_:
+Copy the following message, then paste and send from _Matrix_:
 +
 ```
-<b>fakebot@gitter</b>: fake app message
+<b>fakebot@matrix</b>: fake app message
 ```
 +
 {empty} +
 +
-The expected behaviour from the system is to observe the filter to block the message and therefore not be seen in Slack.
+The expected behaviour from the system is to observe how the filter blocks the message and therefore to see it missing in Rocket.Chat.
 +
 {empty} +
 
@@ -359,7 +427,7 @@ The expected behaviour from the system is to observe the filter to block the mes
 // Otherwise, if the message got indeed blocked, then the data flow is ready. Continue below with the second data flow.
 
 [type=verification]
-In test 1, did you see the message going from _Gitter_ to _Slack_?
+In test 1, did you see the message going from _Matrix_ to _Rocket.Chat_?
 
 [type=verificationSuccess]
 Very good !
@@ -369,7 +437,7 @@ Inspect in the pod logs to troubleshoot.
 
 
 [type=verification]
-In test 2, did you see the message not reach _Slack_?
+In test 2, did you see the message not reach _Rocket.Chat_?
 
 [type=verificationSuccess]
 Very good !
@@ -379,12 +447,39 @@ Inspect in the pod logs to troubleshoot.
 
 
 [time=5]
-[id="s2g"]
-== Slack to Gitter
+[id="r2m"]
+== Rocket.Chat to Matrix
+
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+[type=taskResource]
+.Matrix
+****
+* link:{url-element}[Matrix Web Client, window="_blank"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
+****
 
 This process is equivalent to the previous one, but designed to enable the opposite data flow.
 
-It also requires a filtering mechanism to block events from _Slack_, originally emitted from _Gitter_-to-_Slack_ _Camel_ transactions.
+It also requires a filtering mechanism to block events from _Rocket.Chat_, originally emitted from _Matrix_-to-_Rocket.Chat_ _Camel_ transactions.
 
 {empty} +
 
@@ -398,15 +493,15 @@ image::images/processing-flow-s2g.png[align="center", width=80%]
 There are 4 Kamelets in use:
 
 ====
-* *A source* +
-Consumes events from _Slack_.
+* *1 source* +
+Consumes events from _Rocket.Chat_.
 
-* *Two actions* +
+* *2 actions* +
 One filters messages to prevent death loops. +
-One transforms _Slack_ events to _Gitter_ events (in JSON format).
+One transforms _Rocket.Chat_ events to _Matrix_ events (in JSON format).
 
-* *A sink* +
-Produces events to _Gitter_.
+* *1 sink* +
+Produces events to _Matrix_.
 ====
 
 {empty} +
@@ -418,20 +513,20 @@ Produces events to _Gitter_.
 Run the following command to crate the YAML file:
 +
 ```bash
-touch s2g.yaml
+touch r2m.yaml
 ```
 +
 {empty} +
 
 . Define its source
 +
-Copy the snippet below and paste it into your new `s2g.yaml` file:
+Copy the snippet below and paste it into your new `r2m.yaml` file:
 +
 ```yaml
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
-  name: s2g
+  name: r2m
   annotations:
     trait.camel.apache.org/mount.configs: "secret:stage2"
     trait.camel.apache.org/mount.resources: "configmap:stage2-transform"
@@ -441,11 +536,7 @@ spec:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: slack-source
-    properties:
-      token:   "{{slack.token}}"
-      channel: "{{slack.channel.name}}"
-      delay: 2000
+      name: webhook-source
 
 
   steps:
@@ -456,7 +547,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: predicate-filter-action
     properties:
-      expression: "!$.botId || $.botId == null"
+      expression: $.text =~ /(?!\*.*@.*\*:).*/
   
   # JSON Transformation
   - ref:
@@ -464,56 +555,32 @@ spec:
       apiVersion: camel.apache.org/v1
       name: jslt-action
     properties:
-      template: "{{transform.path:s2g.jslt}}"
+      template: "{{transform.path:r2m.jslt}}"
 
 
   sink:
     ref:
       kind: Kamelet
       apiVersion: camel.apache.org/v1
-      name: gitter-sink
+      name: matrix-sink
     properties:
-      token: "{{gitter.token}}"
-      room: "{{gitter.room}}"
+      token: "{{matrix.token}}"
+      room: "{{matrix.room}}"
 ```
 +
 {empty} +
 +
 [NOTE]
 --
-* The source Kamelet is now _Slack_
-* The sink Kamelet is now _Gitter_
+* The source Kamelet is now a _Webhook_
+** _Rocket.Chat_ has been pre-configured to push events to this particular _Kamelet Binding_, via its _Kubernetes_ service (once the integration deployed).
+* The sink Kamelet is now _Matrix_
 --
 +
 [NOTE]
 --
-The filter is simpler, because _Slack_ includes a `botId` field when messages are app-generated.
-
-* Its expression allows messages to go through when not including `botId` (or equal to null).
+In the filter above you'll notice the expression picks the `$.text` JSON field and evaluates it against the regular expression that takes in account the `*` symbol _Matrix_ uses to render rich content.
 --
-+
-{empty} +
-
-. Include an extra _Slack_ parameter to your properties file.
-+
-Copy from below the parameter definition `slack.channel.name`, paste it into your properties file, and set its value to the _Slack_ room you're using.
-+
-----
-# Gitter credentials
-gitter.token=2d482bdf092e0e2299832b1f38d9560243083894
-gitter.room=6317569e6da03739849c519a
-
-# Slack credentials
-slack.token=YOUR_TOKEN
-----
-+
-```properties
-slack.channel.name=YOUR_SLACK_ROOM
-```
-+
-{blank}
-+
-An example setting for the channel name could be `slack.channel.name=room1`.
 +
 {empty} +
 
@@ -522,18 +589,18 @@ An example setting for the channel name could be `slack.channel.name=room1`.
 .. Run the following command to crate the JSLT file:
 +
 ```bash
-touch s2g.jslt
+touch r2m.jslt
 ```
 +
 {empty} +
 
 .. Define its mapping definition.
 +
-Copy the snippet below and paste it into your new `s2g.jslt` file:
+Copy the snippet below and paste it into your new `r2m.jslt` file:
 +
 ```
 {
-    "text":"<b>"+.user+"@slack</b>: "+.text
+  "text":"<b>"+.user_name+"@rocketchat</b>: "+.text
 }
 ```
 +
@@ -541,8 +608,8 @@ Copy the snippet below and paste it into your new `s2g.jslt` file:
 +
 [NOTE]
 ====
-* When targeting _Slack_, the target room is configured at the sink, not in the JSON payload. +
-* The field `text` includes JsonPath rules extracting values from Slack input events.
+* When targeting _Rocket.Chat_, the target room is configured at the sink, not in the JSON payload. +
+* The field `text` includes JsonPath rules extracting values from Rocket.Chat input events.
 ====
 {empty} +
 
@@ -557,7 +624,7 @@ oc delete secret stage2
 oc create secret generic stage2 --from-file=stage2.properties
 
 oc delete cm stage2-transform
-oc create cm stage2-transform --from-file=g2s.jslt --from-file=s2g.jslt<br>
+oc create cm stage2-transform --from-file=m2r.jslt --from-file=r2m.jslt<br>
 ----
 {empty} +
 
@@ -565,7 +632,7 @@ oc create cm stage2-transform --from-file=g2s.jslt --from-file=s2g.jslt<br>
 .. Run the following `oc` command to deploy the integration:
 +
 ```bash
-oc apply -f s2g.yaml
+oc apply -f r2m.yaml
 
 ```
 +
@@ -585,11 +652,11 @@ During the time you see _Camel K_ building and deploying the integration, the ou
 +
 ----
 NAME   PHASE      REPLICAS
-g2s    Ready      1
-s2g    Creating   
-s2g    Ready      0
-s2g    Ready      1
-s2g    Ready      1
+m2r    Ready      1
+r2m    Creating   
+r2m    Ready      0
+r2m    Ready      1
+r2m    Ready      1
 ----
 +
 {blank}
@@ -602,26 +669,13 @@ image::images/ocp-dev-pod-healthy-s2g.png[align="left", width=80%]
 +
 {empty} +
 
-. Test the integration from Slack.
+. Test the integration from Rocket.Chat.
 +
-Go to you Slack's chat room and send a message, for example "Hello from Slack".
+Go to you Rocket.Chat's chat room and send a message, for example "Hello from Rocket.Chat".
 +
-If all goes well your message should show up in Gitter.
+If all goes well your message should show up in Matrix.
 +
 image::images/stage2-msg-slack-gitter.png[align="left", width=80%]
-+
-[NOTE]
---
-You will notice two inmediate differences:
-
-* When pushing messages from _Camel_, _Gitter_ shows them as a user, not as an App. _Slack_ on the other hand, does not allow Apps to impersonate users.
-* _Slack_ does not provide the real user name, instead it provides its ID.
---
-+
-[NOTE]
---
-An interesting exercise would be to replace _Slack_'s user ID by the real user name. We leave this task for a future more advanced scenario.
---
 +
 {empty} +
 
@@ -630,19 +684,19 @@ An interesting exercise would be to replace _Slack_'s user ID by the real user n
 We now have both flows in place:
 +
 --
-* Gitter to Slack
-* Slack to Gitter
+* Matrix to Rocket.Chat
+* Rocket.Chat to Matrix
 --
 +
 {empty} +
 +
-As a final step, to test the filter and validate it's working well, let's ensure that _Gitter_-to-_Slack_ messages do not circle back.
+As a final step, to test the filter and validate it's working well, let's ensure that _Matrix_-to-_Rocket.Chat_ messages do not circle back.
 +
-From your _Gitter_ chat room, send a message. +
+From your _Matrix_ chat room, send a message. +
 The expected outcome should be as follows:
 
-* You see the message in _Slack_
-* You don't see a new message in _Gitter_
+* You see the message in _Rocket.Chat_
+* You don't see a new message in _Matrix_
 
 
 +
@@ -650,7 +704,7 @@ The expected outcome should be as follows:
 
 
 [type=verification]
-Did you see your message from _Slack_ successfully reach _Gitter_ (and not come back)?
+Did you see your message from _Rocket.Chat_ successfully reach _Matrix_ (and not come back)?
 
 [type=verificationSuccess]
 You have now completed Stage 2 !!

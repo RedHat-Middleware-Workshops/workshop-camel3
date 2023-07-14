@@ -1,0 +1,42 @@
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: m2r
+  annotations:
+    trait.camel.apache.org/mount.resources: "configmap:stage2-transform"
+    trait.camel.apache.org/mount.configs: "secret:stage2"
+spec:
+
+  source:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: matrix-source
+    properties:
+      token: "{{matrix.token}}"
+      room:  "{{matrix.room}}"
+
+  steps:
+  # Filter action to prevent death loops
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: predicate-filter-action
+    properties:
+      expression: $.text =~ /(?!<b>.*@.*<\/b>:).*/
+      
+  - ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: jslt-action
+    properties:
+      template: m2r.jslt
+
+  sink:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: rocketchat-sink
+    properties:
+      userid: "{{rocketchat.userid}}"
+      token: "{{rocketchat.token}}"

@@ -1,7 +1,0 @@
-{
-	"timestamp": string(round(parse-time(.sent, "yyyy-MM-dd'T'HH:mm:ss.SSSX"))),
-	"source":"gitter",
-	"user": $headers.ocpuser+"-"+.fromUser.displayName,
-	"user-original": .fromUser.displayName,
-	"text": .text
-}
