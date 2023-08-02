@@ -430,9 +430,14 @@ image::images/apps-tokens.png[align="left", width=80%]
 * `channel` +
 You can find the channel id in the address bar of your _Discord_ browser tab. The pattern is:
 +
-** \http://discord.com/channels/SERVER_ID/CHANNEL_ID
+** \http://discord.com/channels/SERVER_ID/**CHANNEL_ID**
 +
 image::images/discord-room-id.png[align="left", width=80%]
++
+[IMPORTANT]
+====
+Ensure you only pick the last token (after last `/`) from the address bar.
+====
 --
 +
 {empty} +
