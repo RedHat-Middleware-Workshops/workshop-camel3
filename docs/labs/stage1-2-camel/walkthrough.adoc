@@ -362,6 +362,11 @@ NOTE: The JSLT action is defined as a step in a _KameletBinding_ definition. `st
 --
 For clarity, the picture below illustrates how copy/paste actions  should be performed all along the lab exercises.
 
+[IMPORTANT]
+====
+On copy/paste actions, *ALWAYS* paste the snippet at the beginning of the line to preserve the correct indentation.
+====
+
 image::images/crw-copy-paste.png[align="left", width=100%]
 --
 +
