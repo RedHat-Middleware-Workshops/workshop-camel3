@@ -3,3 +3,4 @@ docs/labs/webapp.db
 .vscode/*
 **/webapp.db
 .DS_Store
+temp

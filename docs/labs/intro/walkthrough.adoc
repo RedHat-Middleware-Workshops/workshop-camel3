@@ -5,15 +5,33 @@
 // URLs
 :codeready-url: http://devspaces.{openshift-app-host}/
 
+:docserver-status: pass:[<img hidden="true" src="invalid-image.jpg" onerror=" \
+        fetch('http://0.0.0.0:8080/status2') \
+        .then(response => response.text()) \
+        .then(data => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:lime;display:inline-block&quot;></div>') \
+        .catch(error => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:red;display:inline-block&quot;></div>') \
+      ">]
+
 ifdef::env-github[]
 endif::[]
+
+
 
 [id='lab-intro']
 = Lab Introduction
 
+[type=walkthroughResource,serviceName=openshift]
+.Invite System
+****
+[subs=attributes]
+++++
+<div style="padding-left: 20px">{docserver-status}<div>
+++++
+****
+
 Start from here to familiarise yourself with the goals of this workshop and the scenario it is based on.
 
-_Apache Camel_ has taken a major evolution step with the release of version 3. It now reaches a wider audience and delivers significant automation on _Kubernetes_ environments to provide cloud native integration.
+_Apache Camel_ keeps making major evolution steps improving its usability and reaching wider audiences. It also advances in delivering significant automation on _Kubernetes_ environments to provide cloud native integration.
 
 {empty} +
 

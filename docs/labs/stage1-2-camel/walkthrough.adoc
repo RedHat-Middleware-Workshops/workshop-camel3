@@ -8,11 +8,52 @@
 :url-codeready: http://devspaces.{openshift-app-host}/
 :url-devconsole: {openshift-host}/topology/ns/{namespace}
 
+:experimental:
+
+
+// WORKS
+:style-kbd: kbd { \
+  color: black; \
+  background-color: lightgrey; \
+  border: 1px solid black; \
+  box-shadow: 0px 1px black; \
+  font-size: .85em; \
+  line-height: .85em; \
+  display: inline-block; \
+  font-weight: 600; \
+  letter-spacing: .05em; \
+  padding: 3px 5px; \
+  white-space: nowrap; \
+  border-radius:5px; \
+} \
+
+:style-preview: pre {background-color: black; color: white}
+:style-indent: .indent2 {padding-left: 2rem;}
+:style-all: pass:a[<style>{style-kbd}{style-preview}{style-indent}</style>]
+
+:docserver-status: pass:[<img hidden="true" src="invalid-image.jpg" onerror=" \
+        fetch('http://0.0.0.0:8080/status2') \
+        .then(response => response.text()) \
+        .then(data => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:lime;display:inline-block&quot;></div>') \
+        .catch(error => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:red;display:inline-block&quot;></div>') \
+      ">]
+
 ifdef::env-github[]
 endif::[]
 
 [id='lab1-part2-camel']
 = Lab 1.part2 - MessageHub - Be the Camel developer
+
+
+
+[type=walkthroughResource,serviceName=openshift]
+.Invite System
+****
+[subs=attributes]
+++++
+<div style="padding-left: 20px">{docserver-status}<div>
+++++
+****
 
 Impersonate the Camel developer to complete Lab-1's Matrix to Rocket.Chat processing flow.
 
@@ -45,6 +86,79 @@ The instructions below are divided in two segments:
 [time=10]
 [id="local"]
 == Local development 
+{style-all}
+
+
+
+:freplace: pass:[function replaceTokens(templateString, values) { \
+    const valueArray = values.split(',').map(val => val.trim()); \
+    let result = templateString; \
+    let replaceIndex = 0; \
+    while (result.includes('REPLACE') && replaceIndex < valueArray.length) { \
+        result = result.replace('REPLACE', valueArray[replaceIndex]); \
+        replaceIndex++; \
+    } \
+    return result; \
+}]
+
+:fdocserver: pass:a[function docserver(target,template,params) { \
+    {freplace} \
+    fetch('http://0.0.0.0:8080/roomid?user='+params) \
+        .then(response => response.text()) \
+        .then(data => {target.firstChild.data=replaceTokens(text, data);}) \
+        .catch(error => room = 'Error fetching data: ' + error.message); \
+}]
+
+
+
+:copypaste: pass:a[ \
+<div style="border: 1px solid #f0f0f0; border-bottom-color: #8a8d90; display: flex; align-items: flex-start;"> \
+  <textarea readonly style="field-sizing: content;border: none; background-color: #f0f0f0; width: 100%; resize: none; font-size:14px; font-family: monospace;padding: 5px 15px" rows="4">function example() { \
+  console.log("Hello {replace-with-previous}!"); \
+  return true; \
+}</textarea> \
+  <button class="mytooltip" onclick="this.previousElementSibling.select();document.execCommand('copy');" style="border: none; background-color: white; padding: 5px 15px; border-bottom: 1px solid transparent; transition: border-bottom-color 0.2s;"> \
+    <svg fill="currentColor" height="1em" width="1em" viewBox="0 0 448 512" aria-hidden="true" role="img" style="vertical-align: -0.125em;"> \
+      <path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"></path> \
+    </svg> \
+    <span class="mytooltiptext">Copy to clipboard</span> \
+  </button> \
+  <style> \
+.mytooltip{position:relative;display:inline-block;border-bottom:1px dotted black}.mytooltip .mytooltiptext{visibility:hidden;width:120px;background-color:#555;color:#fff;text-align:center;border-radius:6px;padding:5px 0;position:absolute;z-index:1;bottom:125%;left:50%;margin-left:-60px;opacity:0;transition:opacity 0.3s}.mytooltip .mytooltiptext::after{content:"";position:absolute;top:100%;left:50%;margin-left:-5px;border-width:5px;border-style:solid;border-color:#555 transparent transparent transparent}.mytooltip:hover .mytooltiptext{visibility:visible;opacity:1} \
+  </style> \
+</div> \
+<img hidden="true" src="invalid-image.jpg" onerror="{ \
+  {fdocserver} \
+  let txtarea = this.parentElement.querySelector('textarea'); \
+  let div = this.closest('.paragraph'); \
+  if(!div.closest('.openblock')){div = div.parentElement} \
+  let source = div.nextElementSibling; \
+  let pre = source.querySelector('pre'); \
+  let text = pre.textContent; \
+  let lineCount = text.split('\n').length; \
+  let tokens = this.nextSibling; \
+  console.log('tokens: [' +tokens.data.trim()+']'); \
+  if(tokens.data.trim()!=''){docserver(txtarea,text,tokens.data);} else {txtarea.firstChild.data=text;} \
+  source.remove(); \
+  tokens.remove(); \
+  this.remove(); \
+}"> \
+]
+
+{copypaste}
+----
+this is
+code1
+----
+
+. something
++
+--
+{copypaste}
+----
+this is code2
+----
+--
 
 [type=taskResource]
 .Credentials
@@ -125,7 +239,7 @@ Copy and paste in your terminal the following:
 ----
 mkdir lab1
 cd lab1
-touch m2r.yaml
+touch m2r.camel.yaml
 touch stage1.properties<br>
 ----
 +
@@ -133,62 +247,65 @@ NOTE: The commands above also create the file sources you need for the exercise.
 +
 {empty} +
 
-. Create the definitions
+. Define the base camel route
 +
-.. Open the `m2r.yaml` file in your editor.
+Camel JBang is packed with handy functionality. One of them is a nano editor you can use for simple edits. +
+Copy and paste the command below to edit the file using Camel JBang in-built editor:
 +
-Select from your project tree:
+[source, subs=]
+----
+camel nano m2r.camel.yaml<br>
+----
 +
-* MessageHub -> Lab1 -> m2r.yaml
+{blank}
 +
-image::images/crw-open-yaml.png[align="left", width=50%]
+The Nano editor will present on screen. +
+Copy and paste the following snippet:
 +
-{empty} +
-
-.. To start with, we will simply consume Matrix messages and log them. We select the following 2 Kamelets to bind:
+[source, subs=]
+----
+- route:
+    from:
+      uri: kamelet
+      parameters:
+        templateId: matrix-source
+        room: "{{matrix.room}}"
+        token: "{{matrix.token}}"
+      variableReceive: matrix
+      steps:
+        - log:
+            message: ${variable.matrix}
+----
 +
+[NOTE]
 --
-- matrix-source
-- log-sink
+About the `matrix-source` _Kamelet_:
+
+* It's not provided out of the box by Camel. It has been specifically created and deployed for this workshop.
+* It's implemented following the specification of the Matrix Sync API (new Matrix's API) to consume events from the server. To know more, read its API documentation here: https://spec.matrix.org/v1.6/client-server-api/#syncing
 --
 +
-NOTE: The `matrix-source` _Kamelet_ is not provided out of the box by Camel K. It has been specifically created and deployed for this workshop.
+[NOTE]
+--
+About the variable `matrix`:
+
+* The Kamelet defines `variableReceive: matrix` to allocate the incoming event (`body` is ignored).
+* The route logs the incoming event using the Camel's simple expression `${variable.matrix}`
+--
++
+{blank}
++
+Then use the sequence of keyboard combinations below:
++
+- kbd:[Ctrl+v] to paste the snippet
+- kbd:[Ctrl+x] to exit the nano editor and kbd:[y] to save the changes
+- kbd:[Enter] to confirm the file name.
 +
 {empty} +
-+
-Include in your YAML file `m2r.yaml` (matrix to rocketchat) the following definition:
-+
-```yaml
-apiVersion: camel.apache.org/v1alpha1
-kind: KameletBinding
-metadata:
-  name: m2r
-  # paste annotations here (when instructed)
-spec:
 
-  source:
-    ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: matrix-source
-    properties:
-      token: "{{matrix.token}}"
-      room:  "{{matrix.room}}"
-
-  # paste JSLT action here (when instructed)
-
-  sink:
-    ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: log-sink 
-```
+. Define the configuration
 +
-NOTE: The `matrix-source` kamelet is implemented following the specification of the Matrix Sync API (new Matrix's API) to consume events from the server. To know more, read its API documentation here: https://spec.matrix.org/v1.6/client-server-api/#syncing
-+
-{empty} +
-+
-.. Now include in your properties file `stage1.properties` the following entries:
+Include in your properties file `stage1.properties` the following entries:
 +
 ```properties
 # On shutdown it reduces waiting time when stoping Camel's streaming listener
@@ -201,7 +318,7 @@ matrix.room=YOUR_ROOM_ID
 +
 {empty} +
 +
-... To configure the `matrix.token` parameter, obtain its value from  the sequence of steps shown in the image below:
+.. To configure the `matrix.token` parameter, obtain its value from  the sequence of steps shown in the image below:
 +
 image::images/matrix-copy-token.png[align="center", width=100%]
 +
@@ -221,7 +338,7 @@ Finally, paste the value you copied into the `matrix.token` parameter.
 +
 {empty} +
 +
-... To configure the `matrix.room` parameter, obtain its value from the sequence of steps shown in the image below:
+.. To configure the `matrix.room` parameter, obtain its value from the sequence of steps shown in the image below:
 +
 image::images/matrix-copy-room-id.png[align="center", width=100%]
 +
@@ -242,15 +359,13 @@ Finally, paste the value you copied into the `matrix.room` parameter.
 
 . Run your YAML definition with Camel JBang
 + 
-Use the following command to run locally your Kamelet Binding:
+Use the following command to run locally your _Camel_ route:
 +
 ```bash
-camel run * --local-kamelet-dir=../support/deploy/kamelets
+camel run *
 ```
 +
 NOTE: Observe the simplicity of the command `camel run \*`. The wildcard `*` allows _Camel JBang_ to automatically scan the folder and recognise the type of each file found (code, properties, resource, etc.).
-+
-NOTE: The command includes a flag to find custom kamelets. The _Matrix_ kamelet has been created for this workshop and does not come out-of-the-box from the default _Camel_ catalog.
 +
 [WARNING]
 --
@@ -275,7 +390,7 @@ _Camel JBang_ will build a local runnable and start it. +
 In the output logs you should see _Camel_ connecting to _Matrix_, similar to the following:
 +
 ----
-... : Apache Camel 3.20.1 (m2r) started in 1s658ms (build:118ms init:1s323ms start:217ms JVM-uptime:3s)
+... : Apache Camel 4.14.0 (m2r) started in 128ms (build:0ms init:0ms start:128ms boot:1s312ms)
 ... : Opening connection to Matrix...
 ... : Matrix HTTP Streaming started
 ----
@@ -310,33 +425,72 @@ _Camel JBang_ also implements the following very handy commands when running mul
 +
 {empty} +
 
-. Now we need to extend the _Kamelet Binding_ definition to include data transformation that matches the JSON structure the target system (_Rocket.Chat_) expects.
+
+. Include data transformation
 +
-We choose from the Kamelet Catalog the JSLT action to transform the body.
+Now we need to extend the _Camel_ route definition to include data transformation to match the JSON structure the target system (_Rocket.Chat_) expects.
 +
-TIP: JSLT is a very convenient transformer to manipulate JSON payloads. It's inspired in XSLT (XML Transformation) to define stylesheets containing transformation rules for JSON.
+.. Include in your Camel route a Kaoto data transformation step
 +
-Create the JSLT file `m2r.jslt` with the command:
-+
-```bash
-touch m2r.jslt
-```
+--
+From Kaoto: 
+
+. Click the `+` button in the transition
+. Find and select the _Kaoto DataMapper_
+. Click to open the configuration panel
+. Click the `🔧Configure` button
+--
 +
 {blank}
 +
-Open the new file in your editor and copy/paste the following definition:
+.. Attach schemas
 +
-```
-{
-    "channel":"YOUR_ROOM",
-    "text":"*"+.fromUser.username+"@matrix*: "+.text
-}
-```
+--
+From the DataMapper editor: 
+
+. On `Parameters` click the `+` to add new parameter
+. input `matrix` and click the checkmark button kbd:[√]
+. Click the Attach schema button.
+.. something
+. Find and select the _Kaoto DataMapper_
+. Click to open the configuration panel
+. Click the `🔧Configure` button
+
+{blank}
+
+Finally, paste the value you copied into the `matrix.token` parameter.
+--
++
+{blank}
++
+.. Define the data mappings
++
+Copy and Paste the values below to define the given field entries:
++
+... `string[@key = channel]`: 
++
+--
+{copypaste}user2
+----
+"REPLACE"
+----
+--
++
+{blank}
++
+... `string[@key = text]`:
++
+--
+{copypaste}
+----
+concat('*', $matrix-x/xf:map/xf:map[@key='fromUser']/xf:string[@key='username'],'@matrix:* ', $matrix-x/xf:map/xf:string[@key='text'])
+----
+--
 +
 [IMPORTANT]
 ====
-The field `channel` denotes the target room in _Rocket.Chat_ where messages will be pushed. +
-Make sure you replace `YOUR_ROOM` with your designated room, for example:
+The string key `channel` denotes the target room in _Rocket.Chat_ where messages will be pushed. +
+Make sure you it points to your designated room, for example:
 
 * `user1` -> use `room1`
 * `user2` -> use `room2`
@@ -353,61 +507,6 @@ image::images/jslt-room-config.png[align="left", width=80%]
 The field `text` includes JsonPath rules extracting values from the input Matrix event.
 ====
 {empty} +
-
-. Modify your YAML definition to include the JSLT action between your Kamelet source and sink.
-+
-NOTE: The JSLT action is defined as a step in a _KameletBinding_ definition. `steps` are a high-level block in the same column as the `source` and `sink`.
-+
-[TIP]
---
-For clarity, the picture below illustrates how copy/paste actions  should be performed all along the lab exercises.
-
-[IMPORTANT]
-====
-On copy/paste actions, *ALWAYS* paste the snippet at the beginning of the line to preserve the correct indentation.
-====
-
-image::images/crw-copy-paste.png[align="left", width=100%]
---
-+
-Following the above illustration, copy and paste the snippet from below into your code:
-+
-----
-apiVersion: camel.apache.org/v1alpha1
-kind: KameletBinding
-metadata:
-  name: m2r
-spec:
-
-  source:
-    ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: matrix-source
-    properties:
-      token: "{{matrix.token}}"
-      room:  "{{matrix.room}}"
-----
-+
-```yaml
-  steps:
-  - ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: jslt-action
-    properties:
-      template: m2r.jslt
-```
-+
-----
-  sink:
-    ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: log-sink 
-----
-{empty} +
-+
 
 . Run Camel JBang again ensuring you include your JSLT file. It should look as follows:
 +
