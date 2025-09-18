@@ -7,6 +7,93 @@
 :url-codeready: http://devspaces.{openshift-app-host}/
 :url-devconsole: {openshift-host}/topology/ns/{namespace}
 
+
+
+
+:experimental:
+
+// WORKS
+:style-kbd: kbd { \
+  color: black; \
+  background-color: lightgrey; \
+  border: 1px solid black; \
+  box-shadow: 0px 1px black; \
+  font-size: .85em; \
+  line-height: .85em; \
+  display: inline-block; \
+  font-weight: 600; \
+  letter-spacing: .05em; \
+  padding: 3px 5px; \
+  white-space: nowrap; \
+  border-radius:5px; \
+} \
+
+
+:style-preview: pre {background-color: #272822; color: white; padding: 5px 15px; font-size: 15px}
+:style-indent: .indent2 {padding-left: 2rem;}
+:style-all: pass:a[<style>{style-kbd}{style-preview}{style-indent}</style>]
+
+:docserver-status: pass:[<img hidden="true" src="invalid-image.jpg" onerror=" \
+        fetch('http://0.0.0.0:8080/status2') \
+        .then(response => response.text()) \
+        .then(data => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:lime;display:inline-block&quot;></div>') \
+        .catch(error => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:red;display:inline-block&quot;></div>') \
+      ">]
+
+:freplace: pass:[function replaceTokens(templateString, values) { \
+    const valueArray = values.split(',').map(val => val.trim()); \
+    let result = templateString; \
+    let replaceIndex = 0; \
+    while (result.includes('REPLACE') && replaceIndex < valueArray.length) { \
+        result = result.replace('REPLACE', valueArray[replaceIndex]); \
+        replaceIndex++; \
+    } \
+    return result; \
+}]
+
+:fdocserver: pass:a[function docserver(target,template,params) { \
+    {freplace} \
+    fetch('http://0.0.0.0:8080/roomid?user='+params) \
+        .then(response => response.text()) \
+        .then(data => {target.firstChild.data=replaceTokens(text, data);}) \
+        .catch(error => room = 'Error fetching data: ' + error.message); \
+}]
+
+:copypaste: pass:a[ \
+<div style="border: 1px solid #f0f0f0; border-bottom-color: #8a8d90; display: flex; align-items: flex-start;"> \
+  <textarea readonly style="field-sizing: content;border: none; background-color: #f0f0f0; width: 100%; resize: none; font-size:14px; font-family: monospace;padding: 5px 15px" rows="4">function example() { \
+  console.log("Hello {replace-with-previous}!"); \
+  return true; \
+}</textarea> \
+  <button class="mytooltip" onclick="this.previousElementSibling.select();document.execCommand('copy');" style="border: none; background-color: white; padding: 5px 15px; border-bottom: 1px solid transparent; transition: border-bottom-color 0.2s;"> \
+    <svg fill="currentColor" height="1em" width="1em" viewBox="0 0 448 512" aria-hidden="true" role="img" style="vertical-align: -0.125em;"> \
+      <path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"></path> \
+    </svg> \
+    <span class="mytooltiptext">Copy to clipboard</span> \
+  </button> \
+  <style> \
+.mytooltip{position:relative;display:inline-block;border-bottom:1px dotted black}.mytooltip .mytooltiptext{visibility:hidden;width:120px;background-color:#555;color:#fff;text-align:center;border-radius:6px;padding:5px 0;position:absolute;z-index:1;bottom:125%;left:50%;margin-left:-60px;opacity:0;transition:opacity 0.3s}.mytooltip .mytooltiptext::after{content:"";position:absolute;top:100%;left:50%;margin-left:-5px;border-width:5px;border-style:solid;border-color:#555 transparent transparent transparent}.mytooltip:hover .mytooltiptext{visibility:visible;opacity:1} \
+  </style> \
+</div> \
+<img hidden="true" src="invalid-image.jpg" onerror="{ \
+  {fdocserver} \
+  let txtarea = this.parentElement.querySelector('textarea'); \
+  let div = this.closest('.paragraph'); \
+  if(!div.closest('.openblock')){div = div.parentElement} \
+  let source = div.nextElementSibling; \
+  let pre = source.querySelector('pre'); \
+  let text = pre.textContent; \
+  let lineCount = text.split('\n').length; \
+  let tokens = this.nextSibling; \
+  console.log('tokens: [' +tokens.data.trim()+']'); \
+  if(tokens.data.trim()!=''){docserver(txtarea,text,tokens.data);} else {txtarea.firstChild.data=text;} \
+  source.remove(); \
+  tokens.remove(); \
+  this.remove(); \
+}"> \
+]
+
+
 ifdef::env-github[]
 endif::[]
 
@@ -91,6 +178,7 @@ Luckily, you've already done all the necessary onboarding setup with both chat s
 [time=5]
 [id="m2r"]
 == Matrix to Rocket.Chat
+{style-all}
 
 [type=taskResource]
 .Credentials
@@ -248,100 +336,76 @@ Ensure you're working on folder `lab2`
 
 . Include the filter
 +
-From the  _link:https://camel.apache.org/camel-kamelets/next/index.html[Kamelet Catalog, window="_blank"]_, there is a convenient _Kamelet_ fit for the purpose:
+_Matrix_ does not provide a field to flag bot-generated messages, so we need to develop a custom pattern-matching approach to distinguish user messages from bot messages.
 +
 --
-* `predicate-filter-action`
-+
-*Reference*
-+
-** link:https://camel.apache.org/camel-kamelets/next/predicate-filter-action.html[Filter action documentation, window="_blank"]
---
-+
-{empty} +
-+
-This _Kamelet_ action applies a _JsonPath_ expression where we can use a regular expression operator to match the blocking pattern. 
-+
-The challenge with _Matrix_, contrary to other chat platforms, is that there's no field (within the incoming event) indicating if the message is from a human or an app. To distinguish one from the other, we need to come up with a pattern that works for us.
-+
---
-Given our JSLT converts messages to the following format:
+The data mapper transforms messages to the following format:
 
 * `username@system:`  message
 +
-(an example would be: *{user-username}@matrix: hello*)
---
+For example:
 +
-{empty} +
+** *{user-username}@matrix:* hello
 +
-It makes sense to use the same pattern to identify and block incoming events since we know they are app-generated by _Camel's_ JSLT transformation.
-+
-With all the above in mind, let's include a `filter-action` _Kamelet_, as an additional step, that does just what's needed.
-+
-Find in your editor's file tree, and open to edit:
+{blank}
 +
 --
-* *_MessageHub_* -> *_lab2_* -> *`m2r.yaml`*
++
+This pattern is reliable for identifying and blocking incoming events because it is uniquely defined by the data mapper in Kaoto and not used by other systems.
++
+With the above in mind, let's include a filtering step, that identifies and blocks bot (Camel generated) messages.
++
+Follow the steps below:
++
+.. Add a *Choice* processor after the Matrix kamelet
+.. From the *Choice* group, delete the *otherwise* element.
+.. Click the *when* element and configure as follows:
+... Click the group `All` at the top of the configuration panel.
+... Select the *JQ* expression language.
+... Configure the following elements with copy and paste:
+.... *Expression*:
++
+--
+{copypaste}
+----
+.text | test("<b>[^<]+@matrix</b>")
+----
 --
 +
-{empty} +
+NOTE: In the expression above you'll notice `.text` is the JSON field selected and tested with a regular expression that takes in account the _HTML_ `<b>` tags that _Matrix_ parses to render rich content.
 +
-Copy the filter snippet below and paste it in your _Kamelet_ Binding:
+{blank}
 +
-----
-apiVersion: camel.apache.org/v1alpha1
-kind: KameletBinding
-metadata:
-  name: m2r
-  annotations:
-    trait.camel.apache.org/mount.configs: "secret:stage2"
-    trait.camel.apache.org/mount.resources: "configmap:stage2-transform"
-spec:
-
-  source:
-    ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: matrix-source
-    properties:
-      token: "{{matrix.token}}"
-      room:  "{{matrix.room}}"
-
-  steps:
-----
+.... *Source*:
 +
-```yaml
-  # Filter action to prevent death loops
-  - ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: predicate-filter-action
-    properties:
-      expression: $.text =~ /(?!<b>.*@.*<\/b>:).*/
-```
+--
+{copypaste}
+----
+matrix
+----
+--
 +
-----
-  - ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: jslt-action
-    properties:
-      template: m2r.jslt
-
-  sink:
-    ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: rocketchat-sink
-    properties:
-      token: "{{rocketchat.token}}"
-----
+NOTE: When *Source* is configured it indicates the variable from where to obtain the input data, otherwise Camel uses the body.
++
+{blank}
++
+.. Include a *Stop* processor
+... Replace the *Log* step by a *Stop* one.
 +
 {empty} +
+
+
 +
-In the filter above you'll notice the expression picks the `$.text` JSON field and evaluates it against the regular expression that takes in account the _HTML_ `<b>` tags _Matrix_ uses to render rich content.
+In summary, the *Choice* definition will result in the following behaviour: +
+** The *when* evaluation picks `.text` and tests for a pattern match:
 +
+--
+.. When it matches, the event is ignored (*stop* halts the process execution)
+.. When not matched, the execution resumes with normality.
+--
++ 
 {empty} + 
+
 
 . Push the configuration to _OpenShift_
 +
@@ -507,6 +571,42 @@ Produces events to _Matrix_.
 {empty} +
 
 === Process definition
+
+. Define the base camel route:
++
+.. Create a new Camel route in Kaoto
+... Name it `r2m`
+.. Replace the default timer step by a Kamelet *Webhook Source*
+... Click the group `All` at the top of the configuration panel.
+... Find the parameter *Variable Receive* and configure with:
++
+--
+{copypaste}
+----
+rocketchat
+----
+--
++
+NOTE: When *Variable Receive* is configured it indicates the variable where to output the data, otherwise Camel uses the body.
++
+.. Update the *Log* activity:
++
+* from: `${body}`
+* to:
++
+** {empty}
++
+--
+{copypaste}
+----
+${variable.rocketchat}
+----
+--
++
+{empty} +
+
+
+=== Process definition OLD
 
 . Create the YAML definition.
 +

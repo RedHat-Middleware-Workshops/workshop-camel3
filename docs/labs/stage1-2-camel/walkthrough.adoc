@@ -10,7 +10,6 @@
 
 :experimental:
 
-
 // WORKS
 :style-kbd: kbd { \
   color: black; \
@@ -27,7 +26,7 @@
   border-radius:5px; \
 } \
 
-:style-preview: pre {background-color: black; color: white}
+:style-preview: pre {background-color: #272822; color: white; padding: 5px 15px; font-size: 15px}
 :style-indent: .indent2 {padding-left: 2rem;}
 :style-all: pass:a[<style>{style-kbd}{style-preview}{style-indent}</style>]
 
@@ -37,6 +36,59 @@
         .then(data => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:lime;display:inline-block&quot;></div>') \
         .catch(error => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:red;display:inline-block&quot;></div>') \
       ">]
+
+:freplace: pass:[function replaceTokens(templateString, values) { \
+    const valueArray = values.split(',').map(val => val.trim()); \
+    let result = templateString; \
+    let replaceIndex = 0; \
+    while (result.includes('REPLACE') && replaceIndex < valueArray.length) { \
+        result = result.replace('REPLACE', valueArray[replaceIndex]); \
+        replaceIndex++; \
+    } \
+    return result; \
+}]
+
+:fdocserver: pass:a[function docserver(target,template,params) { \
+    {freplace} \
+    fetch('http://0.0.0.0:8080/roomid?user='+params) \
+        .then(response => response.text()) \
+        .then(data => {target.firstChild.data=replaceTokens(text, data);}) \
+        .catch(error => room = 'Error fetching data: ' + error.message); \
+}]
+
+:copypaste: pass:a[ \
+<div style="border: 1px solid #f0f0f0; border-bottom-color: #8a8d90; display: flex; align-items: flex-start;"> \
+  <textarea readonly style="field-sizing: content;border: none; background-color: #f0f0f0; width: 100%; resize: none; font-size:14px; font-family: monospace;padding: 5px 15px" rows="4">function example() { \
+  console.log("Hello {replace-with-previous}!"); \
+  return true; \
+}</textarea> \
+  <button class="mytooltip" onclick="this.previousElementSibling.select();document.execCommand('copy');" style="border: none; background-color: white; padding: 5px 15px; border-bottom: 1px solid transparent; transition: border-bottom-color 0.2s;"> \
+    <svg fill="currentColor" height="1em" width="1em" viewBox="0 0 448 512" aria-hidden="true" role="img" style="vertical-align: -0.125em;"> \
+      <path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"></path> \
+    </svg> \
+    <span class="mytooltiptext">Copy to clipboard</span> \
+  </button> \
+  <style> \
+.mytooltip{position:relative;display:inline-block;border-bottom:1px dotted black}.mytooltip .mytooltiptext{visibility:hidden;width:120px;background-color:#555;color:#fff;text-align:center;border-radius:6px;padding:5px 0;position:absolute;z-index:1;bottom:125%;left:50%;margin-left:-60px;opacity:0;transition:opacity 0.3s}.mytooltip .mytooltiptext::after{content:"";position:absolute;top:100%;left:50%;margin-left:-5px;border-width:5px;border-style:solid;border-color:#555 transparent transparent transparent}.mytooltip:hover .mytooltiptext{visibility:visible;opacity:1} \
+  </style> \
+</div> \
+<img hidden="true" src="invalid-image.jpg" onerror="{ \
+  {fdocserver} \
+  let txtarea = this.parentElement.querySelector('textarea'); \
+  let div = this.closest('.paragraph'); \
+  if(!div.closest('.openblock')){div = div.parentElement} \
+  let source = div.nextElementSibling; \
+  let pre = source.querySelector('pre'); \
+  let text = pre.textContent; \
+  let lineCount = text.split('\n').length; \
+  let tokens = this.nextSibling; \
+  console.log('tokens: [' +tokens.data.trim()+']'); \
+  if(tokens.data.trim()!=''){docserver(txtarea,text,tokens.data);} else {txtarea.firstChild.data=text;} \
+  source.remove(); \
+  tokens.remove(); \
+  this.remove(); \
+}"> \
+]
 
 ifdef::env-github[]
 endif::[]
@@ -87,78 +139,6 @@ The instructions below are divided in two segments:
 [id="local"]
 == Local development 
 {style-all}
-
-
-
-:freplace: pass:[function replaceTokens(templateString, values) { \
-    const valueArray = values.split(',').map(val => val.trim()); \
-    let result = templateString; \
-    let replaceIndex = 0; \
-    while (result.includes('REPLACE') && replaceIndex < valueArray.length) { \
-        result = result.replace('REPLACE', valueArray[replaceIndex]); \
-        replaceIndex++; \
-    } \
-    return result; \
-}]
-
-:fdocserver: pass:a[function docserver(target,template,params) { \
-    {freplace} \
-    fetch('http://0.0.0.0:8080/roomid?user='+params) \
-        .then(response => response.text()) \
-        .then(data => {target.firstChild.data=replaceTokens(text, data);}) \
-        .catch(error => room = 'Error fetching data: ' + error.message); \
-}]
-
-
-
-:copypaste: pass:a[ \
-<div style="border: 1px solid #f0f0f0; border-bottom-color: #8a8d90; display: flex; align-items: flex-start;"> \
-  <textarea readonly style="field-sizing: content;border: none; background-color: #f0f0f0; width: 100%; resize: none; font-size:14px; font-family: monospace;padding: 5px 15px" rows="4">function example() { \
-  console.log("Hello {replace-with-previous}!"); \
-  return true; \
-}</textarea> \
-  <button class="mytooltip" onclick="this.previousElementSibling.select();document.execCommand('copy');" style="border: none; background-color: white; padding: 5px 15px; border-bottom: 1px solid transparent; transition: border-bottom-color 0.2s;"> \
-    <svg fill="currentColor" height="1em" width="1em" viewBox="0 0 448 512" aria-hidden="true" role="img" style="vertical-align: -0.125em;"> \
-      <path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"></path> \
-    </svg> \
-    <span class="mytooltiptext">Copy to clipboard</span> \
-  </button> \
-  <style> \
-.mytooltip{position:relative;display:inline-block;border-bottom:1px dotted black}.mytooltip .mytooltiptext{visibility:hidden;width:120px;background-color:#555;color:#fff;text-align:center;border-radius:6px;padding:5px 0;position:absolute;z-index:1;bottom:125%;left:50%;margin-left:-60px;opacity:0;transition:opacity 0.3s}.mytooltip .mytooltiptext::after{content:"";position:absolute;top:100%;left:50%;margin-left:-5px;border-width:5px;border-style:solid;border-color:#555 transparent transparent transparent}.mytooltip:hover .mytooltiptext{visibility:visible;opacity:1} \
-  </style> \
-</div> \
-<img hidden="true" src="invalid-image.jpg" onerror="{ \
-  {fdocserver} \
-  let txtarea = this.parentElement.querySelector('textarea'); \
-  let div = this.closest('.paragraph'); \
-  if(!div.closest('.openblock')){div = div.parentElement} \
-  let source = div.nextElementSibling; \
-  let pre = source.querySelector('pre'); \
-  let text = pre.textContent; \
-  let lineCount = text.split('\n').length; \
-  let tokens = this.nextSibling; \
-  console.log('tokens: [' +tokens.data.trim()+']'); \
-  if(tokens.data.trim()!=''){docserver(txtarea,text,tokens.data);} else {txtarea.firstChild.data=text;} \
-  source.remove(); \
-  tokens.remove(); \
-  this.remove(); \
-}"> \
-]
-
-{copypaste}
-----
-this is
-code1
-----
-
-. something
-+
---
-{copypaste}
-----
-this is code2
-----
---
 
 [type=taskResource]
 .Credentials
@@ -265,7 +245,9 @@ Copy and paste the following snippet:
 [source, subs=]
 ----
 - route:
+    description: Matrix to RocketChat
     from:
+      description: Matrix
       uri: kamelet
       parameters:
         templateId: matrix-source
@@ -297,8 +279,8 @@ About the variable `matrix`:
 +
 Then use the sequence of keyboard combinations below:
 +
-- kbd:[Ctrl+v] to paste the snippet
-- kbd:[Ctrl+x] to exit the nano editor and kbd:[y] to save the changes
+- kbd:[Ctrl+V] to paste the snippet
+- kbd:[Ctrl+X] to exit the nano editor and kbd:[Y] to save the changes
 - kbd:[Enter] to confirm the file name.
 +
 {empty} +
@@ -448,17 +430,17 @@ From Kaoto:
 --
 From the DataMapper editor: 
 
-. On `Parameters` click the `+` to add new parameter
-. input `matrix` and click the checkmark button kbd:[√]
-. Click the Attach schema button.
-.. something
-. Find and select the _Kaoto DataMapper_
-. Click to open the configuration panel
-. Click the `🔧Configure` button
+. Define the source:
+.. On `Parameters` click the `+` to add new parameter
+.. Enter `matrix` and click the checkmark button kbd:[√]
+.. Click first the Attach schema button, then the blue button, and pick `matrix-schema.json`.
++
+{blank}
++
+. Define the target
+.. Find the target Body and click on "Attach schema", then the blue button, and pick `common.json`
 
 {blank}
-
-Finally, paste the value you copied into the `matrix.token` parameter.
 --
 +
 {blank}
@@ -470,7 +452,7 @@ Copy and Paste the values below to define the given field entries:
 ... `string[@key = channel]`: 
 +
 --
-{copypaste}user2
+{copypaste}user1
 ----
 "REPLACE"
 ----
@@ -508,6 +490,16 @@ The field `text` includes JsonPath rules extracting values from the input Matrix
 ====
 {empty} +
 
+. Log the body
++
+Update the log activity from:
++
+* `${variable.matrix}` -> to `${body}`
++
+NOTE: The Matrix Kamelet is configured to store events in a variable `matrix`, however, the data mapper outputs the result in the `body`.
++
+{empty} +
+
 . Run Camel JBang again ensuring you include your JSLT file. It should look as follows:
 +
 ```bash
@@ -525,61 +517,31 @@ You should see an incoming event now transformed and looking similar to this:
 +
 {empty} +
 +
-At this stage you're ready to replace the `log-sink` by the real one, the `rocketchat-sink` _Kamelet_.
+At this stage you're ready to forward messages to _RocketChat_ using its dedicated _Kamelet_.
 +
 {empty} +
 
-. [[step-rocketchat-sink]]Replace your Log sink Kamelet by the Rocket.Chat one.
+. [[step-rocketchat-sink]]Include the Rocket.Chat Kamelet.
 +
-Copy from below the `rocketchat-sink` definition, and replace your old `log-sink` code.
+Copy from below the step definition, and paste it at the end of your Camel route.
 +
-----
-apiVersion: camel.apache.org/v1alpha1
-kind: KameletBinding
-metadata:
-  name: m2r
-spec:
-
-  source:
-    ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: matrix-source
-    properties:
-      token: "{{matrix.token}}"
-      room:  "{{matrix.room}}"
-
-  steps:
-  - ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: jslt-action
-    properties:
-      template: m2r.jslt
-----
-+
-```yaml
-  sink:
-    ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: rocketchat-sink
-    properties:
-      userid: "{{rocketchat.userid}}"
-      token: "{{rocketchat.token}}"
-```
-+
-{blank}
-+
-[TIP]
 --
-If you want to keep the `log-sink` activity, you can move it to the `steps` group as an action using the following definition:
-
+{copypaste}
 ----
-  - ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: log-sink   
+{
+  "type": "Route",
+  "name": "to",
+  "definition": {
+    "uri": "kamelet",
+    "description": "RocketChat",
+    "parameters": {
+      "templateId": "rocketchat-sink",
+      "userid": "{{rocketchat.userid}}",
+      "token": "{{rocketchat.token}}"
+    }
+  },
+  "__kaoto_marker": "kaoto-node"
+}
 ----
 --
 +
@@ -587,7 +549,7 @@ If you want to keep the `log-sink` activity, you can move it to the `steps` grou
 
 . Include your Rocket.Chat credentials in your configuration file.
 +
-.. Copy from below the parameter definitions `rocketchat.*`, paste them into your properties file, and configure their values with your _Rocket.Chat_ credentials, as per the instructions that follow.
+.. Under your `matrix` parameters, copy from below the `rocketchat.*` parameters, paste them into your properties file, and configure their values with your _Rocket.Chat_ credentials, as instructed below.
 +
 ----
 # On shutdown it reduces waiting time when stoping Camel's streaming listener
@@ -598,11 +560,14 @@ matrix.token=2d482bdf092e0e2299832b1f38d9560243083894
 matrix.room=6317569e6da03739849c519a
 ----
 +
-```properties
+--
+{copypaste}
+----
 # Rocket.Chat credentials
 rocketchat.token=YOUR_TOKEN
 rocketchat.userid=YOUR_USER_ID
-```
+----
+--
 +
 {empty} +
 +
@@ -650,7 +615,7 @@ image::images/stage1-msg-gitter-slack.png[align="left", width=80%]
 +
 Hopefully you'll see a successful interaction between both chat systems, similar to the image above.
 +
-Press `Ctrl`+`C` to stop your Camel instance.
+Press kbd:[Ctrl+C] to stop your Camel instance.
 +
 {empty} +
 +
