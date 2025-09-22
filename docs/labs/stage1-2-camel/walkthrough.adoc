@@ -31,7 +31,7 @@
 :style-all: pass:a[<style>{style-kbd}{style-preview}{style-indent}</style>]
 
 //:openshift-app-host: apps.cluster-dspt2.dynamic.redhatworkshops.io
-:url-invite: http://invite-invite.{openshift-app-host}/status2
+:url-invite: https://invite-invite.{openshift-app-host}/status2
 //:url-invite: http://0.0.0.0:8080/status2
 
 :docserver-status: pass:a[<img hidden="true" src="invalid-image.jpg" onerror=" \
