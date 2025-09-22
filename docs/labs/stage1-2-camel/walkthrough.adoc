@@ -30,8 +30,12 @@
 :style-indent: .indent2 {padding-left: 2rem;}
 :style-all: pass:a[<style>{style-kbd}{style-preview}{style-indent}</style>]
 
-:docserver-status: pass:[<img hidden="true" src="invalid-image.jpg" onerror=" \
-        fetch('http://0.0.0.0:8080/status2') \
+//:openshift-app-host: apps.cluster-dspt2.dynamic.redhatworkshops.io
+:url-invite: http://invite-invite.{openshift-app-host}/status2
+//:url-invite: http://0.0.0.0:8080/status2
+
+:docserver-status: pass:a[<img hidden="true" src="invalid-image.jpg" onerror=" \
+        fetch('{url-invite}') \
         .then(response => response.text()) \
         .then(data => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:lime;display:inline-block&quot;></div>') \
         .catch(error => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:red;display:inline-block&quot;></div>') \
