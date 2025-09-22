@@ -31,11 +31,11 @@
 :style-all: pass:a[<style>{style-kbd}{style-preview}{style-indent}</style>]
 
 //:openshift-app-host: apps.cluster-dspt2.dynamic.redhatworkshops.io
-:url-invite: https://invite-invite.{openshift-app-host}/status2
+:url-docserver: https://invite-invite.{openshift-app-host}
 //:url-invite: http://0.0.0.0:8080/status2
 
 :docserver-status: pass:a[<img hidden="true" src="invalid-image.jpg" onerror=" \
-        fetch('{url-invite}') \
+        fetch('{url-docserver}/status2') \
         .then(response => response.text()) \
         .then(data => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:lime;display:inline-block&quot;></div>') \
         .catch(error => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:red;display:inline-block&quot;></div>') \
@@ -54,7 +54,7 @@
 
 :fdocserver: pass:a[function docserver(target,template,params) { \
     {freplace} \
-    fetch('http://0.0.0.0:8080/roomid?user='+params) \
+    fetch('{url-docserver}/roomid?user='+params) \
         .then(response => response.text()) \
         .then(data => {target.firstChild.data=replaceTokens(text, data);}) \
         .catch(error => room = 'Error fetching data: ' + error.message); \
@@ -456,7 +456,7 @@ Copy and Paste the values below to define the given field entries:
 ... `string[@key = channel]`: 
 +
 --
-{copypaste}user1
+{copypaste}{user-username}
 ----
 "REPLACE"
 ----
