@@ -1,0 +1,112 @@
+schemaVersion: 2.2.0
+attributes:
+  controller.devfile.io/storage-type: per-workspace
+metadata:
+  name: camel-workshop
+
+# projects:
+
+# - name: ai-basics
+#   git:
+#     remotes:
+#       origin: https://github.com/RedHat-Middleware-Workshops/devsandbox-category-ai-basics.git
+
+# - name: llm-basics
+#   git:
+#     remotes:
+#       origin: https://github.com/RedHat-Middleware-Workshops/devsandbox-category-llm-basics.git
+
+# - name: catalog
+#   git:
+#     remotes:
+#       origin: https://github.com/RedHat-Middleware-Workshops/devsandbox-catalog-ai-labs.git
+
+
+components:
+  - name: tools
+    container:
+      image: quay.io/redhatintegration/rhi-tools:devspaces
+      memoryLimit: 3Gi
+      env:
+        - name: MAVEN_CONFIG
+          value: ""
+        - name: JAVA_OPTS
+          value: "-XX:MaxRAMPercentage=50.0 -XX:+UseParallelGC -XX:MinHeapFreeRatio=10
+            -XX:MaxHeapFreeRatio=20 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90
+            -Dsun.zip.disableMemoryMapping=true -Xms20m -Djava.security.egd=file:/dev/./urandom
+            -Duser.home=/home/user"
+        - name: MAVEN_OPTS
+          value: $(JAVA_OPTS)
+
+        # TEST
+        # - name: VSCODE_DEFAULT_WORKSPACE
+        #   value: "/projects/catalog/config.code-workspace"
+        
+      endpoints:
+        - exposure: public
+          name: 8080-tcp
+          protocol: https
+          targetPort: 8080
+          secure: true
+          
+      volumeMounts:
+        - name: m2
+          path: /home/user/.m2
+
+  # - name: webapp-all
+  #   container:
+  #     image: quay.io/redhatintegration/tutorial-web-app:latest
+  #     env:
+  #       - name: NODE_ENV
+  #         value: production
+  #       - name: THREESCALE_WILDCARD_DOMAIN
+  #         value: local.localdomain
+  #       - name: OPENSHIFT_VERSION
+  #         value: '4'
+  #       - name: PORT
+  #         value: '5001'
+  #       - name: WALKTHROUGH_LOCATIONS
+  #         value: >-
+  #           https://github.com/RedHat-Middleware-Workshops/devsandbox-category-ai-basics?walkthroughsFolder=/docs/labs,
+  #           https://github.com/RedHat-Middleware-Workshops/devsandbox-category-llm-basics?walkthroughsFolder=/docs/labs
+
+  #     endpoints:
+  #       - name: tutorial
+  #         exposure: public
+  #         targetPort: 5001
+  #         protocol: https
+  #         secure: true
+  #     memoryLimit: 512Mi
+  #     mountSources: true
+  #     volumeMounts:
+  #       - name: tutorial-storage
+  #         path: /opt/user-walkthroughs
+
+  - name: m2
+    volume:
+      size: 2Gi
+
+  # - name: tutorial-storage
+  #   volume:
+  #     size: 256Mi
+
+events:
+  postStart:
+    - set-camel-cli
+    # - setup-lab-default
+
+commands:
+  - id: set-camel-cli
+    exec:
+      commandLine: 'source ~/.bashrc && jbang version --update && jbang cache clear && jbang app uninstall camel && jbang app install camel@apache/camel'
+      component: tools
+
+  # - id: setup-lab-default
+  #   exec:
+  #     commandLine: 'echo -e "export LAB_SCRIPTS=/projects/llm-basics/camel/tools/scripts\nexport PATH=\$LAB_SCRIPTS:\$PATH\nsource setup" >> ~/.bashrc'
+  #     component: tools
+
+  # - id: setup-lab-llm-basics
+  #   exec:
+  #     commandLine: 'sed -i "/LAB_SCRIPTS=.*/c\LAB_SCRIPTS=/projects/llm-basics/camel/tools/scripts" ~/.bashrc'
+  #     component: tools
