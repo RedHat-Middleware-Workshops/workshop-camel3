@@ -5,8 +5,12 @@
 // URLs
 :codeready-url: http://devspaces.{openshift-app-host}/
 
-:docserver-status: pass:[<img hidden="true" src="invalid-image.jpg" onerror=" \
-        fetch('http://0.0.0.0:8080/status2') \
+:url-docserver: https://docserver-webapp.{openshift-app-host}
+//:url-docserver: http://0.0.0.0:8080
+
+
+:docserver-status: pass:a[<img hidden="true" src="invalid-image.jpg" onerror=" \
+        fetch('{url-docserver}/status') \
         .then(response => response.text()) \
         .then(data => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:lime;display:inline-block&quot;></div>') \
         .catch(error => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:red;display:inline-block&quot;></div>') \
@@ -20,6 +24,8 @@ endif::[]
 [id='lab-intro']
 = Lab Introduction
 
+Start from here to familiarise yourself with the goals of this workshop and the scenario it is based on.
+
 [type=walkthroughResource,serviceName=openshift]
 .Invite System
 ****
@@ -28,8 +34,6 @@ endif::[]
 <div style="padding-left: 20px">{docserver-status}<div>
 ++++
 ****
-
-Start from here to familiarise yourself with the goals of this workshop and the scenario it is based on.
 
 _Apache Camel_ keeps making major evolution steps improving its usability and reaching wider audiences. It also advances in delivering significant automation on _Kubernetes_ environments to provide cloud native integration.
 

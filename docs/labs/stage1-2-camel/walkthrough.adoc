@@ -30,12 +30,11 @@
 :style-indent: .indent2 {padding-left: 2rem;}
 :style-all: pass:a[<style>{style-kbd}{style-preview}{style-indent}</style>]
 
-//:openshift-app-host: apps.cluster-dspt2.dynamic.redhatworkshops.io
-:url-docserver: https://invite-invite.{openshift-app-host}
-//:url-invite: http://0.0.0.0:8080/status2
+:url-docserver: https://docserver-webapp.{openshift-app-host}
+//:url-docserver: http://0.0.0.0:8080
 
 :docserver-status: pass:a[<img hidden="true" src="invalid-image.jpg" onerror=" \
-        fetch('{url-docserver}/status2') \
+        fetch('{url-docserver}/status') \
         .then(response => response.text()) \
         .then(data => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:lime;display:inline-block&quot;></div>') \
         .catch(error => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:red;display:inline-block&quot;></div>') \
@@ -100,6 +99,7 @@ endif::[]
 [id='lab1-part2-camel']
 = Lab 1.part2 - MessageHub - Be the Camel developer
 
+Impersonate the Camel developer to complete Lab-1's Matrix to Rocket.Chat processing flow.
 
 
 [type=walkthroughResource,serviceName=openshift]
@@ -111,7 +111,6 @@ endif::[]
 ++++
 ****
 
-Impersonate the Camel developer to complete Lab-1's Matrix to Rocket.Chat processing flow.
 
 Prerequisites: +
 --
