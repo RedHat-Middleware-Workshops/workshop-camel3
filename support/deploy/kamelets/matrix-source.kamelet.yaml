@@ -89,47 +89,50 @@ spec:
                     http://synapse.matrix.svc:8008/_matrix/client/v3/sync?timeout=30000&filter={"account_data":{"not_types":["*"]},"room":{"account_data":{"not_types":["*"]},"rooms":["{{room}}"],"timeline":{"limit":1,"types":["m.room.message"]},"state":{"not_types":["*"]} } }&since=${exchangeProperty.next_batch}&disableStreamCache=true
               - convertBodyTo:
                   type: String
-              - when:
-                  expression:
-                    jsonpath:
-                      suppressExceptions: true
-                      expression: $['rooms']
-                  steps:
-                    # keep data containing next batch
-                    - setProperty:
-                        name: backup-response
-                        expression:
-                          simple:
-                            expression: ${body}
 
-                    # The Matrix API has replaced the Matrix API.
-                    # To minimise the impact in the workshop's code and docs
-                    # we transform the Matrix data into simulated Matrix data.
-                    # we apply a JSLT to transform the data
-                    - setHeader:
-                        name: CamelJsltString
-                        expression:
-                          constant:
-                            expression: >-
-                              let event = [for (.rooms.join) .value.timeline.events[0]]
+              - choice:
 
-                              {
-                                "fromUser": {
-                                  "username": replace($event[0].sender,"@|:(.*)",""),
-                                  "displayName": replace($event[0].sender,"@|:(.*)","")
-                                },
-                                "text": $event[0].content.body,
-                                "sent": format-time(replace($event[0].origin_server_ts, "[\\s\\S]{3}\\z", ""), "yyyy-MM-dd'T'HH:mm:ss.SSSX"),
-                              }
-                    - to: "jslt:dummy?allowTemplateFromHeader=true"
+                  when:
+                    - expression:
+                        jsonpath:
+                          suppressExceptions: true
+                          expression: $['rooms']
+                      steps:
+                        # keep data containing next batch
+                        - setProperty:
+                            name: backup-response
+                            expression:
+                              simple:
+                                expression: ${body}
 
-                    # Invoke kamelet in separate thread to ensure loop's continuity.
-                    # If Kamelet executes a filter or a 'stop' command, it may break the flow
-                    - wire-tap:
-                        uri: kamelet:sink
+                        # The Matrix API has replaced the Matrix API.
+                        # To minimise the impact in the workshop's code and docs
+                        # we transform the Matrix data into simulated Matrix data.
+                        # we apply a JSLT to transform the data
+                        - setHeader:
+                            name: CamelJsltString
+                            expression:
+                              constant:
+                                expression: >-
+                                  let event = [for (.rooms.join) .value.timeline.events[0]]
 
-                    # restore data with next batch for next loop
-                    - setBody:
-                        expression:
-                          simple:
-                            expression: ${exchangeProperty.backup-response}
+                                  {
+                                    "fromUser": {
+                                      "username": replace($event[0].sender,"@|:(.*)",""),
+                                      "displayName": replace($event[0].sender,"@|:(.*)","")
+                                    },
+                                    "text": $event[0].content.body,
+                                    "sent": format-time(replace($event[0].origin_server_ts, "[\\s\\S]{3}\\z", ""), "yyyy-MM-dd'T'HH:mm:ss.SSSX"),
+                                  }
+                        - to: "jslt:dummy?allowTemplateFromHeader=true"
+
+                        # Invoke kamelet in separate thread to ensure loop's continuity.
+                        # If Kamelet executes a filter or a 'stop' command, it may break the flow
+                        - wireTap:
+                            uri: kamelet:sink
+
+                        # restore data with next batch for next loop
+                        - setBody:
+                            expression:
+                              simple:
+                                expression: ${exchangeProperty.backup-response}

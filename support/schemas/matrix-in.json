@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "fromUser": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        }
+      },
+      "required": ["username", "displayName"],
+      "additionalProperties": false
+    },
+    "text": {
+      "type": "string"
+    },
+    "sent": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": ["fromUser", "text", "sent"],
+  "additionalProperties": false
+}

@@ -2,7 +2,7 @@
 :walkthrough: Scenario Introduction
 :user-password: openshift
 :namespace: {user-username}
-:url-element: https://app.element.io
+:url-element: https://element-matrix.{openshift-app-host}
 :url-rocketchat: https://rocketchat-rocketchat.{openshift-app-host}
 
 // URLs

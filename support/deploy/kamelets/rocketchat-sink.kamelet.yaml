@@ -53,15 +53,15 @@ spec:
     from:
       uri: "kamelet:source"
       steps:
-      - remove-headers:
+      - removeHeaders:
           pattern: "*"
-      - set-header:
+      - setHeader:
           name: X-User-Id
           simple: "{{userid}}"
-      - set-header:
+      - setHeader:
           name: X-Auth-Token
           simple: "{{token}}"
-      - set-header:
+      - setHeader:
           name: Content-Type
           simple: application/json
       - to:

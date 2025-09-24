@@ -1,9 +1,9 @@
 :walkthrough: Matrix to Rocket.Chat bridge ()
 :user-password: openshift
-:namespace: {user-username}
+:namespace: {user-username}-devspaces
 :invite-url: http://invite-webapp.{openshift-app-host}
 
-:url-element: https://app.element.io
+:url-element: https://element-matrix.{openshift-app-host}
 :url-rocketchat: https://rocketchat-rocketchat.{openshift-app-host}
 :url-codeready: http://devspaces.{openshift-app-host}/
 :url-devconsole: {openshift-host}/topology/ns/{namespace}
@@ -59,13 +59,22 @@
         .catch(error => room = 'Error fetching data: ' + error.message); \
 }]
 
+:fcopy: pass:a[function copy(el) { \
+  el.previousElementSibling.select(); \
+  text = el.previousElementSibling.textContent; \
+  console.log(text); \
+  navigator.clipboard.writeText(text + '\n') \
+        .then(response => console.log('Text with carriage return copied to clipboard!')) \
+        .catch(err => console.error('Failed to copy: ', err)); \
+}]
+
 :copypaste: pass:a[ \
 <div style="border: 1px solid #f0f0f0; border-bottom-color: #8a8d90; display: flex; align-items: flex-start;"> \
   <textarea readonly style="field-sizing: content;border: none; background-color: #f0f0f0; width: 100%; resize: none; font-size:14px; font-family: monospace;padding: 5px 15px" rows="4">function example() { \
   console.log("Hello {replace-with-previous}!"); \
   return true; \
 }</textarea> \
-  <button class="mytooltip" onclick="this.previousElementSibling.select();document.execCommand('copy');" style="border: none; background-color: white; padding: 5px 15px; border-bottom: 1px solid transparent; transition: border-bottom-color 0.2s;"> \
+  <button class="mytooltip" onclick="{fcopy} copy(this);" style="border: none; background-color: white; padding: 5px 15px; border-bottom: 1px solid transparent; transition: border-bottom-color 0.2s;"> \
     <svg fill="currentColor" height="1em" width="1em" viewBox="0 0 448 512" aria-hidden="true" role="img" style="vertical-align: -0.125em;"> \
       <path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"></path> \
     </svg> \
@@ -218,13 +227,14 @@ image::images/crw-terminal.png[align="left", width=100%]
 Create a folder and resources where you will work. +
 Copy and paste in your terminal the following:
 +
-[source, subs=]
+--
+{copypaste}
 ----
 mkdir lab1
 cd lab1
-touch m2r.camel.yaml
-touch stage1.properties<br>
+touch stage1.properties
 ----
+--
 +
 NOTE: The commands above also create the file sources you need for the exercise.
 +
@@ -235,17 +245,20 @@ NOTE: The commands above also create the file sources you need for the exercise.
 Camel JBang is packed with handy functionality. One of them is a nano editor you can use for simple edits. +
 Copy and paste the command below to edit the file using Camel JBang in-built editor:
 +
-[source, subs=]
+--
+{copypaste}
 ----
-camel nano m2r.camel.yaml<br>
+camel nano m2r.camel.yaml
 ----
+--
 +
 {blank}
 +
 The Nano editor will present on screen. +
 Copy and paste the following snippet:
 +
-[source, subs=]
+--
+{copypaste}
 ----
 - route:
     description: Matrix to RocketChat
@@ -261,6 +274,7 @@ Copy and paste the following snippet:
         - log:
             message: ${variable.matrix}
 ----
+--
 +
 [NOTE]
 --
@@ -292,14 +306,17 @@ Then use the sequence of keyboard combinations below:
 +
 Include in your properties file `stage1.properties` the following entries:
 +
-```properties
+--
+{copypaste}
+----
 # On shutdown it reduces waiting time when stoping Camel's streaming listener
 camel.main.shutdownTimeout = 5
 
 # Matrix credentials
 matrix.token=YOUR_ACCESS_TOKEN
 matrix.room=YOUR_ROOM_ID
-```
+----
+--
 +
 {empty} +
 +
@@ -346,14 +363,17 @@ Finally, paste the value you copied into the `matrix.room` parameter.
 + 
 Use the following command to run locally your _Camel_ route:
 +
-```bash
-camel run *
-```
+--
+{copypaste}
+----
+camel run * --local-kamelet-dir=../support/deploy/kamelets
+----
+--
 +
 NOTE: Observe the simplicity of the command `camel run \*`. The wildcard `*` allows _Camel JBang_ to automatically scan the folder and recognise the type of each file found (code, properties, resource, etc.).
 +
 [WARNING]
---
+====
 If the command above failed with the following output:
 
 ----
@@ -364,10 +384,16 @@ If the command above failed with the following output:
 {blank}
 
 Run the following command and try again:
-```bash
-jbang cache clear
-```
+
 --
+{copypaste}
+----
+jbang cache clear
+----
+--
+
+
+====
 +
 {blank}
 +
@@ -398,7 +424,7 @@ Your terminal should show the arrival of a _Matrix_ event similar to the followi
 {blank}
 +
 Hopefully you've been successful in capturing _Matrix_ messages with _Camel_. +
-To stop the running _Camel_ process, from your terminal, press `Ctrl`+`C`.
+To stop the running _Camel_ process, from your terminal, press kbd:[Ctrl+C].
 +
 [TIP]
 --
@@ -455,6 +481,12 @@ Copy and Paste the values below to define the given field entries:
 ... `string[@key = channel]`: 
 +
 --
+{copypaste}
+----
+"room2"
+----
+
+
 {copypaste}{user-username}
 ----
 "REPLACE"
@@ -632,6 +664,7 @@ Did you see the message in _Matrix_ showing up in _Rocket.Chat_?
 [time=5]
 [id="openshift"]
 == Deployment in OpenShift
+{style-all}
 
 [type=taskResource]
 .Credentials
@@ -681,133 +714,88 @@ The only additional actions really to do are:
 {empty} +
 
 . To start with, make sure you have stopped you local Camel instance. +
-If it is still running, press `Ctrl`+`C` to stop it.
-+
-{empty} +
-
-. Include annotations
-+
-Copy from below the `annotations` snippet and include it in your _Kamelet Binding_.
-+
-----
-apiVersion: camel.apache.org/v1alpha1
-kind: KameletBinding
-metadata:
-  name: m2r
-----
-+
-```yaml
-  annotations:
-    trait.camel.apache.org/mount.resources: "configmap:stage1-transform"
-    trait.camel.apache.org/mount.configs: "secret:stage1"
-```
-+
-----
-spec:
-
-  source:
-    ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: matrix-source
-    properties:
-      token: "{{matrix.token}}"
-      room:  "{{matrix.room}}"
-
-  steps:
-  - ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: jslt-action
-    properties:
-      template: m2r.jslt
-
-  sink:
-    ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: rocketchat-sink
-    properties:
-      token: "{{rocketchat.token}}"
-----
+If it is still running, press kbd:[Ctrl+C] to stop it.
 +
 {empty} +
 
 
-. Push configuration and resources to _OpenShift_
+. Deploy your _Matrix_ to _RocketChat_ integration
 +
 .. For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
 +
-[source,bash,subs="attributes+"]
+--
+{copypaste}{namespace}
 ----
-oc project {namespace}
+oc project REPLACE
 ----
+--
 +
 {blank}
 +
-.. Create a _Secret_ containing your configuration. Run the following `oc` command:
+.. Use the command below to deploy your application:
 +
-```bash
-oc create secret generic stage1 --from-file=stage1.properties
-```
+--
+{copypaste}
+----
+camel kubernetes run * \
+--name=m2r \
+--local-kamelet-dir=../support/deploy/kamelets \
+--cluster-type=openshift
+----
+--
 +
-{blank}
-+
-.. Create a _ConfigMap_ containing your JSLT mapping. Run the following `oc` command:
-+
-```bash
-oc create cm stage1-transform --from-file=m2r.jslt
-```
-{empty} +
-
-. Deploy your YAML definition containing your Kamelet Binding
-.. Run the following `oc` command to deploy the integration:
-+
-```bash
-oc apply -f m2r.yaml
-```
-+
-{empty} +
-+
-The Camel K operator will immediately react. It will start building the integration and deploy it.
-+
-NOTE: Be patient, this action may take some time to complete. If the flow was previously built by other students, it will only take a minute. If not, the operator needs to download all the maven dependencies, build the application and create the image before the integration can be deployed (could take up to 10mn the first time).
+NOTE: Be patient, this action may take some time to complete (could take up to 10mn the first time).
 +
 {empty} +
 +
 You can monitor the state of the resource with the following command:
 +
-```bash
-oc get klb
-```
+--
+{copypaste}
+----
+oc get deployment/m2r
+----
+--
 +
-TIP: the argument `klb` stands for _Kamelet Binding_.
-+
-While Camel K builds the integration, the command above shows:
+When the deployment is ready, the command outputs something similar to:
 +
 ----
-NAME   PHASE      REPLICAS
-m2r    Creating   
+NAME   READY   UP-TO-DATE   AVAILABLE   AGE
+m2r    1/1     1            1           10m 
 ----
 +
 {empty} +
 
 .. Check the logs from your terminal.
 +
-You can use the `kamel` client to inspect the logs from the running pod where you integration `m2r` is deployed.
+You can use different commands to inspect the logs of your deployed `m2r` integration:
 +
-Run the command:
+====
+* Using the Camel CLI
 +
-```bash
-kamel logs m2r
-```
+--
+{copypaste}
+----
+camel kubernetes logs m2r
+----
+--
 +
-{empty} +
+* Or, using OpenShift's CLI
++
+--
+{copypaste}
+----
+oc logs deployment/m2r
+----
+--
+====
++
+{blank}
 +
 After a while, when the operator deploys the integration, you should see Camel connecting to Matrix and starting the streaming listener:
 +
 ----
-... : Apache Camel 3.14.2.redhat-00047 (camel-1) started in 1s193ms (build:0ms init:1s1ms start:192ms)
+... : Apache Camel 4.14.0 (m2r) started in 323ms (build:0ms init:0ms start:323ms boot:2s201ms)
 ...
 ... : Opening connection to Matrix...
 ... : Matrix HTTP Streaming started

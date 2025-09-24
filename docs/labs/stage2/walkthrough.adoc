@@ -207,7 +207,7 @@ Luckily, you've already done all the necessary onboarding setup with both chat s
 * link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
 ****
 
-This process is identical to the one you've already created in Lab 1, except there is situation you need to prevent. +
+This process is identical to the one you've already created in Lab 1, except there is a hazardous scenario you need to prevent. +
 Ask yourself the following question:
 
 * If the App (e.g. Camel) in a chat room fires an event for each new message in a conversation, what would happen when interconnecting both ends (apps)?
