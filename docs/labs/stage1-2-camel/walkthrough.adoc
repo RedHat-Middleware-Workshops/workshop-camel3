@@ -724,9 +724,10 @@ If it is still running, press kbd:[Ctrl+C] to stop it.
 .. For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
 +
 --
-{copypaste}{namespace}
+{copypaste}
+[subs=attributes]
 ----
-oc project REPLACE
+oc project {namespace}
 ----
 --
 +
