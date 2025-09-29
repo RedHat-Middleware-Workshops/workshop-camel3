@@ -72,15 +72,15 @@ spec:
                 }
       - to: "jslt:dummy?allowTemplateFromHeader=true"
 
-      - remove-headers:
+      - removeHeaders:
           pattern: "*"
-      - set-header:
+      - setHeader:
           name: CamelHttpMethod
           simple: PUT
-      - set-header:
+      - setHeader:
           name: Content-Type
           simple: application/json
-      - set-header:
+      - setHeader:
           name: Authorization
           simple: Bearer {{token}}
       - toD:

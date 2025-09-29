@@ -232,7 +232,7 @@ Copy and paste in your terminal the following:
 ----
 mkdir lab1
 cd lab1
-touch stage1.properties
+touch application.properties
 ----
 --
 +
