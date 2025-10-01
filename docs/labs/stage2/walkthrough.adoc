@@ -33,8 +33,12 @@
 :style-indent: .indent2 {padding-left: 2rem;}
 :style-all: pass:a[<style>{style-kbd}{style-preview}{style-indent}</style>]
 
-:docserver-status: pass:[<img hidden="true" src="invalid-image.jpg" onerror=" \
-        fetch('http://0.0.0.0:8080/status2') \
+
+:url-docserver: https://docserver-webapp.{openshift-app-host}
+//:url-docserver: http://0.0.0.0:8080
+
+:docserver-status: pass:a[<img hidden="true" src="invalid-image.jpg" onerror=" \
+        fetch('{url-docserver}/status') \
         .then(response => response.text()) \
         .then(data => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:lime;display:inline-block&quot;></div>') \
         .catch(error => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:red;display:inline-block&quot;></div>') \
@@ -53,10 +57,19 @@
 
 :fdocserver: pass:a[function docserver(target,template,params) { \
     {freplace} \
-    fetch('http://0.0.0.0:8080/roomid?user='+params) \
+    fetch('{url-docserver}/roomid?user='+params) \
         .then(response => response.text()) \
         .then(data => {target.firstChild.data=replaceTokens(text, data);}) \
         .catch(error => room = 'Error fetching data: ' + error.message); \
+}]
+
+:fcopy: pass:a[function copy(el) { \
+  el.previousElementSibling.select(); \
+  text = el.previousElementSibling.textContent; \
+  console.log(text); \
+  navigator.clipboard.writeText(text + '\n') \
+        .then(response => console.log('Text with carriage return copied to clipboard!')) \
+        .catch(err => console.error('Failed to copy: ', err)); \
 }]
 
 :copypaste: pass:a[ \
@@ -65,7 +78,7 @@
   console.log("Hello {replace-with-previous}!"); \
   return true; \
 }</textarea> \
-  <button class="mytooltip" onclick="this.previousElementSibling.select();document.execCommand('copy');" style="border: none; background-color: white; padding: 5px 15px; border-bottom: 1px solid transparent; transition: border-bottom-color 0.2s;"> \
+  <button class="mytooltip" onclick="{fcopy} copy(this);" style="border: none; background-color: white; padding: 5px 15px; border-bottom: 1px solid transparent; transition: border-bottom-color 0.2s;"> \
     <svg fill="currentColor" height="1em" width="1em" viewBox="0 0 448 512" aria-hidden="true" role="img" style="vertical-align: -0.125em;"> \
       <path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"></path> \
     </svg> \
@@ -90,6 +103,29 @@
   source.remove(); \
   tokens.remove(); \
   this.remove(); \
+}"> \
+]
+
+:snippet: pass:a[ \
+<div style="border: 1px solid #f0f0f0; border-bottom-color: #8a8d90; display: flex; align-items: flex-start;"> \
+</div> \
+<img hidden="true" src="invalid-image.jpg" onerror="{ \
+  {freplace} \
+  let block = this.closest('.openblock'); \
+  let div = this.closest('.paragraph'); \
+  let source = div.nextElementSibling; \
+  let pre = source.querySelector('pre'); \
+  let text = pre.textContent; \
+  let lineCount = text.split('\n').length; \
+  let tokens = this.nextSibling; \
+  console.log('tokens: [' +tokens.data.trim()+']'); \
+  console.log('before text: [' +text+']'); \
+  text = replaceTokens(text, tokens.data.trim()); \
+  pre.textContent = text; \
+  console.log('after text: [' +text+']'); \
+  console.log(block); \
+  block.parentElement.insertBefore(pre,block); \
+  block.remove(); \
 }"> \
 ]
 
@@ -290,39 +326,6 @@ cd lab2<br>
 +
 {empty} +
 
-... Rename all occurrences of `stage1` to `stage2`.
-+
-Run the commands below in your terminal:
-+
---
-* **Linux**
-+
-[subs=]
-```bash
-mv stage1.properties stage2.properties
-sed -i 's/stage1/stage2/g' m2r.yaml
-<br> 
-```
-// +
-// * **MacOS**
-// +
-// [subs=]
-// ```bash
-// mv stage1.properties stage2.properties
-// sed -i '' 's/stage1/stage2/g' m2r.yaml
-// <br> 
-// ```
---
-+
-{blank}
-+
-The commands above will:
-+
---
-* replace the annotations in the `m2r.yaml` file from `stage1` to `stage2` 
-* rename `stage1.properties` to `stage2.properties`
---
-{empty} +
 
 .. Find your new folder in the project tree
 +
@@ -345,7 +348,8 @@ The data mapper transforms messages to the following format:
 +
 For example:
 +
-** *{user-username}@rocketchat:* hello
+** *{user-username}@matrix:* ping
+** *{user-username}@rocketchat:* pong
 +
 {blank}
 +
@@ -513,6 +517,7 @@ Inspect in the pod logs to troubleshoot.
 [time=5]
 [id="r2m"]
 == Rocket.Chat to Matrix
+{style-all}
 
 [type=taskResource]
 .Credentials
@@ -570,115 +575,180 @@ Produces events to _Matrix_.
 
 {empty} +
 
+
+
+
 === Process definition
 
-. Define the base camel route:
+. Define the base camel route.
 +
-.. Create a new Camel route in Kaoto
-... Name it `r2m`
-.. Replace the default timer step by a Kamelet *Webhook Source*
-... Click the group `All` at the top of the configuration panel.
-... Find the parameter *Variable Receive* and configure with:
+Because the flow is so similar to the one previously constructed, we provide below a base skeleton to get you started:
++
+.. Create the new Camel route with the `cat` command below:
++
+[NOTE]
+====
+You could also use the Camel CLI's `nano` to easy edit a new camel route:
+----
+camel nano r2m.camel.yaml
+----
+====
 +
 --
 {copypaste}
 ----
-rocketchat
+cat << \EOF > r2m.camel.yaml
+- route:
+    description: RocketChat to Matrix
+    from:
+      uri: kamelet:webhook-source
+      description: RocketChat
+      variableReceive: rocketchat
+      steps:
+        - convertVariableTo:
+            description: stream to String
+            name: rocketchat
+            type: String
+        - choice:
+            when:
+              - steps:
+                  - stop: {}
+                jq:
+                  source: rocketchat
+                  expression: .text | test("\\*.*@.*:\\*")
+        - log:
+            message: ${body}
+EOF
 ----
 --
 +
-NOTE: When *Variable Receive* is configured it indicates the variable where to output the data, otherwise Camel uses the body.
-+
-.. Update the *Log* activity:
-+
-* from: `${body}`
-* to:
-+
-** {empty}
-+
+[NOTE]
 --
-{copypaste}
-----
-${variable.rocketchat}
-----
+The source Kamelet is now a **_Webhook_**.
+
+* It defines `variableReceive: rocketchat` where the incoming payload is kept.
+* _Rocket.Chat_ has been pre-configured to push events to this particular _Webhook_, via its _Kubernetes_ service.
+--
++
+NOTE: The flow includes the `convertVariableTo` step to convert the data into a String type for multiple reads, as the Webhook source provides an input stream that can only be read once.
++
+[NOTE]
+--
+In the **_Choice_**, notice the JQ expression picks the `.text` JSON field and evaluates it against the regular expression that takes in account the `*` symbol that _Matrix_ uses to render rich content.
 --
 +
 {empty} +
 
-
-
-. Include the filter
+. Include data transformation
 +
-_RocketChat_ does not provide a field to flag bot-generated messages, so we need to develop a custom pattern-matching approach to distinguish user messages from bot messages.
+Now we need to extend the _Camel_ route definition to include data transformation to match the JSON structure the target system (_Matrix_) expects.
++
+.. Include in your Camel route a Kaoto data transformation step
 +
 --
-The data mapper transforms messages to the following format:
+From Kaoto: 
 
-* `username@system:`  message
-+
-For example:
-+
-** *{user-username}@matrix:* hello
+. Click the `+` button in the transition
+. Find and select the _Kaoto DataMapper_
+. Click to open the configuration panel
+. Click the `🔧Configure` button
+--
 +
 {blank}
 +
+.. Attach schemas
++
+--
+From the DataMapper editor: 
+
+. Define the source:
+.. On `Parameters` click the `+` to add new parameter
+.. Enter `rocketchat` and click the checkmark button kbd:[√]
+.. Click first the Attach schema button, then the blue button, and pick `rocketchat-in.json`.
++
+{blank}
++
+. Define the target
+.. Find the target Body and click on "Attach schema", then the blue button, and pick `matrix-out.json`
+
+{blank}
 --
 +
-This pattern is reliable for identifying and blocking incoming events because it is uniquely defined by the data mapper in Kaoto and not used by other systems.
+{blank}
 +
-With the above in mind, let's include a filtering step, that identifies and blocks bot (Camel generated) messages.
+.. Define the data mappings
 +
-Follow the steps below:
+Copy and Paste the values below to define the given field entries:
 +
-.. Add a *Choice* processor after the Matrix kamelet
-.. From the *Choice* group, delete the *otherwise* element.
-.. Click the *when* element and configure as follows:
-... Click the group `All` at the top of the configuration panel.
-... Select the *JQ* expression language.
-... Configure the following elements with copy and paste:
-.... *Expression*:
+... `string[@key = text]`: 
 +
 --
 {copypaste}
 ----
-.text | test("\\*.*@.*:\\*")
+concat("<b>",$rocketchat-x/xf:map/xf:string[@key='user_name'],"@rocketchat</b>: ",$rocketchat-x/xf:map/xf:string[@key='text'])
 ----
 --
 +
-NOTE: In the expression above you'll notice `.text` is the JSON field selected and tested with a regular expression that takes in account the _HTML_ `<b>` tags that _Matrix_ parses to render rich content.
+Your mapping rules should look similar to the image below.
++
+image::images/jslt-room-config.png[align="left", width=80%]
 +
 {blank}
 +
-.... *Source*:
-+
---
-{copypaste}
-----
-rocketchat
-----
---
-+
-NOTE: When *Source* is configured it indicates the variable from where to obtain the input data, otherwise Camel uses the body.
-+
-{blank}
-+
-.. Include a *Stop* processor
-... Replace the *Log* step by a *Stop* one.
+NOTE: The field `text` includes JsonPath rules extracting values from the input _Rocket.Chat_ event.
 +
 {empty} +
 
-
-+
-In summary, the *Choice* definition will result in the following behaviour: +
-** The *when* evaluation picks `.text` and tests for a pattern match:
+. Run Camel JBang again to test the process:
 +
 --
-.. When it matches, the event is ignored (*stop* halts the process execution)
-.. When not matched, the execution resumes with normality.
+{copypaste}
+----
+camel run * --local-kamelet-dir=../support/deploy/kamelets --dev
+----
 --
-+ 
-{empty} + 
++
+NOTE: The flag `--dev` indicates to hot-reload the souce code when changes are applied live.
++
+{empty} +
 
+. Test the integration from _Rocket.Chat_.
++
+Go to you Rocket.Chat's chat room and send a message, for example:
++
+--
+{copypaste}
+----
+Hello from Rocket.Chat
+----
+--
++
+If all goes well your message should show in your logs something similar to:
++
+----
+{"text":"<b>user2@rocketchat<\/b>: Hello from Rocket.Chat"}
+----
++
+{empty} +
+
+. Test the filter.
++
+Fake a message pretending it is generated by _Camel_.
++
+NOTE: We simulate a reaction from Rocket.Chat when receiving an event, published by _Matrix_ and channeled via Camel.
++
+Copy the following message, then paste and send from _Rocket.Chat_:
++
+--
+{copypaste}
+----
+*fakebot@matrix:* fake app message
+----
+--
++
+The expected outcome is to observe Camel ignores (filters) the message from _Rocket.Chat_.
++
+{empty} +
 
 
 . Include the Matrix Kamelet.
@@ -707,191 +777,25 @@ Copy from below the step definition, and paste it at the end of your Camel route
 +
 {empty} +
 
-=== Process definition OLD
 
-. Create the YAML definition.
+. Test the end-to-end integration from Rocket.Chat to Matrix.
 +
-Run the following command to crate the YAML file:
+Go to you Rocket.Chat's chat room and send a message, for example:
 +
-```bash
-touch r2m.yaml
-```
-+
-{empty} +
-
-. Define its source
-+
-Copy the snippet below and paste it into your new `r2m.yaml` file:
-+
-```yaml
-apiVersion: camel.apache.org/v1alpha1
-kind: KameletBinding
-metadata:
-  name: r2m
-  annotations:
-    trait.camel.apache.org/mount.configs: "secret:stage2"
-    trait.camel.apache.org/mount.resources: "configmap:stage2-transform"
-spec:
-
-  source:
-    ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: webhook-source
-
-
-  steps:
-
-  # Filter action to prevent death loops
-  - ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: predicate-filter-action
-    properties:
-      expression: $.text =~ /(?!\*.*@.*\*:).*/
-  
-  # JSON Transformation
-  - ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: jslt-action
-    properties:
-      template: "{{transform.path:r2m.jslt}}"
-
-
-  sink:
-    ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: matrix-sink
-    properties:
-      token: "{{matrix.token}}"
-      room: "{{matrix.room}}"
-```
-+
-{empty} +
-+
-[NOTE]
 --
-* The source Kamelet is now a _Webhook_
-** _Rocket.Chat_ has been pre-configured to push events to this particular _Kamelet Binding_, via its _Kubernetes_ service (once the integration deployed).
-* The sink Kamelet is now _Matrix_
+{copypaste}
+----
+Hello from Rocket.Chat
+----
 --
-+
-[NOTE]
---
-In the filter above you'll notice the expression picks the `$.text` JSON field and evaluates it against the regular expression that takes in account the `*` symbol _Matrix_ uses to render rich content.
---
-+
-{empty} +
-
-. Define the JSLT transformation.
-+
-.. Run the following command to crate the JSLT file:
-+
-```bash
-touch r2m.jslt
-```
-+
-{empty} +
-
-.. Define its mapping definition.
-+
-Copy the snippet below and paste it into your new `r2m.jslt` file:
-+
-```
-{
-  "text":"<b>"+.user_name+"@rocketchat</b>: "+.text
-}
-```
-+
-{empty} +
-+
-[NOTE]
-====
-* When targeting _Rocket.Chat_, the target room is configured at the sink, not in the JSON payload. +
-* The field `text` includes JsonPath rules extracting values from Rocket.Chat input events.
-====
-{empty} +
-
-. Push the configuration to _OpenShift_
-+
-Recreate the _Secret_ and _ConfigMap_ to include both JSLTs. +
-Run the following `oc` command:
-+
-[source, subs=]
-----
-oc delete secret stage2
-oc create secret generic stage2 --from-file=stage2.properties
-
-oc delete cm stage2-transform
-oc create cm stage2-transform --from-file=m2r.jslt --from-file=r2m.jslt<br>
-----
-{empty} +
-
-. Deploy the YAML definition containing your new Kamelet Binding
-.. Run the following `oc` command to deploy the integration:
-+
-```bash
-oc apply -f r2m.yaml
-
-```
-+
-NOTE: Be patient, this action will take some time to complete as the operator needs to download all the filter's maven dependencies, build the application and create the image before the integration can be deployed.
-
-.. Wait for readyness
-+
-You can monitor the state of the new flow with the following command:
-+
-```bash
-oc get klb -w
-```
-+
-{blank}
-+
-During the time you see _Camel K_ building and deploying the integration, the output for the command above should show something similar to:
-+
-----
-NAME   PHASE      REPLICAS
-m2r    Ready      1
-r2m    Creating   
-r2m    Ready      0
-r2m    Ready      1
-r2m    Ready      1
-----
-+
-{blank}
-+
-The last entry indicates the pod is ready.
-+
-Check the pod's deployment and logs to ensure all is in healthy state.
-+
-image::images/ocp-dev-pod-healthy-s2g.png[align="left", width=80%]
-+
-{empty} +
-
-. Test the integration from Rocket.Chat.
-+
-Go to you Rocket.Chat's chat room and send a message, for example "Hello from Rocket.Chat".
 +
 If all goes well your message should show up in Matrix.
 +
 image::images/stage2-msg-slack-gitter.png[align="left", width=80%]
-+
-{empty} +
 
-. Ensure the filter works.
+. Test both directions
 +
-We now have both flows in place:
-+
---
-* Matrix to Rocket.Chat
-* Rocket.Chat to Matrix
---
-+
-{empty} +
-+
-As a final step, to test the filter and validate it's working well, let's ensure that _Matrix_-to-_Rocket.Chat_ messages do not circle back.
+As a final step, ensure that _Matrix_-to-_Rocket.Chat_ messages do not circle back.
 +
 From your _Matrix_ chat room, send a message. +
 The expected outcome should be as follows:
@@ -899,8 +803,15 @@ The expected outcome should be as follows:
 * You see the message in _Rocket.Chat_
 * You don't see a new message in _Matrix_
 
+{empty} +
 
-+
+You finally have both flows in place:
+
+--
+* Matrix to Rocket.Chat
+* Rocket.Chat to Matrix
+--
+
 {empty} +
 
 
@@ -913,5 +824,166 @@ You have now completed Stage 2 !!
 [type=verificationFail]
 Inspect in the pod logs to troubleshoot.
 
+
+
+[time=5]
+[id="openshift"]
+== Deployment in OpenShift
+{style-all}
+
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+[type=taskResource]
+.Matrix
+****
+* link:{url-element}[Matrix Web Client, window="_blank"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
+****
+
+Now that you have validated your code locally, you can proceed to deploy and run in _OpenShift_.
+
+{empty} +
+
+. To start with, make sure you have stopped you local Camel instance. +
+If it is still running, press kbd:[Ctrl+C] to stop it.
++
+{empty} +
+
+
+. Deploy your _RocketChat_ to _Matrix_ integration
++
+.. For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
++
+--
+{copypaste}
+[subs=attributes]
+----
+oc project {namespace}
+----
+--
++
+{blank}
++
+.. Use the command below to deploy your application:
++
+--
+{copypaste}
+----
+camel kubernetes run * \
+--name=r2m \
+--local-kamelet-dir=../support/deploy/kamelets \
+--cluster-type=openshift
+----
+--
++
+NOTE: Be patient, this action may take some time to complete (could take up to 10mn the first time).
++
+{empty} +
++
+You can monitor the state of the resource with the following command:
++
+--
+{copypaste}
+----
+oc get deployment/r2m
+----
+--
++
+When the deployment is ready, the command outputs something similar to:
++
+----
+NAME   READY   UP-TO-DATE   AVAILABLE   AGE
+r2m    1/1     1            1           10m 
+----
++
+{blank}
++
+Check the pod's deployment and logs to ensure all is in healthy state.
++
+image::images/ocp-dev-pod-healthy-s2g.png[align="left", width=80%]
++
+{empty} +
+
+. Test the integration from Rocket.Chat.
++
+Go to you Rocket.Chat's chat room and send a message. +
++
+* For example:
++
+--
+{copypaste}
+----
+Hello from Rocket.Chat
+----
+--
++
+If all goes well your message should show up in Matrix.
++
+image::images/stage2-msg-slack-gitter.png[align="left", width=80%]
++
+{empty} +
+
+
+. Test your Matrix to Rocket.Chat integration
++
+One more time, send a message from Matrix, and ensure you don't see loopbacks. +
+For example:
++
+--
+{copypaste}
+----
+Hello from Matrix
+----
+--
++
+image::images/stage1-msg-gitter-slack.png[align="left", width=80%]
+
+
+**Well done!** you shoud now have both flows in place:
+
+--
+* Matrix to Rocket.Chat
+* Rocket.Chat to Matrix
+--
+
+{empty} +
+
+[type=verification]
+Did you see your message from _Rocket.Chat_ successfully reach _Matrix_ (and not come back)?
+
+[type=verificationSuccess]
+You have now completed Stage 2 !!
+
+[type=verificationFail]
+Inspect in the pod logs to troubleshoot.
+
+
+
+[type=verification]
+Did you see the message going from _Matrix_ to _Rocket.Chat_?
+
+[type=verificationSuccess]
+You've successfully completed stage 1 !!
+
+[type=verificationFail]
+Inspect in the pod logs to investigate possible failure causes.
 
 // You have now completed Stage 2 !!

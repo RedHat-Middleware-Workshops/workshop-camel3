@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "description": "A timestamp string derived from parsing a date-time in the format 'yyyy-MM-dd'T'HH:mm:ss.SSSX' and rounded"
+    },
+    "source": {
+      "type": "string",
+      "enum": ["matrix","rocketchat","discord","other"],
+      "description": "The source of the message"
+    },
+    "user": {
+      "type": "string",
+      "description": "The display name of the user who sent the message"
+    },
+    "text": {
+      "type": "string",
+      "description": "The content of the message"
+    }
+  },
+  "required": ["timestamp", "source", "user", "text"],
+  "additionalProperties": false
+}
+

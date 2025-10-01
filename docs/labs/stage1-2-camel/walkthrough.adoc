@@ -102,6 +102,29 @@
 }"> \
 ]
 
+:snippet: pass:a[ \
+<div style="border: 1px solid #f0f0f0; border-bottom-color: #8a8d90; display: flex; align-items: flex-start;"> \
+</div> \
+<img hidden="true" src="invalid-image.jpg" onerror="{ \
+  {freplace} \
+  let block = this.closest('.openblock'); \
+  let div = this.closest('.paragraph'); \
+  let source = div.nextElementSibling; \
+  let pre = source.querySelector('pre'); \
+  let text = pre.textContent; \
+  let lineCount = text.split('\n').length; \
+  let tokens = this.nextSibling; \
+  console.log('tokens: [' +tokens.data.trim()+']'); \
+  console.log('before text: [' +text+']'); \
+  text = replaceTokens(text, tokens.data.trim()); \
+  pre.textContent = text; \
+  console.log('after text: [' +text+']'); \
+  console.log(block); \
+  block.parentElement.insertBefore(pre,block); \
+  block.remove(); \
+}"> \
+]
+
 ifdef::env-github[]
 endif::[]
 
@@ -462,12 +485,12 @@ From the DataMapper editor:
 . Define the source:
 .. On `Parameters` click the `+` to add new parameter
 .. Enter `matrix` and click the checkmark button kbd:[√]
-.. Click first the Attach schema button, then the blue button, and pick `matrix-schema.json`.
+.. Click first the Attach schema button, then the blue button, and pick `matrix-in.json`.
 +
 {blank}
 +
 . Define the target
-.. Find the target Body and click on "Attach schema", then the blue button, and pick `common.json`
+.. Find the target Body and click on "Attach schema", then the blue button, and pick `rocketchat-out.json`
 
 {blank}
 --
@@ -545,16 +568,18 @@ camel run * --local-kamelet-dir=../support/deploy/kamelets
 . From Matrix send another chat message and inspect your terminal output. +
 You should see an incoming event now transformed and looking similar to this:
 +
+--
+{snippet}user2
 [subs="attributes+"]
 ----
-{"channel":"room1","text":"*{user-username}@matrix*: Hello Camel"}
+{"channel":"REPLACE","text":"*{user-username}@matrix*: Hello Camel"}
 ----
-+
-{empty} +
+--
 +
 At this stage you're ready to forward messages to _RocketChat_ using its dedicated _Kamelet_.
 +
 {empty} +
+
 
 . [[step-rocketchat-sink]]Include the Rocket.Chat Kamelet.
 +
