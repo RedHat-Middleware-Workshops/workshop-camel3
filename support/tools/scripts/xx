@@ -1,0 +1,53 @@
+#! /bin/bash
+# set -x
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed_options=( -i '' )
+else
+    sed_options=( -i )
+fi
+
+echo "Using Camel JBang to export into a Quarkus application..."
+camel export * \
+--runtime=quarkus \
+--gav=org.demo:agent:1.0.0 \
+--dep=io.quarkus:quarkus-openshift,io.quarkiverse.langchain4j:quarkus-langchain4j-core:0.17.2,io.quarkiverse.langchain4j:quarkus-langchain4j-openai:0.17.2 \
+--ignore-loading-error
+
+echo "Export completed."
+
+# LangChain4j in Quarkus requires setting the key
+# In the sandbox we need to bind to 0.0.0.0 to channel comms via 8080-tcp
+echo "[custom] Adding extra properties..."
+echo "quarkus.langchain4j.openai.api-key=EMPTY" >> src/main/resources/application.properties
+echo "%dev.quarkus.http.host=0.0.0.0" >> src/main/resources/application.properties
+
+# The 'snakeyaml' depencency conflicts with JavaFaker so we load it first
+# We look for a unique occurrence (to match start/end)
+echo "[custom] Adding Snakeyaml dependency..."
+sed "${sed_options[@]}" '/<\/dependencyManagement>/,/camel-quarkus-core/c\
+    <\/dependencyManagement>\
+    \
+    <dependencies>\
+        <dependency>\
+            <groupId>org.yaml<\/groupId>\
+            <artifactId>snakeyaml<\/artifactId>\
+        <\/dependency>\
+        <dependency>\
+            <groupId>org.apache.camel.quarkus<\/groupId>\
+            <artifactId>camel-quarkus-core<\/artifactId>' \
+pom.xml
+
+# # SpringBoot
+# echo "Using Camel JBang to export into a SpringBoot application..."
+# camel export * \
+# --runtime=spring-boot \
+# --gav=org.demo:agent-sb:1.0.0
+
+echo "[custom] Removing 'lazy=true' parameter..."
+sed "${sed_options[@]}" 's/(lazy=true)//g' src/main/java/org/demo/agent/bindings.java
+
+echo "[custom] Cleaning root files and folders."
+rm -r .camel* *.java *.yaml application.properties style.css index.html
+
+echo "all done."

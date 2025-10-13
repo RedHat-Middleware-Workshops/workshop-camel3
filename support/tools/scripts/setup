@@ -1,0 +1,31 @@
+#! /bin/bash
+# set -x
+
+# DEFINE SCRIPT PROJECT NAME
+# PROJECT=message-hub
+
+# PATH_PROJECT=/projects/$PROJECT
+PATH_PROJECT=$PROJECT_SOURCE
+CATALOG=https://raw.githubusercontent.com/KaotoIO/catalogs/4.8.0/catalogs/index.json
+CWCONFIG=/projects/.code-workspace
+LAB=$PATH_PROJECT/lab
+
+# Disabled as Kaoto's latest release comes with 4.8.0
+# Configure Kaoto's catalogue version
+# echo "$(jq '.settings += {"kaoto.catalog.url": "'"$CATALOG"'"}' $CWCONFIG)" > $CWCONFIG
+
+# Point Camel JBang to SNAPSHOT
+# grep -rl camel /home/user/.jbang/cache/urls | grep CamelJBang.java | xargs sed -i 's/version:4.*}/version:4.8.0-SNAPSHOT}/g'
+
+# Set Java 17
+export JAVA_HOME=$JAVA_HOME_17
+
+# Only execute setup script if chosen workspace matches LLM project
+if [  $PWD == $PATH_PROJECT ]; then
+
+  if [ ! -d "$LAB" ]; then
+    mkdir $LAB
+  fi
+
+  cd $LAB
+fi

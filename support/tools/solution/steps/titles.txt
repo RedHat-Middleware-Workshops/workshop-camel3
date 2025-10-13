@@ -1,0 +1,11 @@
+0 Define the 'm2r' flow: Matrix to RocketChat
+1 Deploy 'm2r' on OpenShift
+2 Define a filter to prevent death loops
+3 Define the 'r2m' flow: RocketChat to Matrix
+4 Create first LLM tool (v1 offline)
+5 Test the weather tool
+6 Finish first LLM tool (v2 online)
+7 Create second LLM tool
+8 Test the tour guide tool
+9 Run the LLM using both tools
+10 Export to Quarkus

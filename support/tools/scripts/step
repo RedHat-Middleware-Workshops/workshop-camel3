@@ -1,0 +1,44 @@
+#! /bin/bash
+# set -x
+
+# BASE=/projects/message-hub
+BASE=$PROJECT_SOURCE
+LAB=$BASE/lab
+TOOLS=$BASE/support/tools
+FF=$TOOLS/solution/steps
+
+# Return chapter details when no argument is passed (no chapter requested)
+if [ ! "$1" ]; then
+  STEP=$(< $TOOLS/scripts/current)
+  echo -e "\033[33mCurrent step: $STEP [`grep '^'$STEP' ' $FF/titles.txt | cut -d' ' -f 2-`]\033[0m"
+  exit
+fi
+
+# Get first and last step IDs
+cd $FF
+FIRST=`ls -d */ | sort -n | cut -f1 -d'/' | head -n 1`
+ LAST=`ls -d */ | sort -n | cut -f1 -d'/' | tail -n 1`
+cd $OLDPWD
+
+# Abort if chapter requested doesn't exist
+if (($1 < $FIRST || $1 > $LAST)); then
+  echo ABORTED! no step $1 available.
+  exit
+fi
+
+NEXT=$1
+
+# to ensure all hidden files & dirs are deleted (.camel) we need to change directory and return
+if [ ! -d "$LAB" ]; then
+  mkdir $LAB
+fi
+cd $LAB
+ls -A | xargs --no-run-if-empty rm -r
+cd $OLDPWD
+
+# Copy chapter sources to lab directory
+cp -r $FF/$NEXT/* $LAB
+echo "step $1 ready [`grep '^'$1' ' $FF/titles.txt | cut -d' ' -f 2-`]"
+echo "$1" > $TOOLS/scripts/current
+
+cd $LAB

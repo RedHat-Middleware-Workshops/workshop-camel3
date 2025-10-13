@@ -1,0 +1,21 @@
+- route:
+    id: weather tool
+    from:
+      uri: langchain4j-tools:weather
+      parameters:
+        tags: all
+        description: get weather forecast of cities around the world
+        parameter.location: string
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: |-
+                  {
+                    "weather":{
+                      "location":"${header.location}",
+                      "temperature": "35 degrees celsius"
+                    }
+                  }
+        - log:
+            message: "response is: ${body}"

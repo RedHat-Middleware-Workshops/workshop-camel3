@@ -1,0 +1,13 @@
+- route:
+    description: Matrix to RocketChat
+    from:
+      description: Matrix
+      uri: kamelet
+      parameters:
+        templateId: matrix-source
+        room: "{{matrix.room}}"
+        token: "{{matrix.token}}"
+      variableReceive: matrix
+      steps:
+        - log:
+            message: ${variable.matrix}

@@ -1,0 +1,8 @@
+#! /bin/bash
+# set -x
+
+echo "[clean] Removing LLM Server from OpenShift..."
+oc get svc,deployment,pvc  -o name | grep llm | xargs --no-run-if-empty oc delete
+
+echo "[clean] Removing Camel Quarkus application..."
+oc get svc,deployment,build,bc,is,route  -o name | grep agent | xargs --no-run-if-empty oc delete

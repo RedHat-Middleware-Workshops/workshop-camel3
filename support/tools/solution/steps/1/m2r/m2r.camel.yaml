@@ -1,0 +1,29 @@
+- route:
+    id: route-9664
+    description: Matrix to RocketChat
+    from:
+      description: Matrix
+      uri: kamelet
+      parameters:
+        room: "{{matrix.room}}"
+        templateId: matrix-source
+        token: "{{matrix.token}}"
+      steps:
+        - step:
+            id: kaoto-datamapper-90a3f4e
+            steps:
+              - to:
+                  id: kaoto-datamapper-xslt-2110
+                  uri: xslt-saxon:kaoto-datamapper-90a3f4e.xsl
+                  parameters:
+                    failOnNullBody: false
+        - log:
+            message: ${body}
+        - to:
+            description: RocketChat
+            uri: kamelet
+            parameters:
+              templateId: rocketchat-sink
+              token: "{{rocketchat.token}}"
+              userid: "{{rocketchat.userid}}"
+      variableReceive: matrix

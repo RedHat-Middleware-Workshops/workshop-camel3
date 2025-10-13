@@ -1,0 +1,22 @@
+#! /bin/bash
+# set -x
+
+FF=$BASE/solution/steps
+
+# Input required
+if [ ! "$1" ]; then
+  echo "Endpoint required, for example 'tt 8080-tcp'"
+  exit
+fi
+
+# Get route
+ROUTE=`oc get route -o name | grep $1`
+
+# Route required
+if [ ! "$ROUTE" ]; then
+  echo "No route found with tag [$1]"
+  exit
+fi
+
+# Annotate route
+oc annotate $ROUTE --overwrite haproxy.router.openshift.io/timeout=300s

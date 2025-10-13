@@ -1,0 +1,24 @@
+- route:
+    id: route-1404
+    description: RocketChat to Matrix
+    from:
+      id: from-3272
+      description: RocketChat
+      uri: platform-http
+      parameters:
+        path: /webhook
+      steps:
+        - filter:
+            id: filter-3589
+            steps:
+              - stop:
+                  id: stop-3589
+            disabled: false
+            expression:
+              jq:
+                expression: .text | test("\\*.*@.*:\\*")
+                source: rocketchat
+        - log:
+            id: log-1739
+            message: ${body}
+      variableReceive: rocketchat

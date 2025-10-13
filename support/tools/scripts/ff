@@ -1,0 +1,10 @@
+#! /bin/bash
+# set -x
+
+BASE=/projects/message-hub/support/tools
+CURRENT=`head $BASE/scripts/current`
+
+# echo "fast forward..."
+echo -e "\033[33mfast forward...\033[0m"
+echo "step $(($CURRENT)) done."
+step "$(($CURRENT+1))"

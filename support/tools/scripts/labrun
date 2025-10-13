@@ -1,0 +1,33 @@
+#! /bin/bash
+# set -x
+
+# BASE=/projects/message-hub
+BASE=$PROJECT_SOURCE
+LAB=$BASE/lab
+TOOLS=$BASE/support/tools
+FF=$TOOLS/solution/steps
+
+# Return chapter details when no argument is passed (no chapter requested)
+if [ ! "$1" ]; then
+  echo "You need to provide the dir to run."
+  exit
+fi
+
+# to ensure all hidden files & dirs are deleted (.camel) we need to change directory and return
+if [ ! -d "$LAB/$1" ]; then
+  echo "The dir needs to exit in your 'lab' directory."
+  exit
+fi
+
+if [ "$2" == "--dev" ]; then
+  # Run Camel JBang
+  camel run \
+  --dev \
+  --source-dir $LAB/$1 \
+  --local-kamelet-dir $BASE/support/deploy/kamelets
+else
+  # Run Camel JBang
+  camel run \
+  --source-dir $LAB/$1 \
+  --local-kamelet-dir $BASE/support/deploy/kamelets
+fi

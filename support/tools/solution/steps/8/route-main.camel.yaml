@@ -1,0 +1,15 @@
+- route:
+    id: main
+    from:
+      uri: platform-http:/camel/chat
+      steps:
+        - process:
+            description: AI message
+            ref: createChatMessage
+        - to:
+            description: call LLM
+            uri: langchain4j-tools:myllm
+            parameters:
+              tags: all
+        - log:
+            message: ${body}

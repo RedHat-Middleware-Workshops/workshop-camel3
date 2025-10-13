@@ -1,0 +1,9 @@
+#!/bin/sh
+
+query="$@"
+
+curl \
+-H "content-type: text" \
+-d "$query" \
+localhost:8080/camel/chat
+echo ""

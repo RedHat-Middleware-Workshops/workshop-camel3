@@ -1,0 +1,24 @@
+#! /bin/bash
+# set -x
+
+# BASE=/projects/message-hub
+BASE=$PROJECT_SOURCE
+LAB=$BASE/lab
+TOOLS=$BASE/support/tools
+FF=$TOOLS/solution/steps
+
+# Return chapter details when no argument is passed (no chapter requested)
+if [ ! "$1" ]; then
+  echo "You need to provide the dir to run."
+  exit
+fi
+
+# to ensure all hidden files & dirs are deleted (.camel) we need to change directory and return
+if [ ! -d "$LAB/$1" ]; then
+  echo "The dir needs to exit in your 'lab' directory."
+  exit
+fi
+
+# Deploy with Kubernetes plugin
+cd $LAB/$1
+camel kubernetes delete --name $1
