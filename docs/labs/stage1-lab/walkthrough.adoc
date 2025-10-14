@@ -241,27 +241,82 @@ image::images/camel-jbang.png[align="left", width=40%]
 
 TIP: Camel JBang is an upstream tool for _Camel_. It is not supported yet by Red Hat but it is an extremely useful tool for all things Camel. It simplifies many of the common tasks a Camel developer undergoes. 
 
-. From your UI terminal...
-+
-image::images/crw-terminal.png[align="left", width=100%]
-+
+=== Start the lab
+
+At first, your `lab` directory is empty:
+
+--
+[.indent2]
+📁 message-hub +
+&nbsp;&nbsp;📁 *lab* +
+pass:[<mark style="padding-left: 1rem; background-color: white; color: grey"></mark>] [empty]
+--
+
 {blank}
-+
+
+From your UI terminal...
+
+image::images/crw-terminal.png[align="left", width=100%]
+
+{blank}
+
 We provide below a base skeleton to get you started:
-+
-.. Setup your exercise with the command below:
-+
+
+[IMPORTANT]
+====
+Issue the command below to officially start your lab:
+
 --
 {copypaste}
 ----
-step 3
+start
 ----
 --
-+
-.. Find and open your `r2m` flow in your `lab` directory:
+
+NOTE: The command will initialise the lab with a couple of files.
+====
+
+
+// {empty} +
+
+[NOTE]
+====
+The lab has a collection of handy scripts you'll need to use when instructed, such as:
+
+- *start* / *restart*
+- *ff* (fast-forward to the next step)
+- *rw* (rewind to the previous step)
+- *step* (jump to step)
+- *chat* (curl-based script to interact with _Camel_)
+====
+
+{empty} +
+
+=== Your files
+
+After initialisation, under the `lab` directory, you'll find the following source files:
+
+
+--
+[.indent2]
+📁 message-hub +
+&nbsp;&nbsp;📁 lab +
+&nbsp;&nbsp;&nbsp;&nbsp;📁 m2r +
+pass:[<mark style="padding-left: 2rem; background-color: white; color: grey"><b>⚙</b></mark>] applications.properties +
+pass:[<mark style="padding-left: 2rem; background-color: white; color: purple"><b><i>&nbsp;!&nbsp;&nbsp;</i></b></mark>] *m2r.camel.yaml* +
+--
+
+{blank}
+
+Make sure the files are visible in your file explorer in the left panel of _VSCode_. +
+Feel free to inspect the files in your editor. +
+
+{empty} +
+
+.. Under your `lab/m2r` directory, find and open the following flow definition:
 +
 --
-* `lab/m2r.camel.yaml`
+* `m2r.camel.yaml`
 --
 +
 {blank}

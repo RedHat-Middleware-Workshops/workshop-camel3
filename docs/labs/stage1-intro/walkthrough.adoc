@@ -108,40 +108,9 @@ Click on the link below to open the Login page in _Matrix_ (opens a new tab).
 +
 {blank}
 +
-You'll be presented with a Login page, as shown below:
+You'll be presented with a Login page.
 +
-image::images/matrix-login-signin.png[align="left", width=50%]
-+
-{blank}
-+
-Click _"Sign In"_.
-+
-{empty} +
-
-. Follow the steps below to complete the Matrix onboarding:
-+
-To sign in, first click `Edit` where indicated by the red arrow in the image below to switch the homeserver to use:
-+
-image::images/matrix-join-4-pre.png[align="left", width=50%]
-+
-{blank}
-+
-Then choose the option `Other homeserver`:
-+
-image::images/matrix-login-homeserver.png[align="left", width=40%]
-+
-{blank}
-+
-Now, copy and paste the following _OpenShift_ URL where the homeserver is deployed, and click _"Continue"_
-+
-[source,bash,subs="attributes+"]
-----
-https://synapse-matrix.{openshift-app-host}
-----
-+
-{blank}
-+
-Then, you will be prompted to enter your credentials, as shown below:
+You will be prompted to enter your credentials, as shown below:
 +
 image::images/matrix-login-credentials.png[align="left", width=50%]
 +
@@ -162,13 +131,13 @@ image::images/matrix-login-credentials.png[align="left", width=50%]
 +
 {empty} +
 +
-If you're presented with a _"Verify this device"_, simply discard the window by clicking on the top right corner cross, as shown below:
+You will be asked to confirm your identity. Enter your password to do so, as shown below:
 +
-image::images/matrix-login-verify-device.png[align="left", width=40%]
+image::images/matrix-login-confirm.jpg[align="left", width=40%]
 +
 {blank}
 +
-Confirm by clicking on _"I'll verify later"_.
+Confirm by clicking on _"Continue"_.
 +
 {empty} +
 +
