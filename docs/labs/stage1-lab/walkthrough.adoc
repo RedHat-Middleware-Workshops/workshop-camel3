@@ -594,7 +594,7 @@ camel run * --local-kamelet-dir=../support/deploy/kamelets
 You should see an incoming event now transformed and looking similar to this:
 +
 --
-{snippet}user2
+{snippet}{user-username}
 [subs="attributes+"]
 ----
 {"channel":"REPLACE","text":"*{user-username}@matrix*: Hello Camel"}

@@ -1,0 +1,22 @@
+{
+	"kaoto-datamapper-90a3f4e": {
+		"sourceBody": {
+			"type": "Primitive"
+		},
+		"sourceParameters": {
+			"matrix": {
+				"type": "JSON Schema",
+				"filePath": [
+					"support/schemas/matrix-in.json"
+				]
+			}
+		},
+		"targetBody": {
+			"type": "JSON Schema",
+			"filePath": [
+				"support/schemas/rocketchat-out.json"
+			]
+		},
+		"xsltPath": "kaoto-datamapper-90a3f4e.xsl"
+	}
+}

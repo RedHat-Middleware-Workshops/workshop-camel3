@@ -8,6 +8,9 @@
       parameters:
         path: /webhook
       steps:
+        - convertVariableTo:
+            name: rocketchat
+            type: String
         - filter:
             id: filter-3589
             steps:

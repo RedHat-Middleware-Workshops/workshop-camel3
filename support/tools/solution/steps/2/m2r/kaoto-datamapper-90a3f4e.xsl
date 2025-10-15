@@ -7,7 +7,7 @@
     <xsl:variable name="mapped-xml">
         <map xmlns="http://www.w3.org/2005/xpath-functions">
             <string key="channel">
-                <xsl:value-of select="&quot;room2&quot;"/>
+                <xsl:value-of select="replace($matrix-x/xf:map/xf:map[@key='fromUser']/xf:string[@key='username'],'user','room')"/>
             </string>
             <string key="text">
                 <xsl:value-of select="concat('*', $matrix-x/xf:map/xf:map[@key='fromUser']/xf:string[@key='username'],'@matrix:* ', $matrix-x/xf:map/xf:string[@key='text'])"/>
