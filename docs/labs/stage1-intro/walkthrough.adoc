@@ -112,7 +112,7 @@ You'll be presented with a Login page.
 +
 You will be prompted to enter your credentials, as shown below:
 +
-image::images/matrix-login-credentials.png[align="left", width=50%]
+image::images/matrix-login-credentials.jpg[align="left", width=50%]
 +
 {blank}
 +

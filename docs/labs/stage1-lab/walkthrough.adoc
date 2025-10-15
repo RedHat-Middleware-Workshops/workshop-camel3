@@ -313,7 +313,7 @@ Feel free to inspect the files in your editor. +
 
 {empty} +
 
-.. Under your `lab/m2r` directory, find and open the following flow definition:
+. Under your `lab/m2r` directory, find and open the following flow definition:
 +
 --
 * `m2r.camel.yaml`
@@ -343,16 +343,18 @@ About the variable `matrix`:
 
 . Configure the application
 +
+--
 Open in your editor your `application.properties` file where you'll find the following entries:
-+
+
 ----
 # Matrix credentials
 matrix.token=YOUR_ACCESS_TOKEN
 matrix.room=YOUR_ROOM_ID
 ----
-+
+
 {empty} +
-+
+--
+
 .. To configure the `matrix.token` parameter, obtain its value from  the sequence of steps shown in the image below:
 +
 image::images/matrix-copy-token.png[align="center", width=100%]

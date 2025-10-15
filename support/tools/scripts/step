@@ -4,6 +4,7 @@
 # BASE=/projects/message-hub
 BASE=$PROJECT_SOURCE
 LAB=$BASE/lab
+CONFIG=$BASE/support/config
 TOOLS=$BASE/support/tools
 FF=$TOOLS/solution/steps
 
@@ -28,6 +29,10 @@ fi
 
 NEXT=$1
 
+if [ $1 == "1" ] || [ $1 == "2" ]; then 
+  cp m2r/application.properties $CONFIG/
+fi
+
 # to ensure all hidden files & dirs are deleted (.camel) we need to change directory and return
 if [ ! -d "$LAB" ]; then
   mkdir $LAB
@@ -40,5 +45,23 @@ cd $OLDPWD
 cp -r $FF/$NEXT/* $LAB
 echo "step $1 ready [`grep '^'$1' ' $FF/titles.txt | cut -d' ' -f 2-`]"
 echo "$1" > $TOOLS/scripts/current
+
+# If there is a config file 'application.properties', overwrite the lab one
+if [ -f "$CONFIG/application.properties" ]; then
+    echo "application.properties found in CONFIG. Replacing all instances in LAB..."
+    
+    # Use find to locate and replace all application.properties in $LAB (recursively)
+    # -type f ensures we only target regular files
+    # -exec cp ... {} \; copies the CONFIG file over each match
+    # Add -iname if case-insensitive search needed (e.g., Application.properties)
+    find "$LAB" -type f -name 'application.properties' -exec cp -f "$CONFIG/application.properties" {} \;
+    
+    # Optional: Verbose output or backup
+    # find "$LAB" -type f -name 'application.properties' -exec echo "Replaced: {}" \; -exec cp -f --backup=numbered "$CONFIG/application.properties" {} \;
+else
+    echo "No application.properties in CONFIG. Skipping replacement."
+    # Optionally: Proceed with other logic, like your rm command
+fi
+
 
 cd $LAB
