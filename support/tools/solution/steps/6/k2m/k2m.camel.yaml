@@ -1,0 +1,45 @@
+- route:
+    id: route-1404
+    description: Kafka to Matrix
+    from:
+      description: Kafka
+      uri: kafka
+      parameters:
+        brokers: my-cluster-kafka-bootstrap:9092
+        topic: myroom
+      steps:
+        - log:
+            id: log-1930
+            message: "from kafka: ${variable.common}"
+        - filter:
+            id: filter-3589
+            steps:
+              - stop:
+                  id: stop-3589
+            disabled: false
+            jq:
+              expression: .source | test("matrix")
+              source: common
+        - step:
+            id: step-1705
+            description: "To do: Mapping"
+            steps:
+              - step:
+                  id: kaoto-datamapper-47762710
+                  steps:
+                    - to:
+                        id: kaoto-datamapper-xslt-1540
+                        uri: xslt-saxon:kaoto-datamapper-47762710.xsl
+                        parameters:
+                          failOnNullBody: false
+        - log:
+            id: log-1739
+            message: ${body}
+        - to:
+            description: Matrix
+            uri: kamelet
+            parameters:
+              room: "{{matrix.room}}"
+              templateId: matrix-sink
+              token: "{{matrix.token}}"
+      variableReceive: common

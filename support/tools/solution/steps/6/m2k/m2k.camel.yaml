@@ -1,0 +1,41 @@
+- route:
+    id: route-9664
+    description: Matrix to Kafka
+    from:
+      description: Matrix
+      uri: kamelet
+      parameters:
+        room: "{{matrix.room}}"
+        templateId: matrix-source
+        token: "{{matrix.token}}"
+      steps:
+        - filter:
+            id: filter-1773
+            steps:
+              - stop:
+                  id: stop-2721
+            jq:
+              expression: .text | test("<b>.*@.*</b>")
+              source: matrix
+        - step:
+            description: "To do: Mapping"
+            steps:
+              - step:
+                  id: kaoto-datamapper-7a118d28
+                  steps:
+                    - to:
+                        id: kaoto-datamapper-xslt-3527
+                        uri: xslt-saxon:kaoto-datamapper-7a118d28.xsl
+                        parameters:
+                          failOnNullBody: false
+        - log:
+            message: ${body}
+        - step:
+            description: "To do: Kafka"
+            steps:
+              - to:
+                  uri: kafka
+                  parameters:
+                    brokers: my-cluster-kafka-bootstrap:9092
+                    topic: myroom
+      variableReceive: matrix

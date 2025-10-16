@@ -1,0 +1,27 @@
+- route:
+    description: Kafka to RocketChat
+    from:
+      description: Kafka
+      steps:
+        - filter:
+            id: filter-1773
+            steps:
+              - stop:
+                  id: stop-2721
+            jq:
+              expression: .text | test("<b>.*@.*</b>")
+              source: matrix
+        - step:
+            id: step-1622
+            description: "To do: Mapping"
+        - log:
+            message: ${body}
+        - to:
+            description: RocketChat
+            uri: kamelet
+            parameters:
+              templateId: rocketchat-sink
+              token: "{{rocketchat.token}}"
+              userid: "{{rocketchat.userid}}"
+            disabled: false
+      variableReceive: matrix

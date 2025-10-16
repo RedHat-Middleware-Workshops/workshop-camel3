@@ -1,0 +1,30 @@
+- route:
+    id: route-1404
+    description: RocketChat to Kafka
+    from:
+      id: from-3272
+      description: RocketChat
+      uri: platform-http
+      parameters:
+        path: /webhook
+      steps:
+        - convertVariableTo:
+            name: rocketchat
+            type: String
+        - filter:
+            id: filter-3589
+            steps:
+              - stop:
+                  id: stop-3589
+            disabled: false
+            expression:
+              jq:
+                expression: .text | test("\\*.*@.*:\\*")
+                source: rocketchat
+        - step:
+            description: "To do: Mapping"
+        - log:
+            message: ${body}
+        - step:
+            description: "To do: Kafka"
+      variableReceive: rocketchat

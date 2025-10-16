@@ -1,0 +1,26 @@
+- route:
+    id: route-9664
+    description: Matrix to Kafka
+    from:
+      description: Matrix
+      uri: kamelet
+      parameters:
+        room: "{{matrix.room}}"
+        templateId: matrix-source
+        token: "{{matrix.token}}"
+      steps:
+        - filter:
+            id: filter-1773
+            steps:
+              - stop:
+                  id: stop-2721
+            jq:
+              expression: .text | test("<b>.*@.*</b>")
+              source: matrix
+        - step:
+            description: "To do: Mapping"
+        - log:
+            message: ${body}
+        - step:
+            description: "To do: Kafka"
+      variableReceive: matrix

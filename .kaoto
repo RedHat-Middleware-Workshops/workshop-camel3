@@ -1,0 +1,122 @@
+{
+	"kaoto-datamapper-90a3f4e": {
+		"sourceBody": {
+			"type": "Primitive"
+		},
+		"sourceParameters": {
+			"matrix": {
+				"type": "JSON Schema",
+				"filePath": [
+					"support/schemas/matrix-in.json"
+				]
+			}
+		},
+		"targetBody": {
+			"type": "JSON Schema",
+			"filePath": [
+				"support/schemas/rocketchat-out.json"
+			]
+		},
+		"xsltPath": "kaoto-datamapper-90a3f4e.xsl"
+	},
+	"kaoto-datamapper-5ca3cd77": {
+		"sourceBody": {
+			"type": "Primitive"
+		},
+		"sourceParameters": {
+			"rocketchat": {
+				"type": "JSON Schema",
+				"filePath": [
+					"support/schemas/rocketchat-in.json"
+				]
+			}
+		},
+		"targetBody": {
+			"type": "JSON Schema",
+			"filePath": [
+				"support/schemas/matrix-out.json"
+			]
+		},
+		"xsltPath": "kaoto-datamapper-5ca3cd77.xsl"
+	},
+	"kaoto-datamapper-7a118d28": {
+		"sourceBody": {
+			"type": "Primitive"
+		},
+		"sourceParameters": {
+			"matrix": {
+				"type": "JSON Schema",
+				"filePath": [
+					"support/schemas/matrix-in.json"
+				]
+			}
+		},
+		"targetBody": {
+			"type": "JSON Schema",
+			"filePath": [
+				"support/schemas/common.json"
+			]
+		},
+		"xsltPath": "kaoto-datamapper-7a118d28.xsl"
+	},
+	"kaoto-datamapper-a02d6e81": {
+		"sourceBody": {
+			"type": "Primitive"
+		},
+		"sourceParameters": {
+			"common": {
+				"type": "JSON Schema",
+				"filePath": [
+					"support/schemas/common.json"
+				]
+			}
+		},
+		"targetBody": {
+			"type": "JSON Schema",
+			"filePath": [
+				"support/schemas/rocketchat-out.json"
+			]
+		},
+		"xsltPath": "kaoto-datamapper-a02d6e81.xsl"
+	},
+	"kaoto-datamapper-47762710": {
+		"sourceBody": {
+			"type": "Primitive"
+		},
+		"sourceParameters": {
+			"common": {
+				"type": "JSON Schema",
+				"filePath": [
+					"support/schemas/common.json"
+				]
+			}
+		},
+		"targetBody": {
+			"type": "JSON Schema",
+			"filePath": [
+				"support/schemas/matrix-out.json"
+			]
+		},
+		"xsltPath": "kaoto-datamapper-47762710.xsl"
+	},
+	"kaoto-datamapper-eacd7d5c": {
+		"sourceBody": {
+			"type": "Primitive"
+		},
+		"sourceParameters": {
+			"rocketchat": {
+				"type": "JSON Schema",
+				"filePath": [
+					"support/schemas/rocketchat-in.json"
+				]
+			}
+		},
+		"targetBody": {
+			"type": "JSON Schema",
+			"filePath": [
+				"support/schemas/common.json"
+			]
+		},
+		"xsltPath": "kaoto-datamapper-eacd7d5c.xsl"
+	}
+}
