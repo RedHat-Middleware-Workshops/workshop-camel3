@@ -2,7 +2,7 @@
 1 Deploy 'm2r' on OpenShift
 2 Define a filter to prevent death loops
 3 Define the 'r2m' flow: RocketChat to Matrix
-4 Create first LLM tool (v1 offline)
+4 Deploy 'r2m' on OpenShift
 5 Test the weather tool
 6 Finish first LLM tool (v2 online)
 7 Create second LLM tool
