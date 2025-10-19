@@ -454,10 +454,13 @@ image::images/camel-jbang.png[align="left", width=40%]
 
 For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
 
-[source,bash,subs="attributes+"]
+--
+{copypaste}
+[subs=attributes]
 ----
-oc project {namespace}
+oc project {namespace}-devspaces
 ----
+--
 
 {empty} +
 
@@ -476,6 +479,124 @@ Before you start this second lab, make sure you close in your editor all the tab
 1) Click on the file explorer's `...` button +
 2) Ensure your `Open Editors` is ticked [√] +
 3) Click the `Close all Editors` button.
++
+{empty} +
+
+
+. Setup your Lab folder
++
+--
+{copypaste}
+[subs=attributes]
+----
+step 7
+----
+--
+
+. Open the base Discord Kamelet in Kaoto
++
+We provide the base sink Kamelet for you to work on. Find in your directory tree the following resource:
++
+  * `discord-sink.kamelet.yaml`
++
+{blank}
++
+Click to open it in _Kaoto_. 
++
+{empty} +
+
+. Add a step to clean all headers
++
+.. Click the `+` sign to add a step
+.. In the catalogue, find and select the `removeHeaders` processor
++
+NOTE: this step removes all headers (`*`) by default.
++
+NOTE: This step prevents sending residual headers to _Discord_.
++
+{empty} +
+
+. Define required headers _Discord_ expects
++
+[TIP]
+====
+To add headers, follow the steps:
+
+. click the `->` sign at the end of flow
+. Browse the catalogue to find and select the `setHeader` processor
+====
++
+.. Add the first header and configure the following fields:
++
+====
+* Name:
++
+--
+{copypaste}
+----
+Content-Type
+----
+--
++
+* Expression:
++
+--
+{copypaste}
+----
+application/json
+----
+--
+====
++
+{empty} +
++
+.. Add the second header to be authorized by _Discord_:
++
+TIP: You can `Duplicate` the previous header to go faster.
++
+Configure with:
++
+====
+* Name:
++
+--
+{copypaste}
+----
+Authorization
+----
+--
++
+* Expression:
++
+--
+{copypaste}
+----
+Bot {{token}}
+----
+--
++
+NOTE: The kamelet defines an input parameter `token` and its value gets used in the header.
+====
++
+{empty} +
+
+. Add a call to communicate with _Discord_
++
+.. Click the `+` sign to add a step
+.. In the catalogue, find and select the `HTTPS(Secure)` component, and configure with:
++
+====
+* `Http Uri`:
++
+--
+{copypaste}
+----
+https://discordapp.com/api/channels/{{channel}}/messages
+----
+--
++
+NOTE: The kamelet defines an input parameter `channel` and its value gets used in the header.
+====
 +
 {empty} +
 

@@ -5,7 +5,7 @@
 4 Deploy 'r2m' on OpenShift
 5 Decoupled Architecture
 6 Deploy event-driven integrations on OpenShift
-7 Create second LLM tool
+7 Create a sink Kamelet for Discord
 8 Test the tour guide tool
 9 Run the LLM using both tools
 10 Export to Quarkus

@@ -1,15 +1,17 @@
 - route:
+    id: route-3191
     description: Kafka to RocketChat
     from:
-      description: Kafka
+      description: "To do: Kafka"
       steps:
         - filter:
             id: filter-1773
+            description: "To do: Filter"
             steps:
               - stop:
                   id: stop-2721
             jq:
-              expression: .text | test("<b>.*@.*</b>")
+              expression: ""
               source: matrix
         - step:
             id: step-1622
