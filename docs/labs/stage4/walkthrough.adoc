@@ -9,6 +9,127 @@
 :url-codeready: http://devspaces.{openshift-app-host}/
 :url-devconsole: {openshift-host}/topology/ns/{namespace}
 
+
+
+:experimental:
+
+// WORKS
+:style-kbd: kbd { \
+  color: black; \
+  background-color: lightgrey; \
+  border: 1px solid black; \
+  box-shadow: 0px 1px black; \
+  font-size: .85em; \
+  line-height: .85em; \
+  display: inline-block; \
+  font-weight: 600; \
+  letter-spacing: .05em; \
+  padding: 3px 5px; \
+  white-space: nowrap; \
+  border-radius:5px; \
+} \
+
+:style-preview: pre {background-color: #272822; color: white; padding: 5px 15px; font-size: 15px}
+:style-indent: .indent2 {padding-left: 2rem;}
+:style-all: pass:a[<style>{style-kbd}{style-preview}{style-indent}</style>]
+
+//:url-docserver: https://docserver-webapp.{openshift-app-host}
+:url-docserver: https://docserver-webapp.apps.cluster-p6cqz.dynamic.redhatworkshops.io/
+//:url-docserver: http://0.0.0.0:8080
+
+:docserver-status: pass:a[<img hidden="true" src="invalid-image.jpg" onerror=" \
+        fetch('{url-docserver}/status') \
+        .then(response => response.text()) \
+        .then(data => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:lime;display:inline-block&quot;></div>') \
+        .catch(error => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:red;display:inline-block&quot;></div>') \
+      ">]
+
+:freplace: pass:[function replaceTokens(templateString, values) { \
+    const valueArray = values.split(',').map(val => val.trim()); \
+    let result = templateString; \
+    let replaceIndex = 0; \
+    while (result.includes('REPLACE') && replaceIndex < valueArray.length) { \
+        result = result.replace('REPLACE', valueArray[replaceIndex]); \
+        replaceIndex++; \
+    } \
+    return result; \
+}]
+
+:fdocserver: pass:a[function docserver(target,template,params) { \
+    {freplace} \
+    fetch('{url-docserver}/roomid?user='+params) \
+        .then(response => response.text()) \
+        .then(data => {target.firstChild.data=replaceTokens(text, data);}) \
+        .catch(error => room = 'Error fetching data: ' + error.message); \
+}]
+
+:fcopy: pass:a[function copy(el) { \
+  el.previousElementSibling.select(); \
+  text = el.previousElementSibling.textContent; \
+  console.log(text); \
+  navigator.clipboard.writeText(text + '\n') \
+        .then(response => console.log('Text with carriage return copied to clipboard!')) \
+        .catch(err => console.error('Failed to copy: ', err)); \
+}]
+
+:copypaste: pass:a[ \
+<div style="border: 1px solid #f0f0f0; border-bottom-color: #8a8d90; display: flex; align-items: flex-start;"> \
+  <textarea readonly style="field-sizing: content;border: none; background-color: #f0f0f0; width: 100%; resize: none; font-size:14px; font-family: monospace;padding: 5px 15px" rows="4">function example() { \
+  console.log("Hello {replace-with-previous}!"); \
+  return true; \
+}</textarea> \
+  <button class="mytooltip" onclick="{fcopy} copy(this);" style="border: none; background-color: white; padding: 5px 15px; border-bottom: 1px solid transparent; transition: border-bottom-color 0.2s;"> \
+    <svg fill="currentColor" height="1em" width="1em" viewBox="0 0 448 512" aria-hidden="true" role="img" style="vertical-align: -0.125em;"> \
+      <path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"></path> \
+    </svg> \
+    <span class="mytooltiptext">Copy to clipboard</span> \
+  </button> \
+  <style> \
+.mytooltip{position:relative;display:inline-block;border-bottom:1px dotted black}.mytooltip .mytooltiptext{visibility:hidden;width:120px;background-color:#555;color:#fff;text-align:center;border-radius:6px;padding:5px 0;position:absolute;z-index:1;bottom:125%;left:50%;margin-left:-60px;opacity:0;transition:opacity 0.3s}.mytooltip .mytooltiptext::after{content:"";position:absolute;top:100%;left:50%;margin-left:-5px;border-width:5px;border-style:solid;border-color:#555 transparent transparent transparent}.mytooltip:hover .mytooltiptext{visibility:visible;opacity:1} \
+  </style> \
+</div> \
+<img hidden="true" src="invalid-image.jpg" onerror="{ \
+  {fdocserver} \
+  let txtarea = this.parentElement.querySelector('textarea'); \
+  let div = this.closest('.paragraph'); \
+  if(!div.closest('.openblock')){div = div.parentElement} \
+  let source = div.nextElementSibling; \
+  let pre = source.querySelector('pre'); \
+  let text = pre.textContent; \
+  let lineCount = text.split('\n').length; \
+  let tokens = this.nextSibling; \
+  console.log('tokens: [' +tokens.data.trim()+']'); \
+  if(tokens.data.trim()!=''){docserver(txtarea,text,tokens.data);} else {txtarea.firstChild.data=text;} \
+  source.remove(); \
+  tokens.remove(); \
+  this.remove(); \
+}"> \
+]
+
+:snippet: pass:a[ \
+<div style="border: 1px solid #f0f0f0; border-bottom-color: #8a8d90; display: flex; align-items: flex-start;"> \
+</div> \
+<img hidden="true" src="invalid-image.jpg" onerror="{ \
+  {freplace} \
+  let block = this.closest('.openblock'); \
+  let div = this.closest('.paragraph'); \
+  let source = div.nextElementSibling; \
+  let pre = source.querySelector('pre'); \
+  let text = pre.textContent; \
+  let lineCount = text.split('\n').length; \
+  let tokens = this.nextSibling; \
+  console.log('tokens: [' +tokens.data.trim()+']'); \
+  console.log('before text: [' +text+']'); \
+  text = replaceTokens(text, tokens.data.trim()); \
+  pre.textContent = text; \
+  console.log('after text: [' +text+']'); \
+  console.log(block); \
+  block.parentElement.insertBefore(pre,block); \
+  block.remove(); \
+}"> \
+]
+
+
 ifdef::env-github[]
 endif::[]
 
@@ -93,6 +214,7 @@ and optionally:
 [time=5]
 [id="discord-chat"]
 == Discord platform onboarding
+{style-all}
 
 TIP: If you're unfamiliar with _Discord_, it is a well known chat platform, very popular among gamers, but increasingly embraced by enterprises to connect internal teams but also for external interactions with customers as a way to maintain close contact.
 
@@ -100,7 +222,7 @@ TIP: If you're unfamiliar with _Discord_, it is a well known chat platform, very
 
 {empty} +
 
-=== Join the lab's Discord server.
+=== Join the Discord lab server.
 
 To accelerate the onboarding process in _Discord_, we've created a shared server for students to freely join and use to complete this enablement workshop. 
 
@@ -112,17 +234,31 @@ TIP: If you prefer using an existing _Discord_ account of yours, please feel fre
 
 To join the lab's Discord server using a temporary account (Unclaimed account), follow the instructions below:
 
-. Click on the link below to obtain your invitation to _Discord_ (opens a new tab).
+:docserver-invite: pass:a[<img hidden="true" src="invalid-image.jpg" onerror=" \
+        fetch('{url-docserver}/invite/discord') \
+        .then(response => response.text()) \
+        .then(data => this.parentElement.innerHTML = '<a href=&quot;'+data+'&quot; target=&quot;_blank&quot;>Click this Discord invite link</a>') \
+        .catch(error => this.parentElement.innerHTML = '<div style=&quot;width:15px;height:15px;border-radius:50%;background:red;display:inline-block&quot;></div> Discord link unavailable (talk to your admin)') \
+      ">]
+
+:docserver-token: pass:a[<img hidden="true" src="invalid-image.jpg" onerror=" \
+        fetch('{url-docserver}/token/discord') \
+        .then(response => response.text()) \
+        .then(data => this.parentElement.innerHTML = 'Status: '+ data) \
+        .catch(error => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:red;display:inline-block&quot;></div>') \
+      ">]
+
+
+
+{empty} +
+
+. Click on the link below to join your _Discord_ server (opens a new tab).
 +
 --
-- link:{invite-url}/invite/discord[Generate _Discord_ invite,window="_blank"]
+- {docserver-invite}
 --
 +
 {empty} +
-
-. Then, follow the link generated (click on it) to join your _Discord_ server.
-+
-image::images/invite-link.png[align="left", width=50%]
 
 . In the new tab, follow the sequence of steps described below:
 +
@@ -246,6 +382,8 @@ Were you able to join the _Discord_ room successfully?
 [time=10]
 [id="kamelet-create"]
 == Part 1 - Create the Sink Kamelet
+{style-all}
+
 
 [type=taskResource]
 .Credentials
@@ -370,6 +508,13 @@ Ensure you're working on folder `lab4-k2d`
 {empty} +
 +
 ... Include in the new properties file your _Discord_ details:
++
+--
+{copypaste}
+----
+start
+----
+--
 +
 ```properties
 # Discord credentials

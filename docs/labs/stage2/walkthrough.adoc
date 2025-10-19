@@ -950,7 +950,7 @@ image::images/stage1-msg-gitter-slack.png[align="left", width=80%]
 Did you see your message from _Rocket.Chat_ successfully reach _Matrix_ (and not come back)?
 
 [type=verificationSuccess]
-You have now completed Stage 2 !!
+Finish this lab by completing the next section.
 
 [type=verificationFail]
 Inspect in the pod logs to troubleshoot.
@@ -961,9 +961,114 @@ Inspect in the pod logs to troubleshoot.
 Did you see the message going from _Matrix_ to _Rocket.Chat_?
 
 [type=verificationSuccess]
-You've successfully completed stage 1 !!
+Finish this lab by completing the next section.
 
 [type=verificationFail]
 Inspect in the pod logs to investigate possible failure causes.
 
-// You have now completed Stage 2 !!
+
+
+
+[time=2]
+[id="clean"]
+== Undeploy from OpenShift
+{style-all}
+
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+[type=taskResource]
+.Matrix
+****
+* link:{url-element}[Matrix Web Client, window="_blank"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
+****
+
+You're almost done on this lab episode.
+In preparation for your next lab exercise, this last section helps you clean your _OpenShift_ project and, more importantly, shows you how to use _Camel JBang_ when it comes to undeploy integrations.
+
+{empty} +
+
+. Undeploy your _"Matrix to RocketChat"_ integration
++
+The _Kubernetes_ plugin in _Camel JBang_ makes it super simple to undeploy _Camel_. +
+Issue the command below to undeploy `m2r`:
++
+--
+{copypaste}
+----
+camel kubernetes delete --name m2r
+----
+--
++
+You'll see the following command output in your terminal:
++
+[subs=attributes]
+----
+Deleting resources in namespace '{user-username}-devspaces' with name: m2r
+Deleted: apps/Deployment 'm2r'
+Deleted: v1/Service 'm2r'
+Deleted: build.openshift.io/BuildConfig 'm2r-s2i'
+Deleted: image.openshift.io/ImageStream 'm2r'
+Deleted: route.openshift.io/Route 'm2r'
+----
++
+NOTE: The process is thorough when cleaning the deployment by removing all the artifacts originally created.
++
+{empty} +
+
+
+
+. Undeploy your _"RocketChat to Matrix"_ integration
++
+Issue the equivalent command below to undeploy `r2m`:
++
+--
+{copypaste}
+----
+camel kubernetes delete --name r2m
+----
+--
++
+You'll see the following command output in your terminal:
++
+[subs=attributes]
+----
+Deleting resources in namespace '{user-username}-devspaces' with name: r2m
+Deleted: apps/Deployment 'r2m'
+Deleted: v1/Service 'r2m'
+Deleted: build.openshift.io/BuildConfig 'r2m-s2i'
+Deleted: image.openshift.io/ImageStream 'r2m'
+Deleted: route.openshift.io/Route 'r2m'
+----
++
+{empty} +
+
+
+{empty} +
+
+[type=verification]
+Do you see your _Camel_ applications absent in your _OpenShift_ project?
+
+[type=verificationSuccess]
+You have now completed Stage 2 !!
+
+[type=verificationFail]
+Inspect in the pod logs to troubleshoot.

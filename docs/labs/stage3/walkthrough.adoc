@@ -2,10 +2,135 @@
 :user-password: openshift
 :namespace: {user-username}
 
+
+
 :url-element: https://app.element.io
 :url-rocketchat: https://rocketchat-rocketchat.{openshift-app-host}
 :url-codeready: http://devspaces.{openshift-app-host}/
 :url-devconsole: {openshift-host}/topology/ns/{namespace}
+
+
+:experimental:
+
+// WORKS
+:style-kbd: kbd { \
+  color: black; \
+  background-color: lightgrey; \
+  border: 1px solid black; \
+  box-shadow: 0px 1px black; \
+  font-size: .85em; \
+  line-height: .85em; \
+  display: inline-block; \
+  font-weight: 600; \
+  letter-spacing: .05em; \
+  padding: 3px 5px; \
+  white-space: nowrap; \
+  border-radius:5px; \
+} \
+
+
+:style-preview: pre {background-color: #272822; color: white; padding: 5px 15px; font-size: 15px}
+:style-indent: .indent2 {padding-left: 2rem;}
+:style-all: pass:a[<style>{style-kbd}{style-preview}{style-indent}</style>]
+
+
+:url-docserver: https://docserver-webapp.{openshift-app-host}
+//:url-docserver: http://0.0.0.0:8080
+
+:docserver-status: pass:a[<img hidden="true" src="invalid-image.jpg" onerror=" \
+        fetch('{url-docserver}/status') \
+        .then(response => response.text()) \
+        .then(data => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:lime;display:inline-block&quot;></div>') \
+        .catch(error => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:red;display:inline-block&quot;></div>') \
+      ">]
+
+:freplace: pass:[function replaceTokens(templateString, values) { \
+    const valueArray = values.split(',').map(val => val.trim()); \
+    let result = templateString; \
+    let replaceIndex = 0; \
+    while (result.includes('REPLACE') && replaceIndex < valueArray.length) { \
+        result = result.replace('REPLACE', valueArray[replaceIndex]); \
+        replaceIndex++; \
+    } \
+    return result; \
+}]
+
+:fdocserver: pass:a[function docserver(target,template,params) { \
+    {freplace} \
+    fetch('{url-docserver}/roomid?user='+params) \
+        .then(response => response.text()) \
+        .then(data => {target.firstChild.data=replaceTokens(text, data);}) \
+        .catch(error => room = 'Error fetching data: ' + error.message); \
+}]
+
+:fcopy: pass:a[function copy(el) { \
+  el.previousElementSibling.select(); \
+  text = el.previousElementSibling.textContent; \
+  console.log(text); \
+  navigator.clipboard.writeText(text + '\n') \
+        .then(response => console.log('Text with carriage return copied to clipboard!')) \
+        .catch(err => console.error('Failed to copy: ', err)); \
+}]
+
+:copypaste: pass:a[ \
+<div style="border: 1px solid #f0f0f0; border-bottom-color: #8a8d90; display: flex; align-items: flex-start;"> \
+  <textarea readonly style="field-sizing: content;border: none; background-color: #f0f0f0; width: 100%; resize: none; font-size:14px; font-family: monospace;padding: 5px 15px" rows="4">function example() { \
+  console.log("Hello {replace-with-previous}!"); \
+  return true; \
+}</textarea> \
+  <button class="mytooltip" onclick="{fcopy} copy(this);" style="border: none; background-color: white; padding: 5px 15px; border-bottom: 1px solid transparent; transition: border-bottom-color 0.2s;"> \
+    <svg fill="currentColor" height="1em" width="1em" viewBox="0 0 448 512" aria-hidden="true" role="img" style="vertical-align: -0.125em;"> \
+      <path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"></path> \
+    </svg> \
+    <span class="mytooltiptext">Copy to clipboard</span> \
+  </button> \
+  <style> \
+.mytooltip{position:relative;display:inline-block;border-bottom:1px dotted black}.mytooltip .mytooltiptext{visibility:hidden;width:120px;background-color:#555;color:#fff;text-align:center;border-radius:6px;padding:5px 0;position:absolute;z-index:1;bottom:125%;left:50%;margin-left:-60px;opacity:0;transition:opacity 0.3s}.mytooltip .mytooltiptext::after{content:"";position:absolute;top:100%;left:50%;margin-left:-5px;border-width:5px;border-style:solid;border-color:#555 transparent transparent transparent}.mytooltip:hover .mytooltiptext{visibility:visible;opacity:1} \
+  </style> \
+</div> \
+<img hidden="true" src="invalid-image.jpg" onerror="{ \
+  {fdocserver} \
+  let txtarea = this.parentElement.querySelector('textarea'); \
+  let div = this.closest('.paragraph'); \
+  if(!div.closest('.openblock')){div = div.parentElement} \
+  let source = div.nextElementSibling; \
+  let pre = source.querySelector('pre'); \
+  let text = pre.textContent; \
+  let lineCount = text.split('\n').length; \
+  let tokens = this.nextSibling; \
+  console.log('tokens: [' +tokens.data.trim()+']'); \
+  if(tokens.data.trim()!=''){docserver(txtarea,text,tokens.data);} else {txtarea.firstChild.data=text;} \
+  source.remove(); \
+  tokens.remove(); \
+  this.remove(); \
+}"> \
+]
+
+:snippet: pass:a[ \
+<div style="border: 1px solid #f0f0f0; border-bottom-color: #8a8d90; display: flex; align-items: flex-start;"> \
+</div> \
+<img hidden="true" src="invalid-image.jpg" onerror="{ \
+  {freplace} \
+  let block = this.closest('.openblock'); \
+  let div = this.closest('.paragraph'); \
+  let source = div.nextElementSibling; \
+  let pre = source.querySelector('pre'); \
+  let text = pre.textContent; \
+  let lineCount = text.split('\n').length; \
+  let tokens = this.nextSibling; \
+  console.log('tokens: [' +tokens.data.trim()+']'); \
+  console.log('before text: [' +text+']'); \
+  text = replaceTokens(text, tokens.data.trim()); \
+  pre.textContent = text; \
+  console.log('after text: [' +text+']'); \
+  console.log(block); \
+  block.parentElement.insertBefore(pre,block); \
+  block.remove(); \
+}"> \
+]
+
+
+
 
 ifdef::env-github[]
 endif::[]
@@ -119,24 +244,16 @@ image::images/standard-data-model.png[align="center", width=90%]
 
 For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
 
-[source,bash,subs="attributes+"]
+--
+{copypaste}
+[subs=attributes]
 ----
-oc project {namespace}
+oc project {namespace}-devspaces
 ----
+--
 
 {empty} +
 
-First of all, ensure you undeploy Lab2's _Kamelet_ bindings, otherwise they will enter in conflict with the ones we're about to create:
-[subs=]
-```bash
-oc delete klb m2r
-oc delete klb r2m
-<br>
-```
-{empty} +
-
-
-Now, we go back where we left it to continue growing our solution. +
 We use Lab-2 as the base for this next stage.
 
 The following set of instructions prepare the set of files you will be working with: 
@@ -144,95 +261,27 @@ The following set of instructions prepare the set of files you will be working w
 
 . Close tabs
 +
+Before you start this second lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
++
 image::images/crw-close-tabs.png[align="left", width=100%]
 +
 {blank}
 +
-Before you start this second lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
-+
-1) Click on the file explorer's `...` button +
-2) Ensure your `Open Editors` is ticked [√] +
-3) Click the `Close all Editors` button.
+1. Click on the file explorer's `...` button +
+1. Ensure your `Open Editors` is ticked [√] +
+1. Click the `Close all Editors` button.
 +
 {empty} +
 
-. Prepare Lab 3 folder
+. Setup your Lab 3 folder
 +
-* **Linux**
-+
-[subs=]
-```bash
-cd /projects/message-hub
-cp -r lab2 lab3
-cd lab3
-mv stage2.properties stage3.properties
-grep -rl stage2 . | xargs sed -i 's/stage2/stage3/g'<br>
-```
-+
-// * **MacOS**
-// +
-// [subs=]
-// ```bash
-// cd /projects/message-hub
-// cp -r lab2 lab3
-// cd lab3
-// mv stage2.properties stage3.properties
-// grep -rl stage2 . | xargs sed -i '' 's/stage2/stage3/g'<br>
-// ```
-// +
-{empty} +
-
-. Split each YAML file in two:
-+
-(The split allows to place Kafka in between)
-+
-[subs=]
-```bash
-mv m2r.yaml m2k.yaml
-cp m2k.yaml k2r.yaml
-mv r2m.yaml r2k.yaml
-cp r2k.yaml k2m.yaml
-mkdir flows
-mv *.yaml flows/<br>
-```
-+
-{empty} +
-
-. Rename the bindings:
-+
-* **Linux**
-+
-[subs=]
-```bash
-sed -i 's/m2r/m2k/g' flows/m2k.yaml
-sed -i 's/m2r/k2r/g' flows/k2r.yaml
-sed -i 's/r2m/r2k/g' flows/r2k.yaml
-sed -i 's/r2m/k2m/g' flows/k2m.yaml<br>
-```
-+
-// * **MacOS**
-// +
-// [subs=]
-// ```bash
-// sed -i '' 's/m2r/m2k/g' flows/m2k.yaml
-// sed -i '' 's/m2r/k2r/g' flows/k2r.yaml
-// sed -i '' 's/r2m/r2k/g' flows/r2k.yaml
-// sed -i '' 's/r2m/k2m/g' flows/k2m.yaml<br>
-// ```
-// +
-{empty} +
-
-. Prepare JSLTs:
-+
-[subs=]
-```bash
-rm *.jslt
-mkdir maps
-touch maps/m2k.jslt
-touch maps/k2r.jslt
-touch maps/r2k.jslt
-touch maps/k2m.jslt<br>
-```
+--
+{copypaste}
+[subs=attributes]
+----
+step 5
+----
+--
 {empty} +
 
 . Check your lab folder
@@ -331,91 +380,152 @@ As in lab 1 & 2, this one also fits the _Kubernetes_ user. We compose the defini
 
 === Matrix to Kafka
 
-. Replace the sink to target _Kafka_
-+
-Open and edit your `m2k.yaml` file.
-+
-The original definition remains intact except for the sink to be replaced by a _Kafka_ destination. +
-Copy the sink snippet down below and paste it in your _Kamelet Binding_:
-+
-----
-apiVersion: camel.apache.org/v1alpha1
-kind: KameletBinding
-metadata:
-  name: m2k
-  annotations:
-    trait.camel.apache.org/mount.configs: "secret:stage3"
-    trait.camel.apache.org/mount.resources: "configmap:stage3-transform"
-spec:
+The picture below shows the original _Matrix to Rocket.Chat_ flow you defined earlier:
 
-  source:
-    ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: matrix-source
-    properties:
-      token: "{{matrix.token}}"
-      room:  "{{matrix.room}}"
+image::images/new/flow-m2r.jpg[align="left", width=60%]
 
-  steps:
-    
-  # Filter action to prevent death loops
-  - ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: predicate-filter-action
-    properties:
-      expression: $.text =~ /(?!\*\*.*@.*\*\*:).*/
+{blank}
 
-  - ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: jslt-action
-    properties:
-      template: m2k.jslt
+The changes you need to apply on the flow above are minimal:
 
-----
+1. Redefine the data mapping using the common interface
+1. Send the event to Kafka (instead of _Rocket.Chat_)
+
+{blank}
+
+To simplify the work you need to do, we've prepared the flow so that you just need to fill the blanks. The picture below illustrates the two focus areas where you need to work on:
+
+image::images/new/flow-m2k-todo.jpg[align="left", width=70%]
+
+{blank}
+
+To open the Camel route definition (picture above), find in your directory tree the following resource:
+
+* `m2k.camel.yaml`
 +
-```yaml
-  sink:
-    ref:
-      kind: KafkaTopic
-      apiVersion: kafka.strimzi.io/v1beta1
-      name: roomx
-```
+Click to open it in _Kaoto_. 
++
+{empty} +
+
+Then, follow the instructions below to complete its definition:
+
+{empty} +
+
+. *Define the data transformation*
++
+In the new data transformation, the source system remains the same (_Matrix_). However, because the event to push to _Kafka_ will target various systems, we need to use a common schema shared with all other _Camel_ flows.
 +
 {empty} +
 +
-[IMPORTANT]
-====
-Keep the name `roomx` for your _KafkaTopic_, do not change its value, it simplifies the copy/paste actions all along the lab exercises.
-====
+A. Include in your Camel route a Kaoto data transformation step
 +
-[TIP]
-====
-* The sink definition in a _Kamelet Binding_ can either be a _Kamelet_ sink from the catalog, or a platform resource (_Kafka_ or _KNative_).
-* _Kafka_ definitions only require the name of the topic, in the above definition `roomx`. The _Camel K_ operator automatically wires the connectivity to the _Kafka_ platform available in the environment.
-====
+--
+From Kaoto: 
+
+. Click the `+` button inside the `To do: Mapping` step
+. Find and select the _Kaoto DataMapper_
+. Click to open the configuration panel
+. Click the `🔧Configure` button
+--
++
 {empty} +
 
-. Define the JSLT transformation to the new standard data model.
+A. Attach schemas
 +
-Copy the snippet below and paste it into your new `m2k.jslt` file:
+--
+From the DataMapper editor: 
+
+. Define the source:
+.. On `Parameters` click the `+` to add new parameter
+.. Enter `matrix` and click the checkmark button kbd:[√]
+.. Click first the Attach schema button, then the blue button, and pick `matrix-in.json`.
 +
-```
-{
-	"timestamp": string(round(parse-time(.sent, "yyyy-MM-dd'T'HH:mm:ss.SSSX"))),
-	"source":"matrix", 
-	"user": .fromUser.displayName, 
-	"text": .text
-}
-```
+{blank}
 +
-[NOTE]
-====
-* We include various fields to provide context.
-* We parse the timestamp to a numeric value.
-====
+. Define the target
+.. Find the target Body and click on "Attach schema", then the blue button, and pick `common.json`
++
+{empty} +
+--
+
+A. Define the data mappings rules
++
+Copy and Paste the values below to define the given field entries:
++
+... `string[@key = timestamp]`: 
++
+--
+{copypaste}
+----
+$matrix-x/xf:map/xf:string[@key='sent']
+----
+--
++
+{blank}
++
+... `string[@key = source]`: 
++
+--
+{copypaste}
+----
+"matrix"
+----
+--
++
+{blank}
++
+... `string[@key = user]`: 
++
+--
+{copypaste}
+----
+$matrix-x/xf:map/xf:map[@key='fromUser']/xf:string[@key='displayName']
+----
+--
++
+{blank}
++
+... `string[@key = text]`:
++
+--
+{copypaste}
+----
+$matrix-x/xf:map/xf:string[@key='text']
+----
+--
++
+{empty} +
+
+. *Define Kafka as the target system*
++
+The last step of the flow is where you need to define Kafka as the target system where events will be pushed.
++
+NOTE: Your _OpenShift_ namespace already contains an _AMQ Streams_ cluster (_Kafka_) ready for you to use. 
++
+
+1. Click the `+` button inside the `To do: Kafka` step
+1. Find and select the _Kafka_ component.
+1. Select the `All` configuration tab
+1. Configure the following 2 properties:
++
+`Topic`:
++
+--
+{copypaste}
+----
+myroom
+----
+--
++
+`Brokers`:
++
+--
+{copypaste}
+----
+my-cluster-kafka-bootstrap:9092
+----
+--
++
 {empty} +
 
 And that's all it takes for this first data flow between _Matrix_ and _Kafka_.
@@ -428,85 +538,133 @@ And that's all it takes for this first data flow between _Matrix_ and _Kafka_.
 
 Very similar changes apply for the _Rocket.Chat_ -> _Kafka_ flow.
 
-. Replace the sink to target _Kafka_
-+
-Open and edit your `r2k.yaml` file.
-+
-The original definition remains intact except for the sink to be replaced by a _Kafka_ destination. +
-Copy the sink snippet down below and paste it in your _Kamelet Binding_:
-+
-----
-apiVersion: camel.apache.org/v1alpha1
-kind: KameletBinding
-metadata:
-  name: r2k
-  annotations:
-    trait.camel.apache.org/mount.configs: "secret:stage3"
-    trait.camel.apache.org/mount.resources: "configmap:stage3-transform"
-spec:
+Find in your directory tree the following resource:
 
-  source:
-    ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: webhook-source
-
-
-  steps:
-
-  # Filter action to prevent death loops
-  - ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: predicate-filter-action
-    properties:
-      expression: $.text =~ /(?!\*.*@.*\*:).*/
-
-
-  # JSON Transformation
-  - ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: jslt-action
-    properties:
-      template: "{{transform.path:r2k.jslt}}"
-----
+* `r2k.camel.yaml`
 +
-```yaml
-  sink:
-    ref:
-      kind: KafkaTopic
-      apiVersion: kafka.strimzi.io/v1beta1
-      name: roomx
-```
-+
-{blank}
-+
-[IMPORTANT]
-====
-Keep the name `roomx` for your _KafkaTopic_, do not change its value, it simplifies the copy/paste actions all along the lab exercises.
-====
+Click to open it in _Kaoto_. 
 +
 {empty} +
 
-. Define the JSLT transformation to the new standard data model.
+Then, follow the instructions below to complete its definition:
+
+{empty} +
+
+. *Define the data transformation*
 +
-Copy the snippet below and paste it into your new `r2k.jslt` file:
+The source system remains the same (_Rocket.Chat_). In similar fashion we also need to use a common schema shared with all other _Camel_ flows.
 +
-```
-{
-	"timestamp": string(round(parse-time(.timestamp, "yyyy-MM-dd'T'HH:mm:ss.SSSX"))),
-	"source":"rocketchat", 
-	"user": .user_name, 
-	"text": .text
-}
-```
+{empty} +
+
+A. Include in your _Camel_ route a _Kaoto_ data transformation step
 +
-[NOTE]
-====
-* We define the same common fields complying with our standard data model.
-* We also parse the timestamp to a numeric value.
-====
+--
+From Kaoto: 
+
+. Click the `+` button in the transition
+. Find and select the _Kaoto DataMapper_
+. Click to open the configuration panel
+. Click the `🔧Configure` button
+--
++
+{empty} +
+
+A. Attach schemas
++
+--
+From the DataMapper editor: 
+
+. Define the source:
+.. On `Parameters` click the `+` to add new parameter
+.. Enter `rocketchat` and click the checkmark button kbd:[√]
+.. Click first the Attach schema button, then the blue button, and pick `rocketchat-in.json`.
++
+{blank}
++
+. Define the target
+.. Find the target Body and click on "Attach schema", then the blue button, and pick `common.json`
++
+{empty} +
+--
+
+A. Define the data mappings rules
++
+Copy and Paste the values below to define the given field entries:
++
+... `string[@key = timestamp]`: 
++
+--
+{copypaste}
+----
+$rocketchat-x/xf:map/xf:string[@key='timestamp']
+----
+--
++
+{blank}
++
+... `string[@key = source]`: 
++
+--
+{copypaste}
+----
+"rocketchat"
+----
+--
++
+{blank}
++
+... `string[@key = user]`: 
++
+--
+{copypaste}
+----
+$rocketchat-x/xf:map/xf:string[@key='user_name']
+----
+--
++
+{blank}
++
+... `string[@key = text]`:
++
+--
+{copypaste}
+----
+$rocketchat-x/xf:map/xf:string[@key='text']
+----
+--
++
+{empty} +
+
+. *Define Kafka as the target system*
++
+The last step of the flow is where you need to define Kafka as the target system where events will be pushed.
++
+NOTE: Your _OpenShift_ namespace already contains an _AMQ Streams_ cluster (_Kafka_) ready for you to use. 
++
+
+1. Click the `+` button inside the `To do: Kafka` step
+1. Find and select the _Kafka_ component.
+1. Select the `All` configuration tab
+1. Configure the following 2 properties:
++
+`Topic`:
++
+--
+{copypaste}
+----
+myroom
+----
+--
++
+`Brokers`:
++
+--
+{copypaste}
+----
+my-cluster-kafka-bootstrap:9092
+----
+--
++
 {empty} +
 
 Very straightforward, nothing else to be done here. 
@@ -517,7 +675,7 @@ Very straightforward, nothing else to be done here.
 
 [time=5]
 [id="kafka-to-matrix-rocketchat"]
-== Kafka to Matrix/Rocket.Chat
+== Kafka to Rocket.Chat/Matrix
 
 [type=taskResource]
 .Credentials
@@ -585,221 +743,310 @@ Produces events to _Matrix/Rocket.Chat_.
 
 
 
-=== Kafka to Matrix
-
-. Modify the Kamelet Binding
-+
-Open and edit your `k2m.yaml` file.
-+
-Two modifications are required:
-+
---
-* The source is now _Kafka_
-* The filter should blocks self-events
---
-+
-{empty} +
-+
-Copy the corresponding snippets and replace in your _Kamelet Binding_:
-+
-----
-apiVersion: camel.apache.org/v1alpha1
-kind: KameletBinding
-metadata:
-  name: k2m
-  annotations:
-    trait.camel.apache.org/mount.configs: "secret:stage3"
-    trait.camel.apache.org/mount.resources: "configmap:stage3-transform"
-spec:
-----
-+
-```yaml
-  source:
-    ref:
-      kind: KafkaTopic
-      apiVersion: kafka.strimzi.io/v1beta1
-      name: roomx
-```
-+
-----
-  steps:
-
-  # Filter action to prevent death loops
-  - ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: predicate-filter-action
-    properties:
-----
-+
-```yaml
-      expression: $.source != "matrix"
-```
-+
-----
-  # JSON Transformation
-  - ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: jslt-action
-    properties:
-      template: "{{transform.path:k2m.jslt}}"
-
-
-  sink:
-    ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: matrix-sink
-    properties:
-      token: "{{matrix.token}}"
-      room: "{{matrix.room}}"
-----
-+
-{empty} +
-+
-[NOTE]
-====
-The filter definition is specifically blocking events coming from _Matrix_ itself. As now _Kafka_ sits in the middle, we are simultaneously producing and consuming _Kafka_ events from/to _Matrix_, which can cause event loops. 
-====
-+
-[TIP]
-====
-The source definition in a _Kamelet Binding_ can either be a _Kamelet_ source from the catalog, or a platform resource (_Kafka_ or _KNative_). The operator auto-wires the connectivity to _Kafka_ for us.
-====
-{empty} +
-
-. Define the JSLT transformation (Standard -> Matrix).
-+
-Copy the snippet below and paste it into your new `k2m.jslt` file:
-+
-```
-{
-    "text":"<b>"+.user+"@"+.source+"</b>: "+.text
-}
-```
-+
-[NOTE]
-====
-We're mapping values from the Standard data model
-====
-{empty} +
-
-Again, very simple updates, nothing else required for the _Kafka_ -> _Matrix_ process.
-
-{empty} +
-
-
-
 === Kafka to Rocket.Chat
 
-Very similar changes apply for the _Kafka_ -> _Rocket.Chat_ flow.
+Like we did earlier, it's handy to use one of the previous flows as a base to construct the new _Kafka to Rocket.Chat_ proces as some of the steps are identical. The picture below shows the original _Matrix to Rocket.Chat_ flow you originally constructed:
 
+image::images/new/flow-m2r.jpg[align="left", width=60%]
 
-. Modify the Kamelet Binding
+{blank}
+
+Again, the changes you need to apply on the flow above are minimal:
+
+1. Replace _Matrix_ as the source by a _Kafka_ consumer.
+1. Redefine the filter to prevent *Rocket.Chat to Rocket.Chat* loopback events.
+1. Redefine the data mapping to use the common interface as the source schema.
+
+{blank}
+
+To simplify the work you need to do, we've prepared the flow so that you just need to fill the blanks. The picture below illustrates the focus areas where you need to work on:
+
+image::images/new/flow-k2r-todo.jpg[align="left", width=70%]
+
+{blank}
+
+Find in your directory tree the following resource:
+
+* `k2r.camel.yaml`
 +
-Open and edit your `k2r.yaml` file.
+Click to open it in _Kaoto_. 
 +
-Two modifications are required:
+{empty} +
+
+Then, follow the instructions below to complete its definition:
+
+{empty} +
+
+. *Define Kafka as the source system*
++
+The first step of the flow is where you need to define Kafka as the source system from where events will arrive.
++
+NOTE: Your _OpenShift_ namespace already contains an _AMQ Streams_ cluster (_Kafka_) ready for you to use. 
++
+
+1. Click the `+` button inside the `To do: Kafka` step
+1. Find and select the _Kafka_ component.
+1. Select the `All` configuration tab
+1. Configure the following 2 properties:
++
+`Topic`:
 +
 --
-* The source is now _Kafka_
-* The filter should blocks self-events
+{copypaste}
+----
+myroom
+----
+--
++
+`Brokers`:
++
+--
+{copypaste}
+----
+my-cluster-kafka-bootstrap:9092
+----
 --
 +
 {empty} +
-+
-Copy the corresponding snippets and replace in your _Kamelet Binding_:
-+
-----
-apiVersion: camel.apache.org/v1alpha1
-kind: KameletBinding
-metadata:
-  name: k2r
-  annotations:
-    trait.camel.apache.org/mount.configs: "secret:stage3"
-    trait.camel.apache.org/mount.resources: "configmap:stage3-transform"
-spec:
-----
-+
-```yaml
-  source:
-    ref:
-      kind: KafkaTopic
-      apiVersion: kafka.strimzi.io/v1beta1
-      name: roomx
-```
-+
-----
-  steps:
-    
-  # Filter action to prevent death loops
-  - ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: predicate-filter-action
-    properties:
-----
-+
-```yaml
-      expression: $.source != "rocketchat"
-```
-+
-----
-  - ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: jslt-action
-    properties:
-      template: k2r.jslt
 
-  sink:
-    ref:
-      kind: Kamelet
-      apiVersion: camel.apache.org/v1
-      name: rocketchat-sink
-    properties:
-      token: "{{rocketchat.token}}"
+. *Define the filter*
++
+Filters you've previously defined are intended to block loopback events, in other words, if we push an event to _Matrix_ or _Rocket.Chat_, we don't want the same message to come back.
++
+However, by decoupling the architecture using _Kafka_, we introduce another event duplication threat you need to keep under control. The problem that arises is that we're about to define flows using _Kafka_ consumers that will route any incoming event, no matter where they really originate from, and push it to a defined target. In other words, we're potentially creating flows where the source and target system is the same, for example:
++
+  * _Matrix -> Matrix_
+  * _Rocket.Chat -> Rochet.Chat_
+  * _X -> X_
++
+{blank}
++
+The filter you need to define will prevent that.
++
+1. Click (in the blue area) `To do: Filter`
++
+You should the `JQ` expression language is selected by default.
++
+1. copy and paste the following expression:
++
+--
+{copypaste}
 ----
+.source | test("rocketchat")
+----
+--
 +
-{empty} +
+NOTE: The expression above picks the `source` JSON field from the Kafka event and checks if it originates in the Rocket.Chat system.
 +
-[NOTE]
-====
-The filter definition is specifically blocking events coming from _Rocket.Chat_ itself. As now _Kafka_ sits in the middle, we are simultaneously producing and consuming _Kafka_ events from/to _Rocket.Chat_, which can cause event loops. 
-====
+NOTE: Flows pushing events to _Kafka_ populate the field `source` to indicate where the event originates. 
 +
 {empty} +
 
-. Define the JSLT transformation (Standard -> _Rocket.Chat_).
+. *Define the data transformation*
 +
-Copy the snippet below and paste it into your new `k2r.jslt` file:
+In the new data transformation, the source data complies with the common schema (from _Kafka_) while the target system needs to map data going to _Rocket.Chat_.
 +
-```
-{
-    "channel":"YOUR_ROOM",
-    "text":"*"+.user+"@"+.source+"*: "+.text
-}
-```
+.. Include in your Camel route a Kaoto data transformation step
 +
-[IMPORTANT]
-====
-The field `channel` denotes the target room in _Rocket.Chat_ where messages will be pushed. +
-Make sure you replace `YOUR_ROOM` with your designated room, for example:
+--
+From Kaoto: 
 
-* `user1` -> use `room1`
-* `user2` -> use `room2`
-* `userN` -> use `roomN`
-====
+. Click the `+` button in the transition
+. Find and select the _Kaoto DataMapper_
+. Click to open the configuration panel
+. Click the `🔧Configure` button
+--
 +
-[NOTE]
-====
-The field `text` includes JsonPath rules extracting values from the input Standard data model.
-====
 {empty} +
 
-And you're done with the _Kafka_ -> _Rocket.Chat_ changes.
+.. Attach schemas
++
+--
+From the DataMapper editor: 
 
+. Define the source:
+.. On `Parameters` click the `+` to add new parameter
+.. Enter `common` and click the checkmark button kbd:[√]
+.. Click first the Attach schema button, then the blue button, and pick `common.json`.
++
+{blank}
++
+. Define the target
+.. Find the target Body and click on "Attach schema", then the blue button, and pick `rocketchat-out.json`
++
+{empty} +
+--
+
+.. Define the data mappings rules
++
+Copy and Paste the values below to define the given field entries:
++
+... `string[@key = channel]`: 
++
+--
+{copypaste}{user-username}
+----
+"REPLACE"
+----
+--
++
+{blank}
++
+... `string[@key = text]`:
++
+--
+{copypaste}
+----
+concat("*",$common-x/xf:map/xf:string[@key='user'], "@", $common-x/xf:map/xf:string[@key='source'],"*", $common-x/xf:map/xf:string[@key='text'])
+----
+--
++
+{empty} +
+
+And you’re done with the Kafka → Rocket.Chat changes.
+
+{empty} +
+
+
+=== Kafka to Matrix
+
+Like we did earlier, it's handy to use one of the previous flows as a base to construct the new _Kafka to Matrix_ proces as many of the steps are the same. The picture below shows the original _Rocket.Chat to Matrix_ flow you defined earlier:
+
+image::images/new/flow-m2r.jpg[align="left", width=60%]
+
+{blank}
+
+Again, the changes you need to apply on the flow above are minimal:
+
+1. Define a _Kafka_ consumer (instead of _Rocket.Chat_)
+1. Redefine the data mapping using the common interface
+
+{blank}
+
+To simplify the work you need to do, we've prepared the flow so that you just need to fill the blanks. The picture below illustrates the two focus areas where you need to work on:
+
+image::images/new/flow-m2k-todo.jpg[align="left", width=70%]
+
+{blank}
+
+Find in your directory tree the following resource:
+
+* `k2m.camel.yaml`
++
+Click to open it in _Kaoto_. 
++
+{empty} +
+
+Then, follow the instructions below to complete its definition:
+
+{empty} +
+
+. *Define Kafka as the source system*
++
+The first step of the flow is where you need to define Kafka as the source system from where events will arrive.
++
+NOTE: Your _OpenShift_ namespace already contains an _AMQ Streams_ cluster (_Kafka_) ready for you to use. 
++
+
+1. Click the `+` button inside the `To do: Kafka` step
+1. Find and select the _Kafka_ component.
+1. Select the `All` configuration tab
+1. Configure the following 2 properties:
++
+`Topic`:
++
+--
+{copypaste}
+----
+myroom
+----
+--
++
+`Brokers`:
++
+--
+{copypaste}
+----
+my-cluster-kafka-bootstrap:9092
+----
+--
++
+{empty} +
+
+. *Define the filter*
++
+As previously explained, you need the define a filter to prevent events flowing from _Matrix to Matrix_.
++
+1. Click (in the blue area) `To do: Filter`
++
+You should the `JQ` expression language is selected by default.
++
+1. copy and paste the following expression:
++
+--
+{copypaste}
+----
+.source | test("matrix")
+----
+--
++
+NOTE: The expression above picks the `source` JSON field from the _Kafka_ event and checks if it originates in the _Matrix_ system.
++
+NOTE: Flows pushing events to _Kafka_ populate the field `source` to indicate where the event originates. 
++
+{empty} +
+
+. *Define the data transformation*
++
+In the new data transformation, the source data complies with the common schema (from _Kafka_) while the target system needs to map data going to _Matrix_.
++
+.. Include in your Camel route a Kaoto data transformation step
++
+--
+From Kaoto: 
+
+. Click the `+` button in the transition
+. Find and select the _Kaoto DataMapper_
+. Click to open the configuration panel
+. Click the `🔧Configure` button
+--
++
+{empty} +
+
+.. Attach schemas
++
+--
+From the DataMapper editor: 
+
+. Define the source:
+.. On `Parameters` click the `+` to add new parameter
+.. Enter `common` and click the checkmark button kbd:[√]
+.. Click first the Attach schema button, then the blue button, and pick `common.json`.
++
+{blank}
++
+. Define the target
+.. Find the target Body and click on "Attach schema", then the blue button, and pick `matrix-out.json`
++
+{empty} +
+--
+
+.. Define the data mappings rules
++
+Copy and Paste the values below to define the given field entries:
++
+... `string[@key = text]`:
++
+--
+{copypaste}
+----
+concat("<b>",$common-x/xf:map/xf:string[@key='user'], "@", $common-x/xf:map/xf:string[@key='source'],"</b>", $common-x/xf:map/xf:string[@key='text'])
+----
+--
++
+{empty} +
+
+Again, very simple updates, nothing else required for the _Kafka → Matrix_ process.
 
 {empty} +
 
