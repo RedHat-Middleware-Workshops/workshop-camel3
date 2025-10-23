@@ -1,0 +1,12 @@
+- route:
+    id: route-1575
+    description: Discord to Kafka
+    from:
+      id: from-4458
+      description: Discord
+      uri: direct
+      parameters:
+        name: main-process
+      steps:
+        - log:
+            message: "message from Discord: ${body}"

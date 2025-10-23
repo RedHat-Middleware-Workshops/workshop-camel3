@@ -1,0 +1,31 @@
+- route:
+    id: route-4668
+    description: Discord to Kafka
+    from:
+      description: Discord
+      uri: direct
+      parameters:
+        name: main-process
+      steps:
+        - filter:
+            steps:
+              - stop: {}
+            jq:
+              expression: .d.author.bot == true
+              source: discord
+        - step:
+            id: kaoto-datamapper-72a80f87
+            steps:
+              - to:
+                  id: kaoto-datamapper-xslt-2237
+                  uri: xslt-saxon:kaoto-datamapper-72a80f87.xsl
+                  parameters:
+                    failOnNullBody: false
+        - log:
+            message: ${body}
+        - to:
+            uri: kafka
+            parameters:
+              brokers: my-cluster-kafka-bootstrap:9092
+              topic: myroom
+      variableReceive: discord

@@ -33,39 +33,41 @@ if [ $1 == "0" ]; then
   cp $CONFIG/.kaoto $BASE/
 fi
 
-if [ $1 == "1" ] || [ $1 == "2" ]; then 
-  cp m2r/application.properties $CONFIG/
-fi
+# if [ $1 == "1" ] || [ $1 == "2" ]; then 
+#   cp m2r/application.properties $CONFIG/
+# fi
 
 # to ensure all hidden files & dirs are deleted (.camel) we need to change directory and return
 if [ ! -d "$LAB" ]; then
   mkdir $LAB
 fi
 cd $LAB
-ls -A | xargs --no-run-if-empty rm -r
+# ls -A | xargs --no-run-if-empty rm -r
+ls -d */ | xargs --no-run-if-empty rm -r
 cd $OLDPWD
 
 # Copy chapter sources to lab directory
 cp -r $FF/$NEXT/* $LAB
-echo "step $1 ready [`grep '^'$1' ' $FF/titles.txt | cut -d' ' -f 2-`]"
+echo -e "\033[33mstep $1 ready [`grep '^'$1' ' $FF/titles.txt | cut -d' ' -f 2-`]\033[0m"
+
 echo "$1" > $TOOLS/scripts/current
 
-# If there is a config file 'application.properties', overwrite the lab one
-if [ -f "$CONFIG/application.properties" ]; then
-    echo "application.properties found in CONFIG. Replacing all instances in LAB..."
+# # If there is a config file 'application.properties', overwrite the lab one
+# if [ -f "$CONFIG/application.properties" ]; then
+#     echo "application.properties found in CONFIG. Replacing all instances in LAB..."
     
-    # Use find to locate and replace all application.properties in $LAB (recursively)
-    # -type f ensures we only target regular files
-    # -exec cp ... {} \; copies the CONFIG file over each match
-    # Add -iname if case-insensitive search needed (e.g., Application.properties)
-    find "$LAB" -type f -name 'application.properties' -exec cp -f "$CONFIG/application.properties" {} \;
+#     # Use find to locate and replace all application.properties in $LAB (recursively)
+#     # -type f ensures we only target regular files
+#     # -exec cp ... {} \; copies the CONFIG file over each match
+#     # Add -iname if case-insensitive search needed (e.g., Application.properties)
+#     find "$LAB" -type f -name 'application.properties' -exec cp -f "$CONFIG/application.properties" {} \;
     
-    # Optional: Verbose output or backup
-    # find "$LAB" -type f -name 'application.properties' -exec echo "Replaced: {}" \; -exec cp -f --backup=numbered "$CONFIG/application.properties" {} \;
-else
-    echo "No application.properties in CONFIG. Skipping replacement."
-    # Optionally: Proceed with other logic, like your rm command
-fi
+#     # Optional: Verbose output or backup
+#     # find "$LAB" -type f -name 'application.properties' -exec echo "Replaced: {}" \; -exec cp -f --backup=numbered "$CONFIG/application.properties" {} \;
+# else
+#     echo "No application.properties in CONFIG. Skipping replacement."
+#     # Optionally: Proceed with other logic, like your rm command
+# fi
 
 
 cd $LAB

@@ -1,0 +1,31 @@
+- route:
+    id: route-3093
+    description: Kafka to Discord
+    from:
+      id: from-2541
+      description: Kafka
+      uri: kafka
+      parameters:
+        brokers: my-cluster-kafka-bootstrap:9092
+        topic: myroom
+      steps:
+        - filter:
+            id: filter-1773
+            description: "To do: Filter"
+            steps:
+              - stop:
+                  id: stop-2721
+            jq:
+              expression: ""
+              source: common
+        - step:
+            id: step-3721
+            description: "To do: Mapping"
+            steps: []
+        - log:
+            message: ${body}
+        - step:
+            id: step-1312
+            description: "To do: Discord"
+            steps: []
+      variableReceive: common

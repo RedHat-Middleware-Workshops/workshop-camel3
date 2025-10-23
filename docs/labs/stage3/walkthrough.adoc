@@ -943,7 +943,7 @@ Then, follow the instructions below to complete its definition:
 
 . *Define Kafka as the source system*
 +
-The first step of the flow is where you need to define Kafka as the source system from where events will arrive.
+The first step of the flow is where you need to define _Kafka_ as the source system from where events will arrive.
 +
 NOTE: Your _OpenShift_ namespace already contains an _AMQ Streams_ cluster (_Kafka_) ready for you to use. 
 +
@@ -979,7 +979,7 @@ As previously explained, you need the define a filter to prevent events flowing 
 +
 1. Click (in the blue area) `To do: Filter`
 +
-You should the `JQ` expression language is selected by default.
+You should see the `JQ` expression language selected by default.
 +
 1. copy and paste the following expression:
 +

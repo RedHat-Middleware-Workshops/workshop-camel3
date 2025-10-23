@@ -118,5 +118,45 @@
 			]
 		},
 		"xsltPath": "kaoto-datamapper-eacd7d5c.xsl"
+	},
+	"kaoto-datamapper-5e9ba87a": {
+		"sourceBody": {
+			"type": "Primitive"
+		},
+		"sourceParameters": {
+			"common": {
+				"type": "JSON Schema",
+				"filePath": [
+					"support/schemas/common.json"
+				]
+			}
+		},
+		"targetBody": {
+			"type": "JSON Schema",
+			"filePath": [
+				"support/schemas/discord-out.json"
+			]
+		},
+		"xsltPath": "kaoto-datamapper-5e9ba87a.xsl"
+	},
+	"kaoto-datamapper-72a80f87": {
+		"sourceBody": {
+			"type": "Primitive"
+		},
+		"sourceParameters": {
+			"discord": {
+				"type": "JSON Schema",
+				"filePath": [
+					"support/schemas/discord-in.json"
+				]
+			}
+		},
+		"targetBody": {
+			"type": "JSON Schema",
+			"filePath": [
+				"support/schemas/common.json"
+			]
+		},
+		"xsltPath": "kaoto-datamapper-72a80f87.xsl"
 	}
 }

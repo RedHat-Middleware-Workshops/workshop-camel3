@@ -1,0 +1,118 @@
+- route:
+    id: route-3778
+    description: Identification
+    from:
+      uri: direct
+      parameters:
+        name: identify
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: |
+                  {
+                    "op": 2,
+                    "d": {
+                      "token": "{{discord.token}}",
+                      "intents": 513,
+                      "properties": {
+                        "os": "linux",
+                        "browser": "my_library",
+                        "device": "my_library"
+                      }
+                    }
+                  }
+        - to:
+            uri: vertx-websocket
+            parameters:
+              consumeAsClient: true
+              encoding: json
+              host: wss:gateway.discord.gg
+              originHeaderUrl: https://gateway.discord.gg
+              port: 443
+              v: 9
+- route:
+    id: route-2389
+    description: Heartbeats
+    from:
+      uri: timer
+      parameters:
+        delay: 10000
+        period: "{{time:30000}}"
+        timerName: heartbeat
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: |
+                  {
+                    "op": 1,
+                    "d": 251
+                  }
+        - to:
+            uri: vertx-websocket
+            parameters:
+              consumeAsClient: true
+              encoding: json
+              host: wss:gateway.discord.gg
+              originHeaderUrl: https://gateway.discord.gg
+              port: 443
+              v: 9
+- route:
+    id: route-3987
+    description: Event Listener
+    from:
+      uri: vertx-websocket
+      parameters:
+        consumeAsClient: true
+        encoding: json
+        host: wss:gateway.discord.gg
+        originHeaderUrl: https://gateway.discord.gg
+        port: 443
+        v: 9
+      steps:
+        - choice:
+            when:
+              - description: Hello
+                steps:
+                  - to:
+                      uri: direct
+                      parameters:
+                        name: identify
+                expression:
+                  jq:
+                    expression: .op == 10
+              - description: Ready
+                steps:
+                  - log:
+                      message: Discord connection open and session ready.
+                  - stop: {}
+                expression:
+                  jq:
+                    expression: .op == 0 and .t == "READY"
+              - description: Heartbeat ACK
+                steps:
+                  - stop: {}
+                expression:
+                  jq:
+                    expression: .op == 11
+              - description: Message
+                steps:
+                  - filter:
+                      steps:
+                        - stop: {}
+                      jq:
+                        expression: .d.channel_id != "{{discord.room}}"
+                  - to:
+                      uri: direct
+                      parameters:
+                        name: main-process
+                expression:
+                  jq:
+                    expression: .t == "MESSAGE_CREATE"
+              - description: Reconnect
+                steps:
+                  - stop: {}
+                expression:
+                  jq:
+                    expression: .op == 7

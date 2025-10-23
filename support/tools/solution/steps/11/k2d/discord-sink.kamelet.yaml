@@ -1,0 +1,48 @@
+apiVersion: camel.apache.org/v1
+kind: Kamelet
+metadata:
+  labels:
+    camel.apache.org/kamelet.type: sink
+  name: discord-sink
+spec:
+  definition:
+    description: Send messages to Discord.
+    properties:
+      channel:
+        description: The channel id
+        title: Channel Identifier
+        type: string
+      token:
+        description: The bot security token
+        title: Security Token
+        type: string
+    required:
+      - token
+      - channel
+    title: Discord Sink
+    type: object
+  template:
+    from:
+      steps:
+        - removeHeaders:
+            id: removeHeaders-3530
+            pattern: "*"
+        - setHeader:
+            id: setHeader-1307
+            name: Content-Type
+            simple:
+              expression: application/json
+        - setHeader:
+            id: setHeader-1307-7633
+            name: Authorization
+            simple:
+              expression: Bot {{token}}
+        - log:
+            id: log-1384
+            message: ${body}
+        - to:
+            id: to-4945
+            parameters:
+              httpUri: https://discordapp.com/api/channels/{{channel}}/messages
+            uri: https
+      uri: kamelet:source

@@ -25,3 +25,4 @@ camel kubernetes run * \
 --name="$1" \
 --local-kamelet-dir="$BASE"/support/deploy/kamelets \
 --cluster-type=openshift
+${@:2}

@@ -5,7 +5,12 @@
 4 Deploy 'r2m' on OpenShift
 5 Decoupled Architecture
 6 Deploy event-driven integrations on OpenShift
-7 Create a sink Kamelet for Discord
-8 Test the tour guide tool
-9 Run the LLM using both tools
-10 Export to Quarkus
+7 Sink Kamelet for Discord (base skeleton)
+8 Sink Kamelet for Discord (steps definition)
+9 Sink Kamelet for Discord (completed)
+10 Define the 'k2d' flow: Kafka to Discord
+11 Test the 'k2d' flow: Kafka to Discord
+12 Define the Discord consumer
+13 Test the Discord cosumer
+14 Define the 'd2k' flow: Discord to Kafka
+15 Test the 'd2k' flow: Discord to Kafka

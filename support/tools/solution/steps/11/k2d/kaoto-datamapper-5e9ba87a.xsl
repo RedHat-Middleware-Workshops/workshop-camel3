@@ -6,11 +6,8 @@
     <xsl:variable name="common-x" select="json-to-xml($common)"/>
     <xsl:variable name="mapped-xml">
         <map xmlns="http://www.w3.org/2005/xpath-functions">
-            <string key="channel">
-                <xsl:value-of select="replace($common-x/xf:map/xf:string[@key='user'], 'user', 'room')"/>
-            </string>
-            <string key="text">
-                <xsl:value-of select="concat(&quot;*&quot;,$common-x/xf:map/xf:string[@key='user'], &quot;@&quot;, $common-x/xf:map/xf:string[@key='source'],&quot;:* &quot;, $common-x/xf:map/xf:string[@key='text'])"/>
+            <string key="content">
+                <xsl:value-of select="concat(&quot;**&quot;, $common-x/xf:map/xf:string[@key='user'],&quot;@&quot;, $common-x/xf:map/xf:string[@key='source'],&quot;**: &quot;, $common-x/xf:map/xf:string[@key='text'])"/>
             </string>
         </map>
     </xsl:variable>

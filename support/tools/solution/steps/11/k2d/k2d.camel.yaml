@@ -1,6 +1,6 @@
 - route:
     id: route-3093
-    description: Kafka to RocketChat
+    description: Kafka to Discord
     from:
       id: from-2541
       description: Kafka
@@ -15,24 +15,23 @@
               - stop:
                   id: stop-2721
             jq:
-              expression: .source == "rocketchat"
+              expression: .source | test("discord")
               source: common
         - step:
-            id: kaoto-datamapper-a02d6e81
+            id: kaoto-datamapper-5e9ba87a
             steps:
               - to:
-                  id: kaoto-datamapper-xslt-7236
-                  uri: xslt-saxon:kaoto-datamapper-a02d6e81.xsl
+                  id: kaoto-datamapper-xslt-4266
+                  uri: xslt-saxon:kaoto-datamapper-5e9ba87a.xsl
                   parameters:
                     failOnNullBody: false
         - log:
             message: ${body}
         - to:
-            description: RocketChat
+            description: Discord
             uri: kamelet
             parameters:
-              templateId: rocketchat-sink
-              token: "{{rocketchat.token}}"
-              userid: "{{rocketchat.userid}}"
-            disabled: false
+              channel: "{{discord.room}}"
+              templateId: discord-sink
+              token: "{{discord.token}}"
       variableReceive: common

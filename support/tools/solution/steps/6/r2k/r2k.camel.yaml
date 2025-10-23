@@ -22,24 +22,18 @@
                 expression: .text | test("\\*.*@.*:\\*")
                 source: rocketchat
         - step:
-            description: "To do: Mapping"
-            steps:
-              - step:
-                  id: kaoto-datamapper-eacd7d5c
-                  steps:
-                    - to:
-                        id: kaoto-datamapper-xslt-8238
-                        uri: xslt-saxon:kaoto-datamapper-eacd7d5c.xsl
-                        parameters:
-                          failOnNullBody: false
-        - log:
-            message: ${body}
-        - step:
-            description: "To do: Kafka"
+            id: kaoto-datamapper-eacd7d5c
             steps:
               - to:
-                  uri: kafka
+                  id: kaoto-datamapper-xslt-8238
+                  uri: xslt-saxon:kaoto-datamapper-eacd7d5c.xsl
                   parameters:
-                    brokers: my-cluster-kafka-bootstrap:9092
-                    topic: myroom
+                    failOnNullBody: false
+        - log:
+            message: ${body}
+        - to:
+            uri: kafka
+            parameters:
+              brokers: my-cluster-kafka-bootstrap:9092
+              topic: myroom
       variableReceive: rocketchat

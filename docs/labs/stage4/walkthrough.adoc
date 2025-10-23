@@ -55,9 +55,17 @@
     return result; \
 }]
 
+//:fdocserver: pass:a[function docserver(target,template,params) { \
+//    {freplace} \
+//    fetch('{url-docserver}/roomid?user='+params) \
+//        .then(response => response.text()) \
+//        .then(data => {target.firstChild.data=replaceTokens(text, data);}) \
+//        .catch(error => room = 'Error fetching data: ' + error.message); \
+//}]
+
 :fdocserver: pass:a[function docserver(target,template,params) { \
     {freplace} \
-    fetch('{url-docserver}/roomid?user='+params) \
+    fetch('{url-docserver}'+params.trim()) \
         .then(response => response.text()) \
         .then(data => {target.firstChild.data=replaceTokens(text, data);}) \
         .catch(error => room = 'Error fetching data: ' + error.message); \
@@ -129,6 +137,17 @@
 }"> \
 ]
 
+:room: pass:a[ \
+<img hidden="true" src="invalid-image.jpg" onerror="{ \
+  let code = this.previousElementSibling; \
+  let text = code.textContent; \
+  console.log('before text: [' +text+']'); \
+  text = text.replace('user', 'room'); \
+  code.textContent = text; \
+  console.log('after text: [' +text+']'); \
+  this.remove(); \
+}"> \
+]
 
 ifdef::env-github[]
 endif::[]
@@ -268,12 +287,21 @@ IMPORTANT: Discord performs an age verification, ensure you enter a birth date f
 +
 image::images/discord-join-step1.png[align="left", width=80%]
 +
+====
+. Enter your username, for example:
++
 --
-. Type in a username, for example `{user-username}`. +
+{copypaste}
+[subs=attributes]
+----
+{user-username}
+----
+--
++
 You can also choose any other username of your liking.
 . Tick the agreement box.
 . Click the _Continue_ button.
---
+====
 +
 {empty} +
 
@@ -408,9 +436,14 @@ A Kamelet encapsulates a normal _Camel_ route.
 
 The _Kamelet_ to create involves defining a Camel route that targets _Discord_ as the endpoint system.
 
-To integrate with _Discord_ we need to understand well its API, but don't worry, we got you covered. For reference, here's _Discord_'s documentation on how to post messages:
+To integrate with _Discord_ we need to understand well its API, but don't worry, we got you covered, just follow our instructions.
+
+[NOTE]
+====
+For reference, here's _Discord_'s documentation on how to post messages:
 
 * link:https://discord.com/developers/docs/resources/channel#create-message[window="_blank"]
+====
 
 {empty} +
 
@@ -464,26 +497,25 @@ oc project {namespace}-devspaces
 
 {empty} +
 
-==== Prototype the Camel route
+==== Clean up your environment
 
-The first step is to create a little prototype that will validate our _Camel_ route implementation.
+Before you start this second lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
 
 . Close tabs
-+
-image::images/crw-close-tabs.png[align="left", width=100%]
-+
-{blank}
-+
-Before you start this second lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
 +
 1) Click on the file explorer's `...` button +
 2) Ensure your `Open Editors` is ticked [√] +
 3) Click the `Close all Editors` button.
 +
+{blank}
++
+image::images/crw-close-tabs.png[align="left", width=100%]
++
 {empty} +
 
+==== Setup your Lab folder
 
-. Setup your Lab folder
+* Next, prepare your lab by issuing the following command:
 +
 --
 {copypaste}
@@ -493,9 +525,47 @@ step 7
 ----
 --
 
+{empty} +
+
+==== Create your base Sink skeleton
+
+Follow the steps below to create your base _Discord_ sink _Kamelet_
+
+[TIP]
+====
+⏩ *Fast-Forward*
+
+[.underline]#*Only*# if you want to skip (fast-forward) this section, execute in your terminal the commands below:
+
+--
+{copypaste}
+----
+ff
+----
+--
+====
+
+For a manual creation process:
+
+. Create a generic sink
++
+Use _Camel JBang_ to create your skeleton executing the command below:
++
+--
+{copypaste}
+[subs=attributes]
+----
+camel init k2d/discord-sink.kamelet.yaml
+----
+--
++
+NOTE: the suffix `-sink` tells _Camel JBang_ you're creating a _Kamelet_ sink.
++
+{empty} +
+
 . Open the base Discord Kamelet in Kaoto
 +
-We provide the base sink Kamelet for you to work on. Find in your directory tree the following resource:
+Find the newly created YAML file in your directory:
 +
   * `discord-sink.kamelet.yaml`
 +
@@ -504,6 +574,90 @@ We provide the base sink Kamelet for you to work on. Find in your directory tree
 Click to open it in _Kaoto_. 
 +
 {empty} +
+
+. Configure input parameters
++
+TIP: Sink _Kamelets_ can be configured to enforce input parameters.
++
+When pushing events, _Discord_ requires some fields to be provided, follow the steps below to configure them:
++
+.. Click the container's blue bar
++
+The panel configuration opens on the side.
++
+... Click on the `Required` configuration group
++
+Scroll down the panel and you'll find an area where to configure properties.
++
+NOTE: The sink creation auto-generates two example properties.
++
+... Reconfigure the first proterty as follows:
++
+====
+* Property Name:
++
+--
+{copypaste}
+----
+token
+----
+--
+
+* Property Type
++
+`string`
+====
++
+... Reconfigure the second proterty as follows:
++
+====
+* Property Name:
++
+--
+{copypaste}
+----
+channel
+----
+--
+
+* Property Type
++
+`string`
+====
++
+{empty} +
+
+. Delete the Log step
++
+Delete the _Log_ step that was auto-generated by _Camel JBang_.
+
+{empty} +
+
+==== Implement the flow steps for the Sink _Kamelet_
+
+At this stage your _Kamelet_ in _Kaoto_ should look like the picture below:
+
+image::images/new/sink-discord-base.jpg[align="left", width=30%]
+
+NOTE: you can configure its description to give it more meaning.
+
+The base skeleton is ready but the actions inside the _Kamelet_ are yet to defined.
+
+[TIP]
+====
+⏩ *Fast-Forward*
+
+[.underline]#*Only*# if you want to skip (fast-forward) this section, execute in your terminal the commands below:
+
+--
+{copypaste}
+----
+ff
+----
+--
+====
+
+For a manual creation process:
 
 . Add a step to clean all headers
 +
@@ -575,7 +729,7 @@ Bot {{token}}
 ----
 --
 +
-NOTE: The kamelet defines an input parameter `token` and its value gets used in the header.
+NOTE: The property `token` in the expression refers to the input parameter defined in the _Kamelet_.
 ====
 +
 {empty} +
@@ -595,472 +749,166 @@ https://discordapp.com/api/channels/{{channel}}/messages
 ----
 --
 +
-NOTE: The kamelet defines an input parameter `channel` and its value gets used in the header.
+NOTE: The property `channel` in the URI refers to the input parameter defined in the _Kamelet_.
 ====
 +
 {empty} +
 
-. Setup your lab folder
-.. Create your working folder:
-+
-[subs=]
-```bash
-cd /projects/message-hub
-mkdir lab4-k2d
-cd lab4-k2d<br>
-```
-+
-{empty} +
-+
-.. Create a configuration file
-+
-```bash
-touch stage4.properties
-```
-+
-... Find your new folder in the project tree
-+
-image::images/crw-folder1.png[align="left", width=30%]
-+
+==== Configure access to _Discord_
+
+[NOTE]
+====
+Quick reminder on the purpose of the 2 input parameters defined in your _Kamelet_:
+
+* `token`: carries the authorization token required to invoke _Discord's_ API.
+* `channel`: carries the identifier that represents your room in _Discord_.
+====
+
 {blank}
-+
-Ensure you're working on folder `lab4-k2d`
-+
-{empty} +
-+
-... Include in the new properties file your _Discord_ details:
+
+Input parameters for a _Kamelet_ is one thing. You still need to pass the values when you call the _Kamelet_. +
+For that, as you did with _Matrix_ and _Rocket.Chat_, define the properties where you'll configure the values to map to your _Kamelet_ inputs.
+
+. Create the configuration file
 +
 --
 {copypaste}
 ----
-start
+touch discord.properties
+----
+--
+
+. Open the file and add the following properties:
++
+--
+{copypaste}configuration/discord/user3
+----
+# Discord credentials
+discord.token=REPLACE
+discord.room=REPLACE
 ----
 --
 +
-```properties
-# Discord credentials
-token=YOUR_TOKEN
-channel=YOUR_ROOM_ID
-```
+NOTE: both values have been pre-configured for your use in this lab.
 +
---
-
-{empty} +
-
-Ensure you configure with your _Discord_ values, and save changes.
-
-- `token`
+WARNING: If the credentials above do not look healthy, speak to your instructor/administrator, and set their values as indicated below:
 +
-Obtain the _Discord_ token following one of the options listed below, and replace `YOUR_TOKEN`:
-+
-=====
-
-** *Option 1*: Try in _Rocket.Chat_:
-+
-They may be available in _Rocket.Chat_. +
-Look in the `#general` channel:
-+
-image::images/rc-discord-credentials.png[align="left", width=90%]
-+
-=========
-. Click on the `#general` channel.
-. Copy the credentials to configure _Camel_.
-=========
-+
-{empty} +
-
-** *Option 2*: Try the link below:
-+
-WARNING: The link may fail if the cluster did not enable token resolution. +
-If it fails, choose [*Option 2*] or [*Option 3*].
-+
-*** link:{invite-url}/token/discord[Obtain _Discord_ token,window="_blank"]
-+
-{empty} +
-
-** *Option 3*: Ask your instructor/administrator for the token to use to connect to Discord.
-+
-[TIP]
+[WARNING]
 ====
+- `token`: Ask your instructor/administrator for the token to use to connect to _Discord_. +
 The workshop slides should contain the token values valid for today's session:
-
-image::images/apps-tokens.png[align="left", width=80%]
-
-====
-** *Option 4*: if you created your own _Discord_ App, use your App's `Bot User OAuth Token`
-=====
-
++
+image::images/apps-tokens.png[align="left", width=50%]
++
 {empty} +
 
-
-* `channel` +
-You can find the channel id in the address bar of your _Discord_ browser tab. The pattern is:
+- `channel`: You can find the channel id in the address bar of your _Discord_ window. The pattern is:
 +
 ** \http://discord.com/channels/SERVER_ID/**CHANNEL_ID**
 +
 image::images/discord-room-id.png[align="left", width=80%]
 +
+IMPORTANT: Ensure you only pick the last token (after last `/`) from the address bar.
+====
+
+{empty} + 
+
+==== Test the _Discord Kamelet_
+
+Ok, you have the configuration ready and the _Kamelet_ fully implemented, but you don't know yet if your _Kamelet_ works. +
+
+This section will show you how to easily test it, _Camel JBang_ has very handy functionality to help you validate your code.
+
+{empty} +
+
+. Start your Kamelet
++
+Camel JBang allows you to run your application in the background. +
+Issue the following command:
++
+--
+{copypaste}
+----
+camel run k2d/* \
+--background \
+--properties discord.properties
+----
+--
++
+NOTE: the command above loads your code under the directory `k2d` (kafka-to-discord) and picks your local `discord.properties`
++
+{empty} +
+
+. Verify the _Kamelet_ is loaded
++
+Check your _Camel_ code is running by issuing the command below:
++
+--
+{copypaste}
+----
+camel ps
+----
+--
++
+You should see a terminal output similar to:
++
+----
+ PID   NAME          READY  STATUS   AGE  TOTAL  FAIL  INFLIGHT   
+ 6496  discord-sink   1/1   Running  21s      0     0         0
+----
++
+NOTE: the output above tells you the name of the application is `discord-sink`
++
+{empty} +
+
+. Test the _Kamelet_
++
+The moment of truth. +
+_Camel JBang_ has a handy command to send/inject messages to running applications.
++
+Use the command below to send a message to the _Kamelet_:
++
+--
+{copypaste}
+----
+camel cmd send discord-sink \
+--uri "kamelet:discord-sink?token={{discord.token}}&channel={{discord.room}}" \
+--body '{"content":"Hello from Camel"}'
+----
+--
++
+NOTE: the `--uri` flag points to the _Discord Kamelet_.
++
+NOTE: the _Kamelet_ parameters `token`/`channel` are set with the values configured in `discord.properties`.
++
+If everything goes according to plan you should see an output similar to:
++
+++++
+<pre>
+<span style="color:grey">2025-10-20 20:21:33.640</span>   <span style="color:deeppink;">6496</span> --- <span style="color:cyan">kamelet://discord-sink?channel=103309798</span> : <span style="color:limegreen;">Sent (success) (367ms)</span>
+</pre>
+++++
++
+{empty} +
+
+. Check Discord's room
++
+_Discord_ should have received the message and displayed it in the room, as shown below:
++
 [IMPORTANT]
 ====
-Ensure you only pick the last token (after last `/`) from the address bar.
+Make sure you have selected in Discord the channel: +
+`# user3` {room}
 ====
---
++
+image::images/discord-room-hello.png[align="left", width=30%]
 +
 {empty} +
 
-. Create a skeleton using _Camel JBang_ in YAML format:
-+
-For example:
-+
-```bash
-camel init test-discord.yaml
-```
-+
 {empty} +
 
-. Open and Edit the `test-discord.yaml` file
-+
-Replace the parameter:
-+
---
-* `period: "1000"`
---
-+
-{empty} +
-+
-Use instead the parameter `repeatCount` (copy/replace from the snippet below):
-+
-----
-# camel-k: language=yaml
-
-# Write your routes here, for example:
-- from:
-    uri: "timer:yaml"
-    parameters:
-----
-+
-```yaml
-      repeatCount: "1"
-```
-+
-----
-    steps:
-      - setBody:
-          constant: "Hello Camel from yaml"
-      - log: "${body}"
-----
-+
-{empty} +
-
-. Run your test route with:
-+
-```bash
-camel run * --dev
-```
-+
-TIP: the flag `dev` indicates to _Camel JBang_ to hot reload new definitions whenever file changes are detected allowing fast prototyping.
-+
-The output in your terminal should show, only once, the following:
-+
-----
-... : Hello Camel from yaml
-----
-{empty} +
-
-. Simulate a _Discord_ payload
-+
-Let's modify the code to simulate the JSON payload _Discord_ expects. Replace the body with the following:
-+
-----
-    steps:
-      - setBody:
-----
-+
-```yaml
-          constant: '{"content": "Hello from Camel"}'
-```
-+
-----
-      - log: "${body}"
-----
-+
-{empty} +
-+
-Save changes. +
--> _Camel JBang_ will react: it will load the new definition on the fly and run it.
-+
-You should see the following in the log output:
-+
-----
-... {"content": "Hello from Camel"}
-----
-+ 
-{empty} +
-+
-[TIP]
-+
---
-- **Troubleshooting with _Camel JBang_**
-+
-Let's pretend for a moment you did something wrong in your code to understand how _Camel JBang_ helps the developer to quickly fix problems before deploying code in _Kubernetes_.
-+
-In your previous line of code, let's say you forgot to close the quote at the end of the `constant` expression, like so:
-+
-```yaml
-          constant: '{"content": "Hello from Camel"}
-```
-+
-{blank}
-+
-When saving changes (automatic by default in _DevSpaces_), _Camel JBang_ quickly loads the new faulty definition and throws an error. Of course, errors are always ugly and have long stack traces, but if you inspect the output carefully you'll find something similar to:
-+
-----
-Caused by: while scanning a quoted scalar
- in file:test-discord.yaml, line 10, column 21:
-              constant: '{"content": "Hello from Camel"}
-----
-+
-{blank}
-+
-Pretend you fix the bug by rolling back your changes to restore normality. _Camel JBang_ will immediately reload the code and execute bug free.
-+
-Fast code iterations with _Camel JBang_ allows developers to accelerate the project development in a more friendly and productive manner.
---
-+
-{empty} +
-
-. Post to _Discord_
-+
-Modify the code to call _Discord_'s API to post a message. +
-Include the following snipped in your YAML file:
-+
-----
-# camel-k: language=yaml
-
-# Write your routes here, for example:
-- from:
-    uri: "timer:yaml"
-    parameters:
-      repeatCount: "1"
-    steps:
-      - setBody:
-          constant: '{"content": "Hello from Camel"}'
-      - log: "${body}"
-----
-+
-```yaml
-      - remove-headers:
-          pattern: "*"
-      - set-header:
-          name: Content-Type
-          simple: application/json
-      - set-header:
-          name: Authorization
-          simple: Bot {{token}}
-      - to:
-          uri: "https://discordapp.com/api/channels/{{channel}}/messages"
-```
-+
-{empty} +
-+
-Save changes. +
--> _Camel JBang_ will react: it will load the new definition on the fly and run it.
-+
-If all goes well, _Discord_ will receive the message and display it in the room, as shown below:
-+
-image::images/discord-room-hello.png[align="left", width=40%]
-+
-{empty} +
 
 === End of prototyping
-
-[type=verification]
-Did you see the message showing in _Discord_?
-
-[type=verificationSuccess]
-The first goal has been accomplished. image:images/emoji-clap.png[width=3%]
-
-[type=verificationFail]
-Verify the snippet copy/paste actions were well followed.
-
-{empty} +
-
-Press `ctrl`+`c` to stop _Camel JBang_.
-
-[TIP]
---
-_Camel JBang_ also implements the following very handy commands when running multiple _Camel_ integrations:
-
-* `camel ps` to list running _Camel_ integrations.
-* `camel stop <instance_name>` to shut down a running _Camel_ integration.  
---
-
-{empty} +
-
-==== Encapsulate as a Sink
-
-Now that our prototype is fully functional, let's encapsulate the code as a _Kamelet_ sink.
-
-. Create skeleton
-+
-Use the following command to create a _Kamelet_ skeleton:
-+
-```bash
-camel init discord-sink.kamelet.yaml
-```
-+
-{empty} +
-+
-Open the file in your editor.
-+
-{empty} +
-
-. Define your Kamelet
-+
-.. Define your Kamelet metadata and parameters
-+
-(Copy and replace the `spec`, keep the _Kamelet_'s header/metadata.)
-+
-----
-apiVersion: camel.apache.org/v1alpha1
-kind: Kamelet
-metadata:
-  name: discord-sink
-  labels:
-    camel.apache.org/kamelet.type: "sink"
-----
-+
-```yaml
-spec:
-  definition:
-    title: "Discord Sink"
-    description: |-
-      Send messages to Discord.
-    required:
-      - token
-      - channel
-    type: object
-    properties:
-      token:
-        title: Security Token
-        description: The bot security token
-        type: string
-      channel:
-        title: Channel Identifier
-        description: The channel id
-        type: string
-  types:
-    out:
-      mediaType: application/json
-  dependencies:
-  - "camel:kamelet"
-  template:
-    from:
-      uri: "kamelet:source"
-      steps:
-```
-+
-{empty} +
-+
-.. Include your prototype code
-+
-(Copy/paste below `spec`, at the bottom of the _Kamelet_)
-+
-NOTE: This snippet below is the one you have just tested locally.
-+
-```yaml
-      - remove-headers:
-          pattern: "*"
-      - set-header:
-          name: Content-Type
-          simple: application/json
-      - set-header:
-          name: Authorization
-          simple: Bot {{token}}
-      - to:
-          uri: "https://discordapp.com/api/channels/{{channel}}/messages"
-```
-+ 
-{empty} +
-+
-Save changes.
-+ 
-{empty} +
-
-. Test your _Kamelet_
-+
-.. Modify your prototype `test-discord.yaml`
-+
-Replace the HTTP logic with your _Kamelet_:  
-+
-----
-# camel-k: language=yaml
-
-# Write your routes here, for example:
-- from:
-    uri: "timer:yaml"
-    parameters:
-      repeatCount: "1"
-    steps:
-      - setBody:
-          constant: '{"content": "Hello from Camel"}'
-      - log: "${body}"
-----
-+
-```yaml
-      - to:
-          uri: "kamelet:discord-sink"
-          parameters:
-            token:   "{{discord.token}}"
-            channel: "{{discord.channel}}"
-```
-+
-{empty} +
-+
-Save changes.
-+
-{empty} +
-.. Update configuration
-+
-We include the [`discord`.xxxxx] prefix on parameters to avoid confusion with other chat systems.
-+
-* **Linux**
-+
-[subs=]
-```bash
-sed -i 's/token/discord.token/g' stage4.properties
-sed -i 's/channel/discord.channel/g' stage4.properties
-<br>
-```
-+
-// * **MacOS**
-// +
-// [subs=]
-// ```bash
-// sed -i '' 's/token/discord.token/g' stage4.properties
-// sed -i '' 's/channel/discord.channel/g' stage4.properties
-// <br>
-// ```
-// +
-{empty} +
-
-.. Run it
-+
-```bash
-camel run *
-```
-+
-{empty} +
-+
-Again, if all goes well, _Discord_ will receive the message and display it in the room, as shown below:
-+
-image::images/discord-room-hello.png[align="left", width=40%]
-+
-{empty} +
-+
-
-
-=== End of encapsulation
 
 [type=verification]
 Did you see the message showing in _Discord_?
@@ -1083,6 +931,7 @@ Press `ctrl`+`c` to stop _Camel JBang_.
 [time=5]
 [id="kamelet-binding-create"]
 == Part 2 - Kafka ⇒ Discord
+{style-all}
 
 [type=taskResource]
 .Credentials
@@ -1135,167 +984,451 @@ Produces events to _Discord_.
 
 {empty} +
 
+Let's get started.
+
+{empty} +
 
 
-=== Process definition
+=== Clean up your environment
+
+Before you start this lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
 
 . Close tabs
-+
-image::images/crw-close-tabs.png[align="left", width=100%]
-+
-{blank}
-+
-Before you start this second lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
 +
 1) Click on the file explorer's `...` button +
 2) Ensure your `Open Editors` is ticked [√] +
 3) Click the `Close all Editors` button.
 +
+{blank}
++
+image::images/crw-close-tabs.png[align="left", width=100%]
++
 {empty} +
 
-. Setup the _Kamelet_ binding
+=== Setup your Lab folder
+
+* Next, prepare your lab by issuing the following command:
 +
-Given the process is almost identical to the _Kafka_ to _Matrix_/_Rocket.Chat_ ones, we can use one of those as a base for our definition. +
-The commands below clones the _Kafka_ to _Rocket.Chat_ and modifies it to use _Discord_ instead.
-+
-Run the following commands in your terminal:
-+
-* **Linux**
-+
-[subs=]
-```bash
-cp ../lab3/flows/k2r.yaml k2d.yaml
-sed -i 's/k2r/k2d/g'       k2d.yaml
-sed -i 's/stage3/stage4/g' k2d.yaml
-sed -i 's/rocketchat/discord/g' k2d.yaml
-sed -i 's/userid/channel/g' k2d.yaml
-touch k2d.jslt<br>
-```
-+
-// * **MacOS**
-// +
-// [subs=]
-// ```bash
-// cp ../lab3/flows/k2r.yaml k2d.yaml
-// sed -i '' 's/k2r/k2d/g'       k2d.yaml
-// sed -i '' 's/rocketchat/discord/g' k2d.yaml
-// sed -i '' 's/stage3/stage4/g' k2d.yaml
-// touch k2d.jslt<br>
-// ```
-// +
+--
+{copypaste}
+[subs=attributes]
+----
+step 10
+----
+--
+
 {empty} +
-+
-[NOTE]
+
+=== Define the Camel process
+
+It helps using one of the existing flows as a base to construct the new _Kafka to Discord_ proces, given some of the steps are identical.
+
+The picture below shows the _Kafka to Rocket.Chat_ process you previously constructed:
+
+image::images/new/flow-k2r.jpg[align="left", width=60%]
+
+{blank}
+
+Using the above process as a base, the changes you need to apply for the new flow are minimal:
+
+1. Redefine the filter to prevent *Discord to Discord* loopback events.
+1. Redefine the data mapping to use _Discord's_ interface as the target schema.
+1. Replace the call to _Rocket.Chat_ with a _Discord_ call.
+
+{blank}
+
+To simplify the work you need to do, we've prepared the flow so that you just need to fill the blanks. The picture below illustrates the focus areas where you need to work on:
+
+image::images/new/flow-k2d-todo.jpg[align="left", width=70%]
+
+{blank}
+
+==== Implement the process definition
+
+Follow the steps below to complete the base _Kafka to Discord_ process.
+
+[TIP]
 ====
-The commands above modified the `k2d.yaml` binding with the following changes:
+⏩ *Fast-Forward*
 
-* Its name is `k2d` (_Kafka_ to _Discord_)
-* The filter blocks `discord` source events
-* Applies the `k2d.jslt` transformation (to be defined)
-* Uses the new _Discord sink Kamelet_
-** defines the `channel` property for _Discord_
+[.underline]#*Only*# if you want to skip (fast-forward) this section, execute in your terminal the commands below:
+
+--
+{copypaste}
+----
+ff
+----
+--
 ====
+
+For a manual creation process, find in your directory tree the following resource:
+
+* `k2d.camel.yaml`
++
+Click to open it in _Kaoto_. 
+
+Then, follow the instructions below to complete its definition:
+
+{empty} +
+
+
+. *Define the filter*
++
+As previously explained _Kafka_ introduces the danger of events circling back. You need to prevent data flowing from one system, back to itself:
++
+  * _Discord -> Discord_
+  * _Matrix -> Matrix_
+  * _Rocket.Chat -> Rochet.Chat_
++
+{blank}
++
+The flows above can occur because we have processes taking originating messages from _Discord/Matrix/Rocket.Chat_ and pushing them to _Kafka_, while at the same time we have processes consuming _Kafka_ events and pushing them to _Discord/Matrix/Rocket.Chat_.
++
+The filter you need to define will prevent that for _Discord -> Discord_ cases.
++
+1. Click (in the blue area) `To do: Filter`
++
+You should see the `JQ` expression language selected by default.
++
+1. copy and paste the following expression:
++
+--
+{copypaste}
+----
+.source | test("discord")
+----
+--
++
+NOTE: The expression above picks the `source` JSON field from the _Kafka_ event and checks if it originates in the _Discord_ system.
++
+NOTE: Flows pushing events to _Kafka_ populate the field `source` to indicate where the event originates. 
 +
 {empty} +
 
-. Define the JSLT transformation (Standard -> _Discord_).
+. *Define the data transformation*
 +
-Copy the snippet below and paste it into your new `k2d.jslt` file:
+In the new data transformation, the source data complies with the common schema (from _Kafka_) while the target system needs to map data going to _Discord_.
 +
-```
+.. Include in your _Camel_ route a _Kaoto_ data transformation step
++
+--
+From _Kaoto_: 
+
+. Click the `+` button in the transition
+. Find and select the _Kaoto DataMapper_
+. Click to open the configuration panel
+. Click the `🔧Configure` button
+--
++
+{empty} +
+
+.. Attach schemas
++
+--
+From the DataMapper editor: 
+
+. Define the source:
+.. On `Parameters` click the `+` to add new parameter
+.. Enter `common` and click the checkmark button kbd:[√]
+.. Click first the "Attach schema" button, then the blue button, and pick `common.json`.
++
+{blank}
++
+. Define the target
+.. Find the target Body and click on "Attach schema", then the blue button, and pick `discord-out.json`
++
+{empty} +
+--
+
+.. Define the data mappings rules
++
+Copy and Paste the values below to define the given field entries:
++
+... `string[@key = content]`:
++
+--
+{copypaste}
+----
+concat("**",$common-x/xf:map/xf:string[@key='user'], "@", $common-x/xf:map/xf:string[@key='source'],"**: ", $common-x/xf:map/xf:string[@key='text'])
+----
+--
++
+{empty} +
+
+. [[step-discord-sink]]*Include the _Discord Kamelet_ call*
++
+Copy from below the step definition, and paste it at the end of your Camel route.
++
+--
+{copypaste}
+----
 {
-	"content":"**"+.user+"@"+.source+"**: "+.text
+  "type": "Route",
+  "name": "to",
+  "definition": {
+    "uri": "kamelet",
+    "description": "Discord",
+    "parameters": {
+      "templateId": "discord-sink",
+      "channel": "{{discord.room}}",
+      "token": "{{discord.token}}"
+    }
+  },
+  "__kaoto_marker": "kaoto-node"
 }
-```
+----
+--
++
+Then perform the actions below:
++
+1. Right-click the blue bar where it reads: `To do: Discord`
+1. Click the option: `⧉ Paste as child`
 +
 {empty} +
+
+==== Test the _Discord_ process
+
+You've completed the definition of all the parts needed:
+
+* the _Discord Kamelet_
+* the _"Kafka -> Discord"_ _Camel_ route
+* the properties file containing _Discord_ credentials
+
+{blank}
+
+Like you did before, use _Camel JBang_ to validate your implementation.
+
+{empty} +
+
+. Run _Camel_
 +
-[NOTE]
+_Camel JBang_ allows you to run your application in the background. +
+Issue the following command:
++
+--
+{copypaste}
+----
+labrun k2d \
+--background \
+--properties discord.properties
+----
+--
++
+NOTE: `labrun` executes `camel run` under the hood loading your code under the directory `k2d` (kafka-to-discord). +
+Additional flags are added to run in the background and pick your local `discord.properties`
++
+{empty} +
+
+. Verify the process is running
++
+Check your _Camel_ code is running by issuing the command below:
++
+--
+{copypaste}
+----
+camel ps
+----
+--
++
+You should see a terminal output similar to:
++
+----
+ PID   NAME  READY  STATUS   AGE  TOTAL  FAIL  INFLIGHT   
+ 2492  k2d    1/1   Running  22s      0     0         0
+----
++
+NOTE: the output above tells you the name of the application is `k2d` _(Kafka to Discord)_.
++
+{empty} +
+
+. Test the flow
++
+Again, use _Camel JBang_ to generate a message, except this time you want it sent to Kafka.
++
+Use the command below to send a message to _Kafka_:
++
+--
+{copypaste}
+[subs=attributes]
+----
+camel cmd send k2d \
+--body '
+  { 
+    "timestamp":"sometime",
+    "user":"{user-username}",
+    "source":"test",
+    "text":"Hello from Camel"
+  }'
+----
+--
++
+NOTE: the command injects the message in the _Camel_ `k2d` process. +
+_Camel JBang_ finds the _Kafka_ endpoint and pushes the message to the _Kafka_ cluster.
++
+NOTE: the JSON payload in the body conforms to the common interface defined to communicate via Kafka.
++
+If everything goes according to plan you should see an output similar to:
++
+++++
+<pre>
+<span style="color:grey">2025-10-20 20:21:33.640</span>   <span style="color:deeppink;">2492</span> --- <span style="color:cyan">kafka://myroom?brokers=my-cluster-kafka-</span> : <span style="color:limegreen;">Sent (success) (4ms)</span>
+</pre>
+++++
++
+{empty} +
+
+. Check Discord's room
++
+_Discord_ should have received the message and displayed it in the room, as shown below:
++
+[IMPORTANT]
 ====
-We're mapping values from the Standard data model JSON structure
+Make sure you have selected in Discord the channel: +
+`# user3` {room}
 ====
++
+image::images/discord-room-hello.png[align="left", width=30%]
++
 {empty} +
 
-And that's it, ready to be deployed.
-
-{empty} +
-
-=== Deploy and test
-
-. Select your _OpenShift_ project
+. Stop the process
 +
-For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
+Ensure you don't forget to stop the process running in the background.
+Execute the command below:
 +
-[source,bash,subs="attributes+"]
+--
+{copypaste}
 ----
-oc project {namespace}
+camel stop k2d
 ----
+--
 +
-{empty} +
-
-. Deploy the _Kamelet_
-+
-To allow _Kubernetes_ users to consume (use in a binding) the _Discord_ _Kamelet_, we need to push the its definition to _OpenShift_ to become part of the Kamelet catalog.
-+
-Push it using the following command:
-+
-```bash
-oc apply -f discord-sink.kamelet.yaml
-```
-+
-{empty} +
-
-
-. Push the configuration to _OpenShift_
-+
-For your _Kamelet_ binding to operate, its configuration needs to be available in _OpenShift_.
-+
-Create the _Secret_ and the _ConfigMap_ that includes the JSLT. +
-Run the following `oc` command:
-+
-[subs=]
-```bash
-oc create secret generic stage4 --from-file=stage4.properties
-oc create cm stage4-transform --from-file=k2d.jslt
-<br>
-```
-{empty} +
-
-. Deploy the YAML definition containing your new _Kamelet Binding_
-.. Run the following `oc` command to deploy the integration:
-+
-```bash
-oc apply -f k2d.yaml
-```
-+
-NOTE: Be patient, this action will take some time to complete as the operator needs to download all related dependencies, build the applications and create the image before the integration can be deployed.
-
-.. Wait for readyness
-+
-Check the deployment of the pod and logs to ensure all is in healthy state.
-+
-You can run the following command to check their state:
-+
-```bash
-oc get klb k2d
-```
-+
-{empty} +
-+
-When the pods are ready, the command should return:
+You should see a message like:
 +
 ----
-NAME   PHASE   REPLICAS
-k2d    Ready   1
+Shutting down Camel integration (PID: 2492)
 ----
 +
 {empty} +
 
-. Send messages to test the system.
-+
-.. Go to your _Matrix_'s room and send a message, for example `Hello from Matrix`.
 
-.. Then go to your _Rocket.Chat_'s room and send a message, for example `Hello from Rocket.Chat`.
+=== Deploy on OpenShift
+
+When happy with your previous local run, proceed to deploy the flow on OpenShift.
+
+. Use the command below to deploy the process:
++
+--
+{copypaste}
+----
+cp discord.properties k2d/application.properties && \
+labdeploy k2d
+----
+--
++
+NOTE: Be patient, this action may take some time to complete (could take up to 10mn the first time).
++
+NOTE: `discord.properties` is copied inside the project to ensure it's included in the deployment.
++
+You can monitor the state of the resource with the following command:
++
+--
+{copypaste}
+----
+oc get deployment/k2d
+----
+--
++
+When the deployment is ready, the command outputs something similar to:
++
+----
+NAME   READY   UP-TO-DATE   AVAILABLE   AGE
+k2d    1/1     1            1           10m 
+----
++
+{empty} +
+
+
+. Test the deployment
++
+Push a message to _Kafka_ using the _Camel JBang_ command below:
++
+--
+{copypaste}
+[subs=attributes]
+----
+camel cmd send \
+--uri "kafka:myroom?brokers=my-cluster-kafka-bootstrap:9092" \
+--body '
+  { 
+    "timestamp":"sometime",
+    "user":"{user-username}",
+    "source":"test",
+    "text":"Hello from Camel"
+  }'
+----
+--
++
+NOTE: `camel cmd send` does not refer to any local process.
++
+NOTE: the `--uri` flag points directly to the _Kafka_ platform.
++
+NOTE: the JSON payload in the body conforms to the common interface defined to communicate via Kafka.
++
+If everything goes according to plan you should see an output similar to:
++
+++++
+<pre>
+<span style="color:grey">2025-10-20 20:21:33.640</span>   <span style="color:deeppink;">7697</span> --- <span style="color:cyan">kafka://myroom?brokers=my-cluster-kafka-</span> : <span style="color:limegreen;">Sent (success) (4ms)</span>
+</pre>
+++++
++
+{empty} +
+
+. Check Discord's room
++
+_Discord_ should have received the message and displayed it in the room, as shown below:
++
+[IMPORTANT]
+====
+Make sure you have selected in Discord the channel: +
+`# user3` {room}
+====
++
+image::images/discord-room-hello.png[align="left", width=30%]
++
+{empty} +
+
+{empty} +
+
+=== Send messages End-to-End
+
+You're almost there. +
+Run a last test to see messages flowing _End-to-End_, from _Matrix/Rocket.Chat to Discord_.
+
+. Send messages to test the flow.
++
+====
+.. Go to your _Matrix_'s room and send a message, for example:
++
+--
+{copypaste}
+----
+Hello from Matrix
+----
+--
+
+.. Then go to your _Rocket.Chat_'s room and send a message, for example:
++
+--
+{copypaste}
+----
+Hello from Rocket.Chat
+----
+--
+====
++
+{empty} +
 +
 If all goes well you should see something similar to the picture below:
 +
@@ -1303,8 +1436,6 @@ image::images/stage4-msg-k2d-test.png[align="left", width=90%]
 +
 {empty} +
 
-+
-{empty} +
 
 [type=verification]
 Did you see the message going from _Matrix_ to _Discord_?
@@ -1328,8 +1459,9 @@ Inspect in the pod logs to troubleshoot.
 
 
 [time=5]
-[id="kamelet-binding-create"]
-== Part 3 - Discord ⇒ Kafka
+[id="discord-source-consumer"]
+== Part 3 - Create the source consumer
+{style-all}
 
 [type=taskResource]
 .Credentials
@@ -1358,30 +1490,32 @@ Inspect in the pod logs to troubleshoot.
 * link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
 ****
 
-In previous exercises we kept using _Kamelets_ to define processing flows. This task however requires more developer control.
-
-_Camel K_ provides the following development options:
-
-====
-* *Kamelets* +
-These are like capsules containing _Camel_ routes that can be used in _Kamalet_ bindings and also invoked from _Camel_'s DSL (_Domain Specific Language_).
-
-* *Kamelet bindings* +
-Bindings are no-code definitions where _Kamelets_ are bound together or to a platform resource (_Kafka/Knative_). _Camel K_ deploys them as a running integration units.
-
-* *Camel DSL* +
-The _Camel_ language to define integration processes (routes). Using the DSL's EIPs (_Enterprise Integration Patterns_), the _Camel_ components (connectors) and _DataFormats_ (translators) the developer defines integrations with a very high level of control.
-====
-
-{empty} +
+In previous exercises, our _Camel_ definitions mainly used source/sink _Kamelets_ to consume/produce events. In this new task however, to communicate with _Discord_, more developer control is required.
 
 _Discord_ implements the use of websockets to push notifications from the chat platform to the application. A websocket is a 2-way communication protocol on top of HTTP. _Camel's_ DSL provides the necessary level of control to implement a _Discord_ listener.
 
 {empty} +
 
+[NOTE]
+====
+As a reminder, _Camel_ provides the following route constructs:
+
+* *Kamelets* +
+These are like capsules containing _Camel_ routes. They don't run on their own, they are used in _Pipes_ or traditional _Camel_ routes.
+
+* *Pipes* +
+These are no-code definitions where _Kamelets_ are sequenced together. _Camel_ deploys them as running integration units.
+
+* *Camel routes* +
+These are defined using the _Camel's_ DSL _(Domain Specific Languate)_. _Camel_ provides EIPs (_Enterprise Integration Patterns_), components (connectors) and _DataFormats_ (translators), as constructs the developer can use to define integrations with a very high level of control.
+====
+
+{empty} +
+
 === Process overview
 
-Although the data flow will be implemented with _Camel's_ DSL instead of _Kamelets_, the processing steps are still essentially the same. The diagram below illustrates the _Discord_ -> _Kafka_ data flow:
+Although the actions of consuming/producing events will be implemented with _Camel's_ DSL instead of _Kamelets_, the core processing steps are still essentially the same. +
+The diagram below illustrates the _Discord -> Kafka_ data flow:
 
 image::images/processing-flow-discord2kafka.png[align="center", width=90%]
 
@@ -1422,369 +1556,393 @@ The _Camel_ developer needs to open a websocket connection and ensure the follow
 
 {empty} +
 
+=== Implementation approach
 
-=== Process definition
+Let's first understand how the new implementation approach (no Kamelets) differs from previous exercises (with Kamelets).
+
+NOTE: This section covers the cases where _Camel_ consumes events from _Matrix/Rocket.Chat/Discord_
+
+* Previous chapters:
+** Flows start with a **Kamelet** component, followed by other route steps.
+** Source Kamelets encapsulates actions.
++
+{empty} +
+
+* This chapter:
+** The flow starts with a **Direct** component (consumer), followed by other route steps.
+** A source _Camel_ route encapsulates logic to obtain events from Discord, and calls **direct** to hand over control.
++
+NOTE: the **direct** component is used to allow routes to call other routes. 
+
+{empty} +
+
+
+=== Flow construction 
+
+Time to get started.
+
+{empty} +
+
+==== Clean up your environment
+
+Before you start this lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
 
 . Close tabs
-+
-image::images/crw-close-tabs.png[align="left", width=100%]
-+
-{blank}
-+
-Before you start this second lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
 +
 1) Click on the file explorer's `...` button +
 2) Ensure your `Open Editors` is ticked [√] +
 3) Click the `Close all Editors` button.
 +
+{blank}
++
+image::images/crw-close-tabs.png[align="left", width=100%]
++
+{blank}
+
 {empty} +
 
-. Setup your lab folder
+==== Setup your Lab folder
+
+* Next, prepare your lab by issuing the following command:
 +
-Execute the following commands to create your working folder and configuration:
+--
+{copypaste}
+[subs=attributes]
+----
+step 12
+----
+--
+
+{empty} +
+
+
+==== Create your Discord consumer
+
+Follow the steps below to create your base _Discord_ sink _Kamelet_
+
+[TIP]
+====
+⏩ *Fast-Forward*
+
+[.underline]#*Only*# if you want to skip (fast-forward) this section, execute in your terminal the commands below:
+
+--
+{copypaste}
+----
+ff
+----
+--
+====
+
+For a manual creation process:
+
+. Find in your directory tree the following resource:
 +
-[subs=]
-```bash
-cd /projects/message-hub
-mkdir lab4-d2k
-cd lab4-d2k
-cp ../lab4-k2d/stage4.properties .<br>
-```
+--
+* `discord-source.camel.yaml`
++
+Click to open it in _Kaoto_. +
+It will present a banner informing you no routes are defined.
+--
 +
 {empty} +
+
+[start=2]
+. Create the Camel routes
++
+Because creating the Discord listener is not trivial, the lab provides the routes pre-defined for you, just copy and paste the given snippets to complete the work.
 +
 [NOTE]
 ====
-We've copied the same configuration file from the previous exercise since it contains the same _Discord_ credentials identifying your bot.
+The following list summarizes the Camel routes you're about to include:
+
+. One route to let _Discord_ **identify** _Camel_ as a registered bot.
+. One route to send **heartbeats** to _Discord_ to signal _Camel_ is alive.
+. One route to handle all **events** coming from _Discord_, including user messages.
 ====
 +
-{empty} +
-
-. Find your new folder in the project tree
+[NOTE]
+====
+image::images/discord-websocket-management.png[align="left", width=30%]
+====
 +
-image::images/crw-folder2.png[align="left", width=30%]
+Kaoto has the ability to provide bi-directional mode of code edition: visual and text based. +
+You will use the text based edition to append the snippets (routes) given below.
 +
-{blank}
+NOTE: Kaoto will automatically synchronize your canvas in the visual mode.
 +
-Ensure you're working on folder `lab4-d2k`
+Open the file in source code view (text mode). +
+In your editor (upper-right corner), find and click the button pass:[<code style="background-color: black; color: white; padding: 10px; border-radius: 5px; font-family: console;"><b>&lt; / &gt;</b></code>]
 +
-{empty} +
-
-. Create your _Camel_ definition file
-+
-Execute the following _Camel JBang_ command:
-+
-```bash
-camel init d2k.xml
-```
+The action above should open the empty source code file in text mode.
 +
 {empty} +
 +
-Open the file to edit.
+[start=1]
+1. Include a (_Discord_) identification process
 +
-{empty} +
-
-. Include a (_Discord_) identification process
+_Discord_ sends an identification request when you open a new _Websocket_ session. 
 +
-Replace in your `d2k.xml` the main _Camel_ route, by the following one:
+The _Camel_ route below provides the actions to identify our _Camel_ system with _Discord_.
 +
+Copy/paste the snippet, click the `Copy to clipboard` button and paste the code in your editor:
++
+--
+{copypaste}
 ----
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- camel-k: language=xml -->
-
-<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns="http://camel.apache.org/schema/spring"
-        xsi:schemaLocation="
-            http://camel.apache.org/schema/spring
-            https://camel.apache.org/schema/spring/camel-spring.xsd">
-----
-+
-```xml
-    <route id="identification">
-        <from uri="direct:identify"/>
-        <setBody>
-            <simple>{
-                "op": 2,
-                "d": {
-                  "token": "{{discord.token}}",
-                  "intents": 513,
-                  "properties": {
-                    "os": "linux",
-                    "browser": "my_library",
-                    "device": "my_library"
+- route:
+    description: Identification
+    from:
+      uri: direct
+      parameters:
+        name: identify
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: |
+                  {
+                    "op": 2,
+                    "d": {
+                      "token": "{{discord.token}}",
+                      "intents": 513,
+                      "properties": {
+                        "os": "linux",
+                        "browser": "my_library",
+                        "device": "my_library"
+                      }
+                    }
                   }
-                }
-              }
-            </simple>
-        </setBody>
-        <to uri="ahc-wss://gateway.discord.gg/?v=9&amp;encoding=json&amp;clientConfig=#myconfig"/>
-    </route>
-```
-+
+        - to:
+            uri: vertx-websocket
+            parameters:
+              consumeAsClient: true
+              encoding: json
+              host: wss:gateway.discord.gg
+              port: 443
+              originHeaderUrl: https://gateway.discord.gg
+              v: 9
 ----
-</routes>
-----
+--
 +
 [NOTE] 
 --
-* The `from` element defines the `direct` _Camel_ component permitting other _Camel_ routes to trigger identification events.
+* The (from) `uri` element defines the `direct` _Camel_ component permitting other _Camel_ routes to trigger identification events.
 
 * The JSON body follows _Discord's_ API specification for identification payloads.
 
-* The parameter `{{discord.token}}` identifies the bot connecting to _Discord_.
+* The parameter `{{discord.token}}` identifies our _Camel_ bot registerd in _Discord_.
 
-* The producer (`to` element) invokes _Discord's_ websocket, and uses a custom client configurer `myconfig` (java resource) to customise the websocket connection. 
+* The producer (`to` element) pushes the JSON body to _Discord's_ websocket.
 --
 +
 {empty} +
 
-. Include a pulsating heartbeat process
+1. Include the pulsating heartbeat process
 +
-Inlcude in your `d2k.xml` the additional _Camel_ route:
+Include in your `discord-source.camel.yaml` the additional _Camel_ route below:
 +
-```xml
-    <route id="heartbeat">
-        <from uri="timer:heartbeat?delay=10000&amp;period={{time:30000}}"/>
-        <setBody>
-            <simple>{"op": 1,"d": 251}</simple>
-        </setBody>
-        <to uri="ahc-wss://gateway.discord.gg/?v=9&amp;encoding=json&amp;clientConfig=#myconfig"/>
-    </route>
-```
+--
+{copypaste}
+----
+- route:
+    description: Heartbeats
+    from:
+      uri: timer
+      parameters:
+        delay: 10000
+        period: "{{time:30000}}"
+        timerName: heartbeat
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: |
+                  {
+                    "op": 1,
+                    "d": 251
+                  }
+        - to:
+            uri: vertx-websocket
+            parameters:
+              consumeAsClient: true
+              encoding: json
+              host: wss:gateway.discord.gg
+              originHeaderUrl: https://gateway.discord.gg
+              port: 443
+              v: 9
+----
+--
 +
 [NOTE] 
 --
-* The `from` element defines the `timer` _Camel_ component to triggers an event every 30 seconds.
+* The `from` element defines the `timer` _Camel_ component to trigger an event every 30 seconds.
 
 * The JSON body follows _Discord's_ API specification for heartbeat payloads.
 
-* The producer (`to` element) invokes _Discord's_ websocket, and uses a custom client configurer `myconfig` (java resource) to customise the websocket connection. 
+* The producer (`to` element) pushes the JSON body to _Discord's_ websocket.
+
 --
 +
 {empty} +
 
-. Include an event listener
+1. Include the event listener
 +
-Inlcude in your `d2k.xml` the yet another _Camel_ route:
+Include in your `discord-source.camel.yaml` yet another _Camel_ route:
 +
-```xml
-    <route id="listener">
-        <from uri="ahc-wss://gateway.discord.gg/?v=9&amp;encoding=json&amp;clientConfig=#myconfig"/>
-        <log message="from DISCORD: ${body}"/>
-        <choice>
-            <when>
-                <jsonpath>$[?(@.op == 11)]</jsonpath>
-                <log message="Heartbeat ACK received."/>
-            </when>
-            <when>
-                <jsonpath>$[?(@.op == 7)]</jsonpath>
-                <log message="Reconnect requested. Server will disconnect."/>
-            </when>
-            <when>
-                <jsonpath>$[?(@.op == 10)]</jsonpath>
-                <log message="Hello received. Sending identification..."/>
-                <to uri="direct:identify"/>
-            </when>
-            <when>
-                <jsonpath>$[?(@.t == "MESSAGE_CREATE" &amp;&amp; @.d.author.username != "camelbot")]</jsonpath>
-                <to uri="jslt:d2k.jslt"/>
-                <to uri="direct:kafka-push"/>
-            </when>
-        </choice>
-    </route>
-```
+--
+{copypaste}
+----
+- route:
+    description: Event Listener
+    from:
+      uri: vertx-websocket
+      parameters:
+        consumeAsClient: true
+        encoding: json
+        host: wss:gateway.discord.gg
+        originHeaderUrl: https://gateway.discord.gg
+        port: 443
+        v: 9
+      steps:
+        - choice:
+            when:
+              - description: Hello
+                expression:
+                  jq:
+                    expression: .op == 10
+                steps:
+                  - to:
+                      uri: direct
+                      parameters:
+                        name: identify
+              - description: Ready
+                expression:
+                  jq:
+                    expression: .op == 0 and .t == "READY"
+                steps:
+                  - log:
+                      message: Discord connection open and session ready.
+                  - stop: {}
+              - description: Heartbeat ACK
+                expression:
+                  jq:
+                    expression: .op == 11
+                steps:
+                  - stop: {}
+              - description: Message
+                expression:
+                  jq:
+                    expression: .t == "MESSAGE_CREATE"
+                steps:
+                  - filter:
+                      jq:
+                        expression: .d.channel_id != {{discord.room}}
+                      steps:
+                        - stop: {}
+                  - to:
+                      uri: direct
+                      parameters:
+                        name: main-process
+              - description: Reconnect
+                expression:
+                  jq:
+                    expression: .op == 7
+                steps:
+                  - stop: {}
+----
+--
 +
 [NOTE] 
 --
-* The `from` consumer connects to _Discord's_ websocket to attend incoming events, and uses a custom client configurer `myconfig` (java resource) to customise the websocket connection. 
+* The `from` consumer connects to _Discord's_ websocket to attend incoming events. 
 
 * A `choice` EIP matches types of incoming events according to their `op` (operation identifier).
 
-* Events with `op == 10` require responding to _Discord_ with an identification event (triggers internal call to `direct:identify`).
+* Events with `.op == 10` require responding to _Discord_ with an identification event (triggers internal call to `direct:identify`).
 
-* Events of type `MESSAGE_CREATE` identify _Discord_ chat messages to be routed to Kafka. The expression includes a condition (filter) to block BOT messages.
-** *ATTENTION:* Make sure the field `.d.author.username` is evaluated against the bot name you're using. The code defines `camelbot` by default.
-** Chat messages are transformed with a JSLT mapping.
+* Events of type `MESSAGE_CREATE` identify _Discord_ messages and are directed to the main processor.
+
 --
 +
 {blank}
 +
-[WARNING]
---
-In the filter expression for events of type `MESSAGE_CREATE`, make sure the field `.d.author.username` is evaluated against the bot name you're using. The code defines `camelbot` by default.
-
-Not Using the correct bot name will cause feedback loops.
---
+NOTE: The `main-process` route is yet to be implemented and, later in the lab exercise, where the main steps to push messages to Kafka will be defined.
 +
 {empty} +
 
+By the end of this process you should find all the route definitions in your canvas (vertical layout):
 
-. Include a _Kafka_ publisher
-+
-Inlcude in your `d2k.xml` the last _Camel_ route:
-+
-```xml
-    <route id="kafka-publisher">
-        <from uri="direct:kafka-push"/>
-        <log message="message to push: ${body}"/>
-        <choice>
-            <when>
-                <simple>"{{camel.jbang.classpathFiles:not-jbang}}" != "not-jbang"</simple>
-                <log message="JBang instance, bypassing kafka push"/>
-            </when>
-            <otherwise>
-                <log message="Camel K instance, pushing to kafka"/>
-                <toD uri="kafka:roomx?brokers=my-cluster-kafka-bootstrap:9092"/>
-            </otherwise>
-        </choice>
-    </route>
-```
-+
-[NOTE] 
---
-* The `from` element defines a `direct` _Camel_ component permitting other _Camel_ routes invoking this route to publish events to _Kafka_.
+image::images/new/source-discord-flows.jpg[align="center", width=100%]
 
-* A `choice` EIP defines two different behaviours:
-** Executions with _Camel JBang_, for local testing (bypassing pushes to _Kafka_).
-** Live executions pushing events to the _Kafka_ cluster.
+{empty} +
+
+==== Test your Discord consumer
+
+It's time to check it all works. +
+We've included in your folder the file `d2k.camel.yaml` _(Discord to Kafka)_. It contains the endpoint `direct:main-process` where the _Discord_ source above forwards messages to. The base route provided only logs messages coming from _Discord_, as per the image below:
+
+image::images/new/flow-d2k-test.jpg[align="left", width=20%]
+
+{empty} +
+
+. Run the _Camel_ routes
++
+Issue the following command:
++
 --
+{copypaste}
+----
+camel run d2k/* \
+--properties discord.properties
+----
+--
++
+NOTE: the command above loads your code under the directory `d2k` (discord-to-kafka) and picks your local `discord.properties`
 +
 {empty} +
 
-. Define the JSLT transformation (_Discord_ -> Standard).
+. Send a message from _Discord_
 +
-.. Create the JSLT file
-+
-Execute the following command:
-+
-```bash
-touch d2k.jslt
-```
-+
-{empty} +
-+
-.. Copy the snippet below and paste it into your new `d2k.jslt` file:
-+
-```
-{
-	"timestamp": string(round(now())),
-	"source":"discord", 
-	"user": .d.author.username, 
-	"text": .d.content
-}
-```
-+
-[NOTE]
+[IMPORTANT]
 ====
-* We're mapping values from _Discord's_ JSON structure.
-* We're generating a timestamp (_Discord_ doesn't provide one).
+Make sure you have selected in _Discord_ the channel: +
+`# user3` {room}
 ====
 +
-{empty} +
-
-
-. Define the custom websocket configurer
+From your Discord browser tab, send a message, for example:
 +
-The default behaviour of _Camel's_ websocket component does not include the `Origin` HTTP header set to the value _Discord_ requires.
-+
-Camel is highly customisable. In this particular case, to address the problem we can create a custom _Java_ class that includes the needed HTTP header.
-+
-.. Create the Java class
-+
-Execute the following command:
-+
-```bash
-touch wsConfig.java
-```
-+
-{empty} +
-+
-.. Inlcude in your `wsConfig.java` file the following code:
-+
-```java
-// camel-k: language=java
-
-import org.apache.camel.BindToRegistry;
-import org.apache.camel.builder.RouteBuilder;
-import org.asynchttpclient.AsyncHttpClientConfig;
-import org.asynchttpclient.DefaultAsyncHttpClientConfig;
-import org.asynchttpclient.filter.RequestFilter;
-import org.asynchttpclient.filter.FilterContext;
-import org.asynchttpclient.filter.FilterException;
-
-public class wsConfig extends RouteBuilder {
-
-    //dummy
-    @Override
-    public void configure() throws Exception {}
-
-    @BindToRegistry
-    public static AsyncHttpClientConfig myconfig(){
-
-        DefaultAsyncHttpClientConfig.Builder configBuilder = new DefaultAsyncHttpClientConfig.Builder();
-        configBuilder.addRequestFilter(new RequestFilter() {
-            public FilterContext filter(FilterContext ctx) throws FilterException {
-
-                    ctx.getRequest().getHeaders().add("Origin", "https://gateway.discord.gg");
-
-                    return ctx;
-                }
-        });
-
-        return configBuilder.build();
-    }
-}
-```
-+
-[NOTE] 
 --
-* The class needs to extend `RouteBuilder` as _Camel K_ only accepts route builder definitions. In our case we define an empty `configure` method because our routes are defined in a separate XML file.
-
-* A filter method defines an instruction that adds the `Origin` header.
+{copypaste}
+----
+test Camel listener
+----
 --
-+
-{empty} +
-+
-Save changes.
-+
-{empty} +
-
-
-. Test locally your _Discord_ listener
-+
-.. Start your local instance with _Camel JBang_:
-+
-```bash
-camel run * --dep=org.apache.camel:camel-ahc-ws:3.18.2
-```
-+
-[NOTE] 
---
-As a temporary workaround, the _Camel_ websocket dependency `camel-ahc-ws` needs to be manually indicated. This component needs to be replaced in the future by a newer websocket component.
---
-+
-{empty} +
-+
-.. Go to your _Discord's_ room and send a message. +
-For example, type `test Camel listener`.
 +
 image::images/stage4-msg-d2k-test-local.png[align="left", width=30%]
 +
-{empty} +
+{empty} + 
 +
 If all goes well you should see in your terminal an output similar to:
 +
-----
-... : message to push: {"timestamp":"1663927933","source":"discord","user":"bmesegue","text":"test Camel listener"}
-... : JBang instance, bypassing kafka push
-----
+++++
+<pre style="line-height: 1;white-space: pre-wrap"><span style="color:grey;font-family: monospace;font-size: 12px;">2025-10-22 13:26:52.744 <span style="color: limegreen">INFO</span> <span style="color: deeppink">2134</span> --- [orker-thread-10] <span style="color: cyan;">discord-source.camel.yaml:87</span><span style="color: white;"> : Discord connection open and session ready.</span>
+2025-10-22 13:26:54.039 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">2134</span> --- [worker-thread-4] <span style="color: cyan">d2k.camel.yaml:11</span><span style="color: white;">            : message from Discord: {"t":"MESSAGE_CREATE","s":3,"op":0,"d":{"type":0,"tts":false,"timestamp":"2025-10-22T13:26:33.903000+00:00","pinned":false,"nonce":"1430658109562421248","mentions":[],"mention_roles":[],"mention_everyone":false,"member":{"roles":[],"premium_since":null,"pending":false,"nick":null,"mute":false,"joined_at":"2025-10-20T13:44:22.302000+00:00","flags":0,"deaf":false,"communication_disabled_until":null,"banner":null,"avatar":null},"id":"1430658110573514966","flags":0,"embeds":[],"edited_timestamp":null,<span style="background-color: #ffff00; color: #000000; padding: 2px 4px;">"content":"test Camel listener"</span>,"components":[],"channel_type":0,"channel_id":"1033097985220952134","author":{"username":"user3_29248","public_flags":0,"primary_guild":null,"id":"1429825714667913388","global_name":"user3","display_name_styles":null,"discriminator":"0","collectibles":null,"clan":null,"avatar_decoration_data":null,"avatar":null},"attachments":[],"guild_id":"1019612394131030036"}}</span></span></pre>
+++++
 +
-NOTE: You can read the in the logs the message `bypassing kafka push`. The code you copied contains logic to bypass _Kafka_ when running locally with _Camel JBang_.
+NOTE: Find the message content highlighted in yellow.
 +
 {empty} +
 
+You have completed the definition of your **_Discord_ consumer**, the equivalent of the source _Kamelets_ for _Matrix/Rocket.Chat_. Now you can use it as your source of _Discord_ events.
+
+{empty} +
+
+
+=== Checkpoint
+
 [type=verification]
-Did you see the _Discord_ message showing up in your terminal with the standard JSON format?
+Did you see the raw _Discord_ message showing up in your terminal?
 
 [type=verificationSuccess]
 Very good !
@@ -1792,94 +1950,385 @@ Very good !
 [type=verificationFail]
 Inspect in the pod logs to troubleshoot.
 
+TIP: Stop _Camel JBang_ when done +
+Press kbd:[Ctrl+C], from your terminal, to stop the running _Camel_ process.
+
 
 {empty} +
 
-Press `ctrl`+`c` to stop _Camel JBang_.
+
+[time=5]
+[id="discord-to-kafka"]
+== Part 4 - Discord ⇒ Kafka
+{style-all}
+
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+[type=taskResource]
+.Matrix
+****
+* link:{url-element}[Matrix Web Client, window="_blank"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
+****
+
+Now that you have your _Discord_ consumer, it is time to complete the main processing flow to handle _Discord_ messages, transform them and push them to _Kafka_.
+
+=== Clean up your environment
+
+Before you start this lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
+
+. Close tabs
++
+1) Click on the file explorer's `...` button +
+2) Ensure your `Open Editors` is ticked [√] +
+3) Click the `Close all Editors` button.
++
+{blank}
++
+image::images/crw-close-tabs.png[align="left", width=100%]
++
+{blank}
 
 {empty} +
 
-=== Deploy in OpenShift
+=== Setup your Lab folder
 
-You have successfully tested your integration locally. It is time to deploy it in _OpenShift_.
-
-. Select your _OpenShift_ project
+* Next, prepare your lab by issuing the following command:
 +
-For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
-+
-[source,bash,subs="attributes+"]
-----
-oc project {namespace}
-----
-+
-{empty} +
-
-. Deploy the integration
-+
-The _Camel K_ client (`kamel`) allows us to push the definition to _OpenShift_. The _Camel K_ operator will do the rest, as it does for _Kamelet_ bindings.
-+
-.. Run the following `kamel` command to deploy the integration:
-+
-[subs=]
-```bash
-kamel run --name d2k \
-d2k.xml \
-wsConfig.java \
--p file:stage4.properties \
---resource file:d2k.jslt \
--d camel-jslt \
--d camel-ahc-ws<br>
-```
-+
-NOTE: Be patient, this action will take some time to complete as the operator needs to download all related dependencies, build the applications and create the image before the integration can be deployed.
-+
-[NOTE] 
 --
-As a temporary workaround, the _Camel_ websocket dependency `camel-ahc-ws` needs to be manually indicated. This component needs to be replaced in the future by a newer websocket component.
+{copypaste}
+[subs=attributes]
+----
+step 14
+----
+--
+
+{empty} +
+
+
+=== Overview of work ahead
+
+It helps using one of the existing flows as a base to construct the new _Discord to Kafka_ proces, given some of the steps are identical.
+
+Only for reference, the _Matrix to Kafka_ flow (picture below) is a good starting point:
+
+image::images/new/flow-m2k.jpg[align="left", width=60%]
+
+{blank}
+
+Using the above process as a base, the changes you need to apply for the new flow are minimal:
+
+1. Redefine the filter to prevent *Discord to Discord* loopback events.
+1. Redefine the data mapping to use the common interface.
+
+{blank}
+
+To simplify the work you need to do, we've prepared the flow so that you just need to fill the blanks. +
+The picture below illustrates the focus areas where you need to work on:
+
+image::images/new/flow-d2k-todo.jpg[align="left", width=70%]
+
+{blank}
+
+=== Define the main Camel process
+
+Follow the steps below to complete the base _Discord to Kafka_ process.
+
+[TIP]
+====
+⏩ *Fast-Forward*
+
+[.underline]#*Only*# if you want to skip (fast-forward) this section, execute in your terminal the commands below:
+
+--
+{copypaste}
+----
+ff
+----
+--
+====
+
+For a manual creation process:
+
+. Find in your directory tree the following resource:
++
+--
+* `d2k.camel.yaml`
++
+Click to open it in _Kaoto_.
 --
 +
 {empty} +
 
-.. Wait for readyness
+
+. *Define the filter*
 +
-Check the deployment of the pod and logs to ensure all is in healthy state.
+Once more, you need to prevent loopback events to block _Discord -> Discord_ circles. +
+An advantage with Discord's API is that it provides a flag that signals the message was bot generated.
 +
-You can run the following command to check their state:
+NOTE: As a reminder, a loopback in _Discord_ can happen when we push a message to _Discord_ using our sink _Kamelet_ and _Discord_ notifies our registered _Camel_ bot via websocket.
 +
-```bash
-kamel get d2k
-```
+1. Click (in the blue area) `To do: Filter`
 +
-{empty} +
+You should see the `JQ` expression language selected by default.
 +
-When the pod is ready, the command should return:
+1. copy and paste the following expression:
 +
+--
+{copypaste}
 ----
-NAME   PHASE     KIT
-d2k    Running   demo-camelk/kit-ccmpckejt0blsp80sp10
+.d.author.bot == true
 ----
+--
 +
-{empty} +
-+
-You can run inspect the pod logs by running:
-+
-```bash
-kamel logs d2k
-```
+NOTE: The expression is much simpler in contrast with _Matrix/Rocket.Chat_ where message pattern matching was necesary using regular expressions.
 +
 {empty} +
 
+. *Define the data transformation*
++
+In the new data transformation, the source will be defined with _Discord's_ schema while the target will use the common schema, as the data is to be shared with all other systems in the platform.
++
+{empty} +
++
+A. Include the Kaoto data transformation step
++
+--
+From Kaoto: 
 
-. Test the integration
+. Click the `+` button inside the `To do: Mapping` step
+. Find and select the _Kaoto DataMapper_
+. Click to open the configuration panel
+. Click the `🔧Configure` button
+--
 +
-.. Go to your _Discord's_ room and send a message. +
-For example, type `Hello from Discord`.
+{empty} +
+
+A. Attach schemas
 +
-If all goes well you should see the message displayed both in Rocket.Chat and Matrix, as the picture shown below:
+--
+From the DataMapper editor: 
+
+. Define the source:
+.. On `Parameters` click the `+` to add new parameter
+.. Enter `discord` and click the checkmark button kbd:[√]
+.. Click first the Attach schema button, then the blue button, and pick `discord-in.json`.
++
+{blank}
++
+. Define the target
+.. Find the target Body and click on "Attach schema", then the blue button, and pick `common.json`
++
+{empty} +
+--
+
+A. Define the data mappings rules
++
+Copy and Paste the values below to define the given field entries:
++
+... `string[@key = timestamp]`: 
++
+--
+{copypaste}
+----
+current-dateTime()
+----
+--
++
+{blank}
++
+... `string[@key = source]`: 
++
+--
+{copypaste}
+----
+"discord"
+----
+--
++
+{blank}
++
+... `string[@key = user]`: 
++
+--
+{copypaste}
+----
+$discord-x/xf:map/xf:map[@key='d']/xf:map[@key='author']/xf:string[@key='global_name']
+----
+--
++
+{blank}
++
+... `string[@key = text]`:
++
+--
+{copypaste}
+----
+$discord-x/xf:map/xf:map[@key='d']/xf:string[@key='content']
+----
+--
++
+{empty} +
+
+That concludes the implementation phase for the main processing flow.
+
+{empty} +
+
+
+=== Test the flow
+
+You've completed the definition of all the parts needed:
+
+* the _Discord_ consumer
+* the _"Discord -> Kafka"_ _Camel_ route
+
+{blank}
+
+Like you did before, use _Camel JBang_ to validate your implementation.
+
+{empty} +
+
+. Run _Camel_
++
+_Camel JBang_ allows you to run your application in the background. +
+Issue the following command:
++
+--
+{copypaste}
+----
+labrun d2k \
+--properties discord.properties
+----
+--
++
+NOTE: `labrun` executes `camel run` under the hood loading your code under the directory `d2k` (discord-to-kafka). +
+An additional flag adds your local `discord.properties` configuration.
++
+{empty} +
+
+. Send a message from _Discord_
++
+From _Discord_, send a message, for example:
++
+[IMPORTANT]
+====
+Make sure you have selected in _Discord_ the channel: +
+`# user3` {room}
+====
++
+--
+{copypaste}
+----
+Hello from Discord
+----
+--
++
+{empty} + 
++
+If all goes well you should see the message displayed both in _Rocket.Chat_ and _Matrix_, as the picture shown below:
 +
 image::images/stage4-msg-d2k-test-ocp.png[align="left", width=90%]
 +
 {empty} +
++
+You should also see a log trace on your terminal similar to:
++
+++++
+<pre style="line-height: 1;white-space: pre-wrap"><span style="color:grey;font-family: monospace;font-size: 12px;">2025-10-23 13:37:05.723 <span style="color: limegreen">INFO</span> <span style="color: deeppink">3261</span> --- [worker-thread-1] <span style="color: cyan;">discord-source.camel.yaml:87</span><span style="color: white;"> : Discord connection open and session ready.</span>
+2025-10-23 13:37:40.512 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">3261</span> --- [worker-thread-0] <span style="color: cyan">d2k.camel.yaml:11</span><span style="color: white;">            : {"timestamp":"2025-10-23T13:37:40.49224044Z","source":"discord","user":"user3","text":"<span style="background-color: #ffff00; color: #000000; padding: 0px 0px;">Hello from Discord</span>"}</span></span></pre>
+++++
++
+NOTE: Find the message content highlighted in yellow.
++
+{empty} +
+
+{empty} +
+
+
+
+=== Deploy on OpenShift
+
+When happy with your previous local run, proceed to deploy the flow on _OpenShift_.
+
+{empty} +
+
+. Use the command below to deploy the process:
++
+--
+{copypaste}
+----
+cp discord.properties d2k/application.properties && \
+labdeploy d2k
+----
+--
++
+NOTE: `discord.properties` is copied inside the project to ensure it's included in the deployment.
++
+You can monitor the state of the resource with the following command:
++
+--
+{copypaste}
+----
+oc get deployment/d2k
+----
+--
++
+When the deployment is ready, the command outputs something similar to:
++
+----
+NAME   READY   UP-TO-DATE   AVAILABLE   AGE
+d2k    1/1     1            1           10m 
+----
++
+{empty} +
++
+{empty} +
++
+. Send a message from _Discord_
++
+From _Discord_, send a message, for example:
++
+[IMPORTANT]
+====
+Make sure you have selected in _Discord_ the channel: +
+`# user3` {room}
+====
++
+--
+{copypaste}
+----
+Hello from Discord
+----
+--
++
+{empty} + 
++
+If all goes well you should see the message displayed both in _Rocket.Chat_ and _Matrix_, as the picture shown below:
++
+image::images/stage4-msg-d2k-test-ocp.png[align="left", width=90%]
++
+{empty} +
+
+
+
 
 [type=verification]
 Did you see the message displayed in _Rocket.Chat_?

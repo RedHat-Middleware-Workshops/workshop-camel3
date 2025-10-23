@@ -18,24 +18,18 @@
               expression: .text | test("<b>.*@.*</b>")
               source: matrix
         - step:
-            description: "To do: Mapping"
-            steps:
-              - step:
-                  id: kaoto-datamapper-7a118d28
-                  steps:
-                    - to:
-                        id: kaoto-datamapper-xslt-3527
-                        uri: xslt-saxon:kaoto-datamapper-7a118d28.xsl
-                        parameters:
-                          failOnNullBody: false
-        - log:
-            message: ${body}
-        - step:
-            description: "To do: Kafka"
+            id: kaoto-datamapper-7a118d28
             steps:
               - to:
-                  uri: kafka
+                  id: kaoto-datamapper-xslt-3527
+                  uri: xslt-saxon:kaoto-datamapper-7a118d28.xsl
                   parameters:
-                    brokers: my-cluster-kafka-bootstrap:9092
-                    topic: myroom
+                    failOnNullBody: false
+        - log:
+            message: ${body}
+        - to:
+            uri: kafka
+            parameters:
+              brokers: my-cluster-kafka-bootstrap:9092
+              topic: myroom
       variableReceive: matrix
