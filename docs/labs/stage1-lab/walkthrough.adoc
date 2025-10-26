@@ -26,9 +26,21 @@
   border-radius:5px; \
 } \
 
+:style-summary: summary {cursor: pointer; list-style: none;}
+:style-triangle: .triangle {margin-right: .5em;} summary:hover .sumtext {text-decoration: underline;}
+:style-details:  .triangle::before {content: "▶";} details[open] .triangle::before {content: "▼";}
+:style-open-close: {style-summary}{style-triangle}{style-details} 
+
+
+
+//:style-summary: summary {cursor: pointer; list-style: none;}
+//:style-triangle: .triangle::before {content: "▶"; margin-right: .5em;}
+//:style-details: details[open] .triangle::before {content: "▼";} details[open] p {margin-top: 1em;}
+//:style-open-close: {style-summary}{style-triangle}{style-details} 
+
 :style-preview: pre {background-color: #272822; color: white; padding: 5px 15px; font-size: 15px}
 :style-indent: .indent2 {padding-left: 2rem;}
-:style-all: pass:a[<style>{style-kbd}{style-preview}{style-indent}</style>]
+:style-all: pass:a[<style>{style-kbd}{style-preview}{style-indent}{style-open-close}</style>]
 
 :url-docserver: https://docserver-webapp.{openshift-app-host}
 //:url-docserver: http://0.0.0.0:8080
@@ -401,7 +413,10 @@ Use the following command to run locally your _Camel_ route:
 --
 {copypaste}
 ----
-camel run m2r/* --local-kamelet-dir=../support/deploy/kamelets
+camel run \
+--source-dir m2r \
+--properties matrix.properties \
+--local-kamelet-dir ../support/deploy/kamelets
 ----
 --
 +
@@ -580,14 +595,32 @@ NOTE: The Matrix Kamelet is configured to store events in a variable `matrix`, h
 +
 {empty} +
 
-. Run Camel JBang again ensuring you include your JSLT file. It should look as follows:
+. Run the flow again by issuing the following command:
 +
 --
 {copypaste}
 ----
-camel run * --local-kamelet-dir=../support/deploy/kamelets
+labrun m2r \
+--properties matrix.properties
 ----
 --
++
+[pass]
+<details>
+  <summary>
+    <span class="triangle"></span>
+    <span class="sumtext">Click for more information</span>
+  </summary>
+<p style="margin-top: 1em;">We provide the script <code>labrun</code> to help you read the commands more clearly.</br>
+Under the hood the script calls <i>Camel JBang</i> as per the snippet below:
+<pre>
+camel run \
+--source-dir m2r \
+--properties matrix.properties \
+--local-kamelet-dir ../support/deploy/kamelets
+</pre></p>
+</details>
++
 {empty} +
 
 . From Matrix send another chat message and inspect your terminal output. +
@@ -779,7 +812,6 @@ If it is still running, press kbd:[Ctrl+C] to stop it.
 +
 {empty} +
 
-
 . Deploy your _Matrix_ to _RocketChat_ integration
 +
 .. For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
@@ -795,6 +827,17 @@ oc project {namespace}
 {blank}
 +
 .. Use the command below to deploy your application:
++
+[TIP]
+====
+[pass]
+<details>
+<summary><span class="triangle">Click for more information</span></summary>
+<p><pre>
+Epcot is a theme park at Walt Disney World Resort.
+</pre><p>
+</details>
+====
 +
 --
 {copypaste}
