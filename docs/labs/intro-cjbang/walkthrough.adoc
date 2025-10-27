@@ -1,0 +1,736 @@
+:walkthrough: Camel JBang first steps
+:user-password: openshift
+:namespace: {user-username}
+
+// URLs
+:codeready-url: http://devspaces.{openshift-app-host}/
+
+
+:experimental:
+
+// WORKS
+:style-kbd: kbd { \
+  color: black; \
+  background-color: lightgrey; \
+  border: 1px solid black; \
+  box-shadow: 0px 1px black; \
+  font-size: .85em; \
+  line-height: .85em; \
+  display: inline-block; \
+  font-weight: 600; \
+  letter-spacing: .05em; \
+  padding: 3px 5px; \
+  white-space: nowrap; \
+  border-radius:5px; \
+} \
+
+:style-summary: summary {cursor: pointer; list-style: none;}
+:style-triangle: .triangle {margin-right: .5em;} summary:hover .sumtext {text-decoration: underline;}
+:style-details:  .triangle::before {content: "▶";} details[open] .triangle::before {content: "▼";}
+:style-open-close: {style-summary}{style-triangle}{style-details} 
+
+:style-preview: pre {background-color: #272822; color: white; padding: 5px 15px; font-size: 15px}
+:style-indent: .indent2 {padding-left: 2rem;}
+:style-all: pass:a[<style>{style-kbd}{style-preview}{style-indent}{style-open-close}</style>]
+
+:url-docserver: https://docserver-webapp.{openshift-app-host}
+//:url-docserver: http://0.0.0.0:8080
+
+:docserver-status: pass:a[<img hidden="true" src="invalid-image.jpg" onerror=" \
+        fetch('{url-docserver}/status') \
+        .then(response => response.text()) \
+        .then(data => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:lime;display:inline-block&quot;></div>') \
+        .catch(error => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:red;display:inline-block&quot;></div>') \
+      ">]
+
+:freplace: pass:[function replaceTokens(templateString, values) { \
+    const valueArray = values.split(',').map(val => val.trim()); \
+    let result = templateString; \
+    let replaceIndex = 0; \
+    while (result.includes('REPLACE') && replaceIndex < valueArray.length) { \
+        result = result.replace('REPLACE', valueArray[replaceIndex]); \
+        replaceIndex++; \
+    } \
+    return result; \
+}]
+
+:fdocserver: pass:a[function docserver(target,template,params) { \
+    {freplace} \
+    fetch('{url-docserver}/roomid?user='+params) \
+        .then(response => response.text()) \
+        .then(data => {target.firstChild.data=replaceTokens(text, data);}) \
+        .catch(error => room = 'Error fetching data: ' + error.message); \
+}]
+
+:fcopy: pass:a[function copy(el) { \
+  el.previousElementSibling.select(); \
+  text = el.previousElementSibling.textContent; \
+  console.log(text); \
+  navigator.clipboard.writeText(text + '\n') \
+        .then(response => console.log('Text with carriage return copied to clipboard!')) \
+        .catch(err => console.error('Failed to copy: ', err)); \
+}]
+
+:copypaste: pass:a[ \
+<div style="border: 1px solid #f0f0f0; border-bottom-color: #8a8d90; display: flex; align-items: flex-start;"> \
+  <textarea readonly style="field-sizing: content;border: none; background-color: #f0f0f0; width: 100%; resize: none; font-size:14px; font-family: monospace;padding: 5px 15px" rows="4">function example() { \
+  console.log("Hello {replace-with-previous}!"); \
+  return true; \
+}</textarea> \
+  <button class="mytooltip" onclick="{fcopy} copy(this);" style="border: none; background-color: white; padding: 5px 15px; border-bottom: 1px solid transparent; transition: border-bottom-color 0.2s;"> \
+    <svg fill="currentColor" height="1em" width="1em" viewBox="0 0 448 512" aria-hidden="true" role="img" style="vertical-align: -0.125em;"> \
+      <path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"></path> \
+    </svg> \
+    <span class="mytooltiptext">Copy to clipboard</span> \
+  </button> \
+  <style> \
+.mytooltip{position:relative;display:inline-block;border-bottom:1px dotted black}.mytooltip .mytooltiptext{visibility:hidden;width:120px;background-color:#555;color:#fff;text-align:center;border-radius:6px;padding:5px 0;position:absolute;z-index:1;bottom:125%;left:50%;margin-left:-60px;opacity:0;transition:opacity 0.3s}.mytooltip .mytooltiptext::after{content:"";position:absolute;top:100%;left:50%;margin-left:-5px;border-width:5px;border-style:solid;border-color:#555 transparent transparent transparent}.mytooltip:hover .mytooltiptext{visibility:visible;opacity:1} \
+  </style> \
+</div> \
+<img hidden="true" src="invalid-image.jpg" onerror="{ \
+  {fdocserver} \
+  let txtarea = this.parentElement.querySelector('textarea'); \
+  let div = this.closest('.paragraph'); \
+  if(!div.closest('.openblock')){div = div.parentElement} \
+  let source = div.nextElementSibling; \
+  let pre = source.querySelector('pre'); \
+  let text = pre.textContent; \
+  let lineCount = text.split('\n').length; \
+  let tokens = this.nextSibling; \
+  console.log('tokens: [' +tokens.data.trim()+']'); \
+  if(tokens.data.trim()!=''){docserver(txtarea,text,tokens.data);} else {txtarea.firstChild.data=text;} \
+  source.remove(); \
+  tokens.remove(); \
+  this.remove(); \
+}"> \
+]
+
+:snippet: pass:a[ \
+<div style="border: 1px solid #f0f0f0; border-bottom-color: #8a8d90; display: flex; align-items: flex-start;"> \
+</div> \
+<img hidden="true" src="invalid-image.jpg" onerror="{ \
+  {freplace} \
+  let block = this.closest('.openblock'); \
+  let div = this.closest('.paragraph'); \
+  let source = div.nextElementSibling; \
+  let pre = source.querySelector('pre'); \
+  let text = pre.textContent; \
+  let lineCount = text.split('\n').length; \
+  let tokens = this.nextSibling; \
+  console.log('tokens: [' +tokens.data.trim()+']'); \
+  console.log('before text: [' +text+']'); \
+  text = replaceTokens(text, tokens.data.trim()); \
+  pre.textContent = text; \
+  console.log('after text: [' +text+']'); \
+  console.log(block); \
+  block.parentElement.insertBefore(pre,block); \
+  block.remove(); \
+}"> \
+]
+
+
+
+
+ifdef::env-github[]
+endif::[]
+
+
+
+[id='intro-camel-jbang']
+= Camel JBang - First steps
+
+Familiarise yourself with the prototyping tool helping you to run, iterate and test your Camel applications. 
+
+_Camel JBang_ is a command-line interface (CLI) that accelerates prototyping by letting developers quickly create, validate, and tweak flows without complex setups, making it perfect for rapid experimentation.
+
+image::images/camel-jbang.png[align="left", width=40%]
+
+{empty} +
+
+This chapter is optional but recommended to understand how _Camel JBang_ helps you work fast with _Apache Camel_
+
+[type=walkthroughResource,serviceName=openshift]
+.Invite System
+****
+[subs=attributes]
+++++
+<div style="padding-left: 20px">{docserver-status}<div>
+++++
+****
+
+
+{empty} +
+
+
+[time=15]
+[id='intro-camel-jbang']
+== Camel JBang at play
+{style-all}
+
+This workshop puts substantial focus on the prototyping phase. When a developer is tasked to deliver a solution, prototyping and experimentation are crucial to finding the best path forward, especially when adopting new, unfamiliar tools and techniques.
+
+During this workshop, _Camel JBang_ will be one such important prototyping tool.
+
+image::images/camel-jbang.png[align="left", width=40%]
+
+{empty} +
+
+This chapter is an introductory taste of _Camel JBang_ showing you a basic group of commands. Hopefully you'll get to see how much you can sharpen your axe when making a good use of _Camel JBang_. 
+
+{empty} +
+
+=== Playing a game with Camel JBang
+
+They say playing is a great way to learn, so let's play for a bit. While you're at it you'll discover a few tricks _Camel JBang_ has in the bag.
+
+NOTE: Later, we'll get serious when diving into the core of the workshop.
+
+{empty} +
+
+Pretend we're about to organise a tennis tournament.
+Let us introduce to you `player1`:
+
+TIP: Click the copy button and paste in your terminal to create the file
+--
+{copypaste}
+----
+cat <<EOF > player1.yaml
+- route:
+    id: player1
+    from:
+      uri: file:court/side1
+      parameters:
+        delete: true
+      steps:
+        - log:
+            message: (ping)⋅⋅⋅━━━► 🎾
+        - delay:
+            constant: "{{pace:2000}}"
+        - to:
+            uri: file:court/side2
+EOF
+----
+--
+
+NOTE: `player1` one plays on one side of the court and hits every ball that comes his way. +
+When hitting the ball, it crosses the court (at a given pace) to the other side.
+
+Run this command to get `player1` on the court, ready to play:
+
+--
+{copypaste}
+----
+camel run player1.yaml
+----
+--
+
+NOTE: Observe the simplicty of it all, no more than one player in the game, no dependency descriptors, no additional files needed to run the show. _Camel JBang_ figures all out, it reads `player1` and provides all that is needed to the run the game.
+
+In your terminal you'll see `player1` ready:
+
+++++
+<pre style="line-height: 1;white-space: pre-wrap"><span style="color:grey;font-family: monospace;font-size: 12px;">2025-10-26 12:40:32.210 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">2243</span> --- [           main] <span style="color: cyan">e.camel.impl.engine.AbstractCamelContext</span><span style="color: white;"> : Apache Camel 4.15.0 (player1) started in 242ms ...</span></span></pre>
+++++
+
+{blank}
+
+Also, watching closely your folder structure, you'll see on which side `player1` stands waiting for balls:
+
+* `court/side1`
+
+{empty} +
+
+=== Throw a ball
+
+`player1` is ready, give him a 🎾.
+
+From the terminal's top right corner, click `+` to open a second terminal, as shown below:
+
+image::images/terminal-plus.jpg[align="left", width=30%]
+
+{blank}
+
+From the new terminal, use _Camel JBang_ to hand a ball to `player1`:
+
+TIP: The `send` command is very helpful to test the game, you can throw balls to players and see what happens.
+
+--
+{copypaste}
+----
+camel cmd send player1 --header CamelFileName=🎾
+----
+--
+
+Get back to the first terminal where `player1` is running:
+
+image::images/terminal-one.jpg[align="left", width=25%]
+
+{blank}
+
+Inspect the terminal's output, you should see `player1` hitting the ball to the other side of the court:
+
+++++
+<pre style="line-height: 1;white-space: pre-wrap"><span style="color:grey;font-family: monospace;font-size: 12px;">2025-10-26 12:50:12.951 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">2243</span> --- [e://court/side1] <span style="color: cyan">player1.yaml:8</span><span style="color: white;">           : (ping)⋅⋅⋅━━━► 🎾</span></span></pre>
+++++
+
+{empty} +
+
+Have a look to the court. You should see the ball resting on the other side:
+
+image::images/court-side2-ball.jpg[align="left", width=8%]
+
+NOTE: The downside of playing tennis with a single player is that balls end up motionless on the other side of the court.
+
+{empty} +
+
+Before we continue, give `player1` some rest. +
+Stop the action with kbd:[Ctrl+C].
+
+{empty} +
+
+=== The ball boy
+
+We introduce to you the ball boy, he will ensure the court is always tidy.
+
+TIP: Click the copy button and paste in your terminal to create the file
+--
+{copypaste}
+----
+cat <<EOF > the-ballboy.yaml
+- route:
+    id: ballboy
+    from:
+      uri: timer:check-court
+      steps:
+        - filter:
+            groovy:
+              expression: >-
+                def court = ['court/side1/🎾', 'court/side2/🎾'];
+                def file = court.find { new File(it).exists() }?.with { new File(it) };
+
+                if (file?.exists() && (System.currentTimeMillis() - file.lastModified()) > {{wait:5000}} )
+                  return file.delete();
+                else
+                  return false;
+            steps:
+              - log:
+                  message: "🎾 cleared, court ready."
+EOF
+----
+--
+
+NOTE: In _Camel_, certain tasks require agility. Notice the ballboy making use of _Groovy_ to look at both sides of the court, and retrieve any ball sitting on the court for too long (5 seconds).
+
+
+When you see everyone ready, use the command below to restart:
+
+--
+{copypaste}
+----
+camel run *
+----
+--
+
+[NOTE]
+====
+_Camel JBang_ makes things easy:
+
+* Use the `*` wildcard when you have multiple individuals on court. +
+* The wildcard also picks up property files where you can configure a different game behaviour. +
+Here's an (optional) example `game.properties` you could use:
++
+++++
+<pre style="line-height: 1;white-space: pre-wrap"><span style="color:forestgreen;font-family: monospace;font-size: 12px;"># Ball pace (millis) when players hit. Lower value is faster.
+<span style="color: skyblue;">pace</span><span style="color: white;">=2000</span>
+
+# Ballboy waits (millis) before picking up the ball.
+<span style="color: skyblue;">wait</span><span style="color: white;">=5000</span></span></pre>
+++++
+====
+
+Inspect the terminal logs, you should see the ball boy already at work:
+
+++++
+<pre style="line-height: 1;white-space: pre-wrap"><span style="color:grey;font-family: monospace;font-size: 12px;">2025-10-26 18:23:53.558 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">20299</span> --- [r://check-court] <span style="color: cyan">the-ballboy.yaml:17</span><span style="color: white;">           : 🎾 cleared, court ready.</span></span></pre>
+++++
+
+{blank}
+
+Look also at the court. You'll notice the ball has been cleared:
+
+image::images/court-clear.jpg[align="left", width=8%]
+
+{empty} +
+
+Let `player1` practice a bit more. +
+When done, press kbd:[Ctrl+C] to give him some rest.
+
+{empty} +
+
+=== Set up the tournament
+
+Ok, practice is over, let's organise a real game.
+
+For a proper game to take place, you need more than just one player. +
+We introduce to you `player2`:
+
+TIP: Click the copy button and paste in your terminal to create the file
+--
+{copypaste}
+----
+cat <<EOF > player2.yaml
+- route:
+    id: player2
+    from:
+      uri: file:court/side2
+      parameters:
+        delete: true
+      steps:
+        - log:
+            message: "      🎾 ◄━━━⋅⋅⋅(pong)"
+        - delay:
+            constant: "{{pace:2000}}"
+        - to:
+            uri: file:court/side1
+EOF
+----
+--
+
+NOTE: These players really train for doing just one thing.
+
+Because this is a prestigious tournament, there's a protocol to follow:
+
+{empty} +
+
+. Let spectators sit confortably while players and staff wait in the locker rooms. +
+Press kbd:[Ctrl+C] (if you didn't already) to follow on with preparations.
++
+{empty} +
++
+. Let the ball boy go on court first to get ready:
++
+--
+{copypaste}
+----
+camel run the-ballboy.yaml --background
+----
+--
++
+NOTE: The flag `--background` indicates _Camel JBang_ to run the process detached.
++
+{empty} +
++
+. Present the players to the public and let them jump on court:
++
+--
+{copypaste}
+----
+camel run player1.yaml --background --dev
+----
+--
++
+--
+{copypaste}
+----
+camel run player2.yaml --background --dev
+----
+--
++
+NOTE: The flag `--dev` indicates _Camel JBang_ to do live code reloads (new racket for example).
++
+{empty} +
++
+. Before the game starts, check everyone is ready:
++
+--
+{copypaste}
+----
+camel ps
+----
+--
++
+NOTE: The `ps` command is handy to check who's playing and who's not, who's ready and who's not, and who's busy and who's not.
++
+{empty} +
++
+. Join the crowd and enjoy watching the game:
++
+--
+{copypaste}
+----
+camel log
+----
+--
++
+[NOTE]
+====
+The `log` command aggregates all the action on court so that you're aware of all that's happening.
+
+TIP: You can also focus on one single player, or even the ball boy if curious of what the job entails. +
+For example to focus on player 1, you would run `camel log player1`.
+====
++
+{empty} +
+
+Ok, the ball boy is ready, the players are ready, and the public is anxious waiting to see the game start.
+
+{empty} +
+
+=== Let the game begin
+
+`player1` starts serving, hand him a 🎾
+
+--
+{copypaste}
+----
+camel cmd send player1 --header CamelFileName=🎾
+----
+--
+
+Inspect your terminal output, you should see both players hitting the ball hard:
+
+++++
+<pre style="line-height: 1;white-space: pre-wrap;"><span style="color:grey;font-family: monospace;font-size: 12px;"><span style="color: yellow;">player1    | </span>2025-10-26 19:01:36.006 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22363</span> --- [e://court/side1] <span style="color: cyan">player1.yaml:8</span><span style="color: white;">           : (ping)⋅⋅⋅━━━► 🎾</span>
+<span style="color: lightgreen;">player2    | </span>2025-10-26 19:01:38.106 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22578</span> --- [e://court/side2] <span style="color: cyan">player2.yaml:8</span><span style="color: white;">           :       🎾 ◄━━━⋅⋅⋅(pong)</span>
+<span style="color: yellow;">player1    | </span>2025-10-26 19:01:40.509 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22363</span> --- [e://court/side1] <span style="color: cyan">player1.yaml:8</span><span style="color: white;">           : (ping)⋅⋅⋅━━━► 🎾</span>
+<span style="color: lightgreen;">player2    | </span>2025-10-26 19:01:42.610 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22578</span> --- [e://court/side2] <span style="color: cyan">player2.yaml:8</span><span style="color: white;">           :       🎾 ◄━━━⋅⋅⋅(pong)</span>
+...
+</pre>
+++++
+
+{blank}
+
+It's a long rally !
+
+Also, see the ball on the court going back and forth:
+
+image::images/court-rally.jpg[align="left", width=18%]
+
+{empty} +
+
+But `player1` feels the laces of his shoe are loose and has to stop to tie them up. +
+Run the command:
+
+--
+{copypaste}
+----
+camel cmd stop-route --id player1
+----
+--
+
+Because `player1` stopped hitting the ball, spectators will see `player2` hitting last, `player1` tying up his shoe laces, and the ball boy retrieving the ball:
+
+++++
+<pre style="line-height: 1;white-space: pre-wrap;"><span style="color:grey;font-family: monospace;font-size: 12px;"><span style="color: lightgreen;">player2    | </span>2025-10-26 19:32:24.401 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22578</span> --- [e://court/side2] <span style="color: cyan">player2.yaml:8</span><span style="color: white;">               :       🎾 ◄━━━⋅⋅⋅(pong)</span>
+<span style="color: yellow;">player1    | </span>2025-10-26 19:32:25.327 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22363</span> --- [calCliConnector] <span style="color: cyan">.engine.AbstractCamelContext</span><span style="color: white;"> : Stopped player1 (file://court/side1)</span>
+<span style="color: orangered;">the-ballboy| </span>2025-10-26 19:01:42.610 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22140</span> --- [r://check-court] <span style="color: cyan">the-ballboy.yaml:17</span><span style="color: white;">          : 🎾 cleared, court ready.</span>
+</pre>
+++++
+
+{empty} + 
+
+==== Game statistics
+
+It's a good moment to look at the game statistics. +
+Get the stats with:
+
+--
+{copypaste}
+----
+camel get route
+----
+--
+
+Stats will reveal who's hitting faster (and other measurements as well):
+
+NOTE: Observe `player1` has stopped playing for a moment, but is still very much part of the game.
+
+----
+  PID   NAME         ID       FROM                            REMOTE  STATUS    AGE   COVER  MSG/S  TOTAL  FAIL  INFLIGHT  MEAN  MIN   MAX   LAST  DELTA  SINCE-LAST        
+ 22140  the-ballboy  ballboy  timer://check-court                     Started   6m3s    2/2   1.00    363     0         0     2     0   841     0      0            0s/0s/- 
+ 22363  player1      player1  file://court/side1?delete=true    x     Stopped           3/3   0.00     25     2         0  2001  2001  2007  2001      0  1m31s/1m29s/1m41s 
+ 22578  player2      player2  file://court/side2?delete=true    x     Started  5m21s    3/3   0.00     23     0         0  2001  2001  2012  2001      0      1m29s/1m27s/- 
+----
+
+{empty} + 
+
+==== The game resumes
+
+It seems `player1` sorted out the shoe laces problem and is ready to play again. +
+Get the player in position again with:
+
+--
+{copypaste}
+----
+camel cmd start-route --id player1
+----
+--
+
+It's `player2` 's turn to serve, hand him a 🎾
+
+--
+{copypaste}
+----
+camel cmd send player2 --header CamelFileName=🎾
+----
+--
+
+Here they go again, another insane rally.
+
+{empty} + 
+
+==== Game conditions
+
+It seems the wind is peaking up, some clouds have covered the sky and some spots of rain are dotting the court. +
+Weather conditions can really change the game in tennis.
+
+The rain drops make the ball wetter and heavier, the hitting starts to sound funny and the exchanges feel slower. + 
+
+While the intense rally keeps going (ping/pong), make these changes on the players:
+
+* In player 1, change the log message to `p1ng`, and the pace of the ball to `{{pace:3000}}` (slower) 
+* In player 2, change the log message to `p0ng`, and the pace of the ball to `{{pace:3000}}` (slower)
+
+NOTE: _Camel JBang_ reacts to live code changes and ensures the new game behaviour takes inmediate effect.
+
+{blank}
+
+You should see in the terminal _Camel_ reacting with reloads:
+
+
+++++
+<pre style="line-height: 1;"><span style="color:grey;font-family: monospace;font-size: 12px;"><span style="color: yellow;">player1    | </span>2025-10-26 19:01:36.006 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22363</span> --- [rReloadStrategy] <span style="color: cyan">RouteWatcherReloadStrategy </span><span style="color: white;">: Routes reloaded summary (total:1 started:1)</span>
+<span style="color: yellow;">player1    | </span>2025-10-26 19:01:40.509 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22363</span> --- [rReloadStrategy] <span style="color: cyan">RouteWatcherReloadStrategy </span><span style="color: white;">: Started player1 (file://court/side1) (source: player1.yaml:4)</span>
+</pre>
+++++
+
+++++
+<pre style="line-height: 1"><span style="color:grey;font-family: monospace;font-size: 12px;"><span style="color: lightgreen;">player2    | </span>2025-10-26 19:01:38.106 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22578</span> --- [rReloadStrategy] <span style="color: cyan">RouteWatcherReloadStrategy </span><span style="color: white;">: Routes reloaded summary (total:1 started:1)</span>
+<span style="color: lightgreen;">player2    | </span>2025-10-26 19:01:42.610 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22578</span> --- [rReloadStrategy] <span style="color: cyan">RouteWatcherReloadStrategy </span><span style="color: white;">: Started player1 (file://court/side1) (source: player2.yaml:4)</span>
+</pre>
+++++
+
+{blank}
+
+Now you'll notice more clearly, the funny sound from the rackets, and the game slowing down:
+
+++++
+<pre style="line-height: 1;white-space: pre-wrap;"><span style="color:grey;font-family: monospace;font-size: 12px;"><span style="color: lightgreen;">player2    | </span>2025-10-26 19:01:43.106 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22578</span> --- [e://court/side2] <span style="color: cyan">player2.yaml:8</span><span style="color: white;">             :       🎾 ◄━━━⋅⋅⋅(p0ng)</span>
+<span style="color: yellow;">player1    | </span>2025-10-26 19:01:46.509 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22363</span> --- [e://court/side1] <span style="color: cyan">player1.yaml:8</span><span style="color: white;">             : (p1ng)⋅⋅⋅━━━► 🎾</span>
+<span style="color: lightgreen;">player2    | </span>2025-10-26 19:01:49.610 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22578</span> --- [e://court/side2] <span style="color: cyan">player2.yaml:8</span><span style="color: white;">             :       🎾 ◄━━━⋅⋅⋅(p0ng)</span>
+<span style="color: yellow;">player1    | </span>2025-10-26 19:01:52.706 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22363</span> --- [e://court/side1] <span style="color: cyan">player1.yaml:8</span><span style="color: white;">             : (p1ng)⋅⋅⋅━━━► 🎾</span>
+...
+</pre>
+++++
+
+{empty} +
+
+=== Abrupt end
+
+How unfortunate! +
+`player1` slips in the wet court, were his laces well tied up? +
+We fear he got injured. After close inspection its confirmed, he needs to quit the game.
+
+--
+{copypaste}
+----
+camel stop player1
+----
+--
+
+NOTE: Run `camel ps` and you'll notice `player1` no longer takes part in the game.
+
+At this point, it makes no sense to continue the event, the announcement is made, and the game is stopped:
+
+--
+{copypaste}
+----
+camel stop
+----
+--
+
+NOTE: when no name is specified, _Camel JBang_ stops all.
+
+{empty} +
+
+We're sorry it ended this way, but don't let it spoil your day, there are many other matches to watch!
+
+🎾🎾🎾
+Keep exploring the workshop to see more.
+🎾🎾🎾
+
+
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{codeready-url}[Console, window="_blank", , id="resources-codeready-url"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{openshift-host}/topology/ns/{namespace}[Topology View, window="_blank"]
+****
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+
+
+{empty} +
+
+
+
+[type=verification]
+Was the tournament interesting?
+
+[type=verificationFail]
+That's a shame, stay a bit longer, I'm sure you'll find a thrilling match with intense rivalry.
+
+[type=verificationSuccess]
+Good! Time then to get back to real work !
+
+
+
+[time=1]
+[id='clean-up']
+== Clean up your lab folder
+
+Make sure your `lab` folder stays clean in preparation for your lab exercices.
+
+Run the command below:
+
+--
+{copypaste}
+----
+rm -r *
+----
+--
+
+{empty} +
+
+Your `lab` folder should contain no files or directories.
+
+{empty} +
+
+
+[type=verification]
+Is your `lab` folder empty?
+
+[type=verificationFail]
+Make sure you follow the commands above. Try again.
+
+[type=verificationSuccess]
+Get ready to start working !
+
+
+[time=1]
+[id='closing-words']
+== Closing words
+
+This was only a taster on how to work fast with a few _Camel_ files.
+
+Continue with other chapters in the workshop to discover, not only what _Camel JBang_ can do for you beyond what you've just seen, but also other companion tools empowering the developer to work fast with _Apache Camel_.
+
+The rest of the workshop will guide you through the process of rapid prototyping using _Apache Camel_, starting with initial concepts, all the way to deploying on _OpenShift_.
