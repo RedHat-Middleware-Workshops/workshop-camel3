@@ -42,9 +42,7 @@
 :style-indent: .indent2 {padding-left: 2rem;}
 :style-all: pass:a[<style>{style-kbd}{style-preview}{style-indent}{style-open-close}</style>]
 
-
-//:url-docserver: https://docserver-webapp.{openshift-app-host}
-:url-docserver: https://docserver-webapp.apps.cluster-mqpjp.dynamic.redhatworkshops.io/
+:url-docserver: https://docserver-webapp.{openshift-app-host}
 //:url-docserver: http://0.0.0.0:8080
 
 :docserver-status: pass:a[<img hidden="true" src="invalid-image.jpg" onerror=" \
@@ -65,17 +63,9 @@
     return result; \
 }]
 
-//:fdocserver: pass:a[function docserver(target,template,params) { \
-//    {freplace} \
-//    fetch('{url-docserver}/roomid?user='+params) \
-//        .then(response => response.text()) \
-//        .then(data => {target.firstChild.data=replaceTokens(text, data);}) \
-//        .catch(error => room = 'Error fetching data: ' + error.message); \
-//}]
-
 :fdocserver: pass:a[function docserver(target,template,params) { \
     {freplace} \
-    fetch('{url-docserver}'+params.trim()) \
+    fetch('{url-docserver}/roomid?user='+params) \
         .then(response => response.text()) \
         .then(data => {target.firstChild.data=replaceTokens(text, data);}) \
         .catch(error => room = 'Error fetching data: ' + error.message); \
@@ -144,18 +134,6 @@
   console.log(block); \
   block.parentElement.insertBefore(pre,block); \
   block.remove(); \
-}"> \
-]
-
-:room: pass:a[ \
-<img hidden="true" src="invalid-image.jpg" onerror="{ \
-  let code = this.previousElementSibling; \
-  let text = code.textContent; \
-  console.log('before text: [' +text+']'); \
-  text = text.replace('user', 'room'); \
-  code.textContent = text; \
-  console.log('after text: [' +text+']'); \
-  this.remove(); \
 }"> \
 ]
 
@@ -338,7 +316,6 @@ After initialisation, under the `lab` directory, you'll find the following sourc
 &nbsp;&nbsp;&nbsp;&nbsp;📁 m2r +
 pass:[<mark style="padding-left: 2rem; background-color: white; color: purple"><b><i>&nbsp;!&nbsp;&nbsp;</i></b></mark>] *m2r.camel.yaml* +
 pass:[<mark style="padding-left: 1rem; background-color: white; color: grey"><b>⚙</b></mark>] matrix.properties +
-pass:[<mark style="padding-left: 1rem; background-color: white; color: grey"><b>⚙</b></mark>] rocketchat.properties +
 --
 
 {blank}
@@ -376,23 +353,66 @@ About the variable `matrix`:
 +
 {empty} +
 
-. Configure the _Matrix_ credentials
-+
-Open in your editor your `matrix.properties` file and add the following entries:
+. Configure the application
 +
 --
-{copypaste}configuration/matrix/user3
+Open in your editor your `matrix.properties` file where you'll find the following entries:
+
+--
+{copypaste}configuration/discord/user3
 ----
-# Matrix credentials
 matrix.token=REPLACE
 matrix.room=REPLACE
 ----
 --
+
+----
+# Matrix credentials
+matrix.token=YOUR_ACCESS_TOKEN
+matrix.room=YOUR_ROOM_ID
+----
+
+{empty} +
+--
+
+.. To configure the `matrix.token` parameter, obtain its value from  the sequence of steps shown in the image below:
 +
-NOTE: both parameters have been automatically pre-configured for your use in this lab.
+image::images/matrix-copy-token.png[align="center", width=100%]
++
+--
+From Matrix: 
+
+. Start from the _"User Menu"_
+. Then, click _"All settings"_
+. Select _"Help & About"_
+. Scroll to the very bottom, and click _"Access Token"_
+. Click the _Copy_ button
+
+{blank}
+
+Finally, paste the value you copied into the `matrix.token` parameter.
+--
 +
 {empty} +
++
+.. To configure the `matrix.room` parameter, obtain its value from the sequence of steps shown in the image below:
++
+image::images/matrix-copy-room-id.png[align="center", width=100%]
++
+--
+From Matrix: 
 
+. Start from the _"Room options"_.
+. Then, click _"Settings"_.
+. Select _"Advanced"_.
+. Click the _Copy_ button of the _"Internal room ID"_.
+
+{blank}
+
+Finally, paste the value you copied into the `matrix.room` parameter.
+--
++
+{empty} +
 
 . Run your YAML definition with Camel JBang
 + 
@@ -529,7 +549,13 @@ Copy and Paste the values below to define the given field entries:
 ... `string[@key = channel]`: 
 +
 --
-{copypaste}roomid/{user-username}
+{copypaste}
+----
+"room2"
+----
+
+
+{copypaste}{user-username}
 ----
 "REPLACE"
 ----
@@ -546,8 +572,25 @@ concat('*', $matrix-x/xf:map/xf:map[@key='fromUser']/xf:string[@key='username'],
 ----
 --
 +
-NOTE: The field `text` concatenates various fields from the input _Matrix_ event.
+[IMPORTANT]
+====
+The string key `channel` denotes the target room in _Rocket.Chat_ where messages will be pushed. +
+Make sure you it points to your designated room, for example:
+
+* `user1` -> use `room1`
+* `user2` -> use `room2`
+* `userN` -> use `roomN`
+====
+Your JSLT content should look similar to the image below. The `channel` represents your target room in _Rocket.Chat_, in this example it targets 'room10'.
 +
+image::images/jslt-room-config.png[align="left", width=80%]
++
+{blank}
++
+[NOTE]
+====
+The field `text` includes JsonPath rules extracting values from the input Matrix event.
+====
 {empty} +
 
 . Log the body
@@ -630,49 +673,67 @@ Copy from below the step definition, and paste it at the end of your Camel route
 +
 {empty} +
 
-
-. Configure the _Rocket.Chat_ credentials
+. Include your Rocket.Chat credentials in your configuration file.
 +
-Open in your editor your `rocketchat.properties` file and add the following entries:
+.. Under your `matrix` parameters, copy from below the `rocketchat.*` parameters, paste them into your properties file, and configure their values with your _Rocket.Chat_ credentials, as instructed below.
 +
---
-{copypaste}configuration/rocketchat/user3
 ----
-# Rocket.Chat credentials
-rocketchat.token=REPLACE
-rocketchat.userid=REPLACE
-----
---
-+
-NOTE: Both parameters have been automatically pre-configured for your use in this lab.
-+
-{empty} +
+# On shutdown it reduces waiting time when stoping Camel's streaming listener
+camel.main.shutdownTimeout = 5
 
-. Run the flow again as follows:
+# Matrix credentials
+matrix.token=(some unreadable token)
+matrix.room=(some unreadable room id)
+----
 +
 --
 {copypaste}
 ----
-labrun m2r \
---properties matrix.properties,rocketchat.properties
+# Rocket.Chat credentials
+rocketchat.token=YOUR_TOKEN
+rocketchat.userid=YOUR_USER_ID
 ----
 --
 +
-[pass]
-<details>
-  <summary>
-    <span class="triangle"></span>
-    <span class="sumtext">Click for more information</span>
-  </summary>
-<p style="margin-top: 1em;">We provide the script <code>labrun</code> to help you read the commands more clearly.</br>
-Under the hood the script calls <i>Camel JBang</i> as per the snippet below:
-<pre>
-camel run \
---source-dir m2r \
---properties matrix.properties,rocketchat.properties \
---local-kamelet-dir ../support/deploy/kamelets
-</pre></p>
-</details>
+{empty} +
++
+.. To configure the _Rocket.Chat_ credentials, obtain them from the sequence of steps shown in the image below:
++
+image::images/rchat-credentials-1.png[align="center", width=100%]
++
+--
+From _Rocket.Chat_: 
+
+. Start from the _"User Menu"_.
+. Then, click _"My Account"_.
+. Select _"Personal Access Tokens"_.
+. Type in a name for your token, for example `mytoken`.
+. Click the _Add_ button
+--
++
+image::images/rchat-credentials-2.png[align="center", width=100%]
++
+{blank}
++
+--
+[start=6]
+. Enter the password `{user-password}`.
+. Click _"Verify"_.
+. Your token and user id will be generated.
++
+Copy the values and configure your Camel parameters.
+--
++
+{empty} +
+
+. Run Camel JBang from your terminal as follows:
++
+--
+{copypaste}
+----
+camel run * --local-kamelet-dir=../support/deploy/kamelets
+----
+--
 +
 {empty} +
 

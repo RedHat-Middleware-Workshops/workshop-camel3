@@ -29,9 +29,9 @@ fi
 
 NEXT=$1
 
-if [ $1 == "0" ]; then 
-  cp $CONFIG/.kaoto $BASE/
-fi
+# if [ $1 == "0" ]; then 
+#   cp $CONFIG/.kaoto $BASE/
+# fi
 
 # if [ $1 == "1" ] || [ $1 == "2" ]; then 
 #   cp m2r/application.properties $CONFIG/
@@ -47,7 +47,7 @@ ls -d */ | xargs --no-run-if-empty rm -r
 cd $OLDPWD
 
 # Copy chapter sources to lab directory
-cp -r $FF/$NEXT/* $LAB
+cp -rn $FF/$NEXT/* $LAB
 echo -e "\033[33mstep $1 ready [`grep '^'$1' ' $FF/titles.txt | cut -d' ' -f 2-`]\033[0m"
 
 echo "$1" > $TOOLS/scripts/current

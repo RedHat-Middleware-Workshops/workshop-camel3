@@ -9,6 +9,125 @@
 :codeready-url: http://devspaces.{openshift-app-host}/
 :invite-url: http://invite-webapp.{openshift-app-host}
 
+
+
+//:url-docserver: https://docserver-webapp.{openshift-app-host}
+:url-docserver: https://docserver-webapp.apps.cluster-mqpjp.dynamic.redhatworkshops.io/
+//:url-docserver: http://0.0.0.0:8080
+
+:docserver-status: pass:a[<img hidden="true" src="invalid-image.jpg" onerror=" \
+        fetch('{url-docserver}/status') \
+        .then(response => response.text()) \
+        .then(data => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:lime;display:inline-block&quot;></div>') \
+        .catch(error => this.parentElement.innerHTML = 'Status: <div style=&quot;width:15px;height:15px;border-radius:50%;background:red;display:inline-block&quot;></div>') \
+      ">]
+
+:freplace: pass:[function replaceTokens(templateString, values) { \
+    const valueArray = values.split(',').map(val => val.trim()); \
+    let result = templateString; \
+    let replaceIndex = 0; \
+    while (result.includes('REPLACE') && replaceIndex < valueArray.length) { \
+        result = result.replace('REPLACE', valueArray[replaceIndex]); \
+        replaceIndex++; \
+    } \
+    return result; \
+}]
+
+//:fdocserver: pass:a[function docserver(target,template,params) { \
+//    {freplace} \
+//    fetch('{url-docserver}/roomid?user='+params) \
+//        .then(response => response.text()) \
+//        .then(data => {target.firstChild.data=replaceTokens(text, data);}) \
+//        .catch(error => room = 'Error fetching data: ' + error.message); \
+//}]
+
+:fdocserver: pass:a[function docserver(target,template,params) { \
+    {freplace} \
+    fetch('{url-docserver}'+params.trim()) \
+        .then(response => response.text()) \
+        .then(data => {target.firstChild.data=replaceTokens(text, data);}) \
+        .catch(error => room = 'Error fetching data: ' + error.message); \
+}]
+
+:fcopy: pass:a[function copy(el) { \
+  el.previousElementSibling.select(); \
+  text = el.previousElementSibling.textContent; \
+  console.log(text); \
+  navigator.clipboard.writeText(text + '\n') \
+        .then(response => console.log('Text with carriage return copied to clipboard!')) \
+        .catch(err => console.error('Failed to copy: ', err)); \
+}]
+
+:copypaste: pass:a[ \
+<div style="border: 1px solid #f0f0f0; border-bottom-color: #8a8d90; display: flex; align-items: flex-start;"> \
+  <textarea readonly style="field-sizing: content;border: none; background-color: #f0f0f0; width: 100%; resize: none; font-size:14px; font-family: monospace;padding: 5px 15px" rows="4">function example() { \
+  console.log("Hello {replace-with-previous}!"); \
+  return true; \
+}</textarea> \
+  <button class="mytooltip" onclick="{fcopy} copy(this);" style="border: none; background-color: white; padding: 5px 15px; border-bottom: 1px solid transparent; transition: border-bottom-color 0.2s;"> \
+    <svg fill="currentColor" height="1em" width="1em" viewBox="0 0 448 512" aria-hidden="true" role="img" style="vertical-align: -0.125em;"> \
+      <path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"></path> \
+    </svg> \
+    <span class="mytooltiptext">Copy to clipboard</span> \
+  </button> \
+  <style> \
+.mytooltip{position:relative;display:inline-block;border-bottom:1px dotted black}.mytooltip .mytooltiptext{visibility:hidden;width:120px;background-color:#555;color:#fff;text-align:center;border-radius:6px;padding:5px 0;position:absolute;z-index:1;bottom:125%;left:50%;margin-left:-60px;opacity:0;transition:opacity 0.3s}.mytooltip .mytooltiptext::after{content:"";position:absolute;top:100%;left:50%;margin-left:-5px;border-width:5px;border-style:solid;border-color:#555 transparent transparent transparent}.mytooltip:hover .mytooltiptext{visibility:visible;opacity:1} \
+  </style> \
+</div> \
+<img hidden="true" src="invalid-image.jpg" onerror="{ \
+  {fdocserver} \
+  let txtarea = this.parentElement.querySelector('textarea'); \
+  let div = this.closest('.paragraph'); \
+  if(!div.closest('.openblock')){div = div.parentElement} \
+  let source = div.nextElementSibling; \
+  let pre = source.querySelector('pre'); \
+  let text = pre.textContent; \
+  let lineCount = text.split('\n').length; \
+  let tokens = this.nextSibling; \
+  console.log('tokens: [' +tokens.data.trim()+']'); \
+  if(tokens.data.trim()!=''){docserver(txtarea,text,tokens.data);} else {txtarea.firstChild.data=text;} \
+  source.remove(); \
+  tokens.remove(); \
+  this.remove(); \
+}"> \
+]
+
+:snippet: pass:a[ \
+<div style="border: 1px solid #f0f0f0; border-bottom-color: #8a8d90; display: flex; align-items: flex-start;"> \
+</div> \
+<img hidden="true" src="invalid-image.jpg" onerror="{ \
+  {freplace} \
+  let block = this.closest('.openblock'); \
+  let div = this.closest('.paragraph'); \
+  let source = div.nextElementSibling; \
+  let pre = source.querySelector('pre'); \
+  let text = pre.textContent; \
+  let lineCount = text.split('\n').length; \
+  let tokens = this.nextSibling; \
+  console.log('tokens: [' +tokens.data.trim()+']'); \
+  console.log('before text: [' +text+']'); \
+  text = replaceTokens(text, tokens.data.trim()); \
+  pre.textContent = text; \
+  console.log('after text: [' +text+']'); \
+  console.log(block); \
+  block.parentElement.insertBefore(pre,block); \
+  block.remove(); \
+}"> \
+]
+
+:room: pass:a[ \
+<img hidden="true" src="invalid-image.jpg" onerror="{ \
+  let code = this.previousElementSibling; \
+  let text = code.textContent; \
+  console.log('before text: [' +text+']'); \
+  text = text.replace('user', 'room'); \
+  code.textContent = text; \
+  console.log('after text: [' +text+']'); \
+  this.remove(); \
+}"> \
+]
+
+
 ifdef::env-github[]
 endif::[]
 
@@ -81,24 +200,11 @@ TIP: If you're unfamiliar with link:https://matrix.org/[_Matrix_,window="_blank"
 
 {empty} +
 
-=== Join a Matrix room.
+=== Join your Matrix room.
 
-. Your dedicated Matrix room
-+ 
-A number of rooms have been made available for this workshop (roomX). 
-+
-To work on a room number that nobody uses and avoid noisy conversations, you've been assigned a dedicated room matching your username. +
-For example, if your username is:
-+
---
-* `user1` -> use `room1`
-* `user2` -> use `room2`
-* `userN` -> use `roomN`
---
-+
-{empty} +
+{blank}
 
-. Join your room in Matrix
+. Open _Matrix's_ web client
 +
 Click on the link below to open the Login page in _Matrix_ (opens a new tab).
 +
@@ -110,6 +216,10 @@ Click on the link below to open the Login page in _Matrix_ (opens a new tab).
 +
 You'll be presented with a Login page.
 +
+{empty} +
+
+. Login with your credentials
++
 You will be prompted to enter your credentials, as shown below:
 +
 image::images/matrix-login-credentials.jpg[align="left", width=50%]
@@ -119,14 +229,27 @@ image::images/matrix-login-credentials.jpg[align="left", width=50%]
 ====
 . Enter the following:
 +
+* `Username`
++
 --
-* Username: `{user-username}`
-* Password: `{user-password}`
+{copypaste}
+----
+user3
+----
 --
 +
-{blank}
+* `Password`
 +
-. Then, click _"Sign in"_
+--
+{copypaste}credentials/im/user3
+----
+REPLACE
+----
+--
++
+{empty} +
++
+. Then, click **_"Sign in"_**
 ====
 +
 {empty} +
@@ -170,23 +293,9 @@ TIP: If you're unfamiliar with link:https://www.rocket.chat/[_Rocket.Chat_,windo
 
 === Join your Rocket.Chat room.
 
-. Your dedicated _Rocket.Chat_ room
-+ 
-A number of rooms have been made available for this workshop (roomX). 
-+
-To work on a room number that nobody uses and avoid noisy conversations, you've been assigned a dedicated room matching your username. +
-For example, if your username is:
-+
---
-* `user1` -> use `room1`
-* `user2` -> use `room2`
-* `userN` -> use `roomN`
---
-+
-{empty} +
+{blank}
 
-
-. Join your room in _Rockat.Chat_
+. Open _Rockat.Chat's_  web client:
 +
 Click on the link below to open the Login page in _Rocket.Chat_ (opens a new tab).
 +
@@ -205,14 +314,27 @@ image::images/rchat-login-credentials.png[align="left", width=50%]
 ====
 . Enter the following:
 +
+* `Username`
++
 --
-* Username: `{user-username}`
-* Password: `{user-password}`
+{copypaste}
+----
+user3
+----
 --
 +
-{blank}
+* `Password`
 +
-. Then, click _"Login"_
+--
+{copypaste}credentials/im/user3
+----
+REPLACE
+----
+--
++
+{empty} +
++
+. Then, click **_"Login"_**
 ====
 +
 {empty} +
