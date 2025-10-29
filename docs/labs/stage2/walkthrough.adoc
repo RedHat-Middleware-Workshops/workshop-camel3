@@ -302,30 +302,6 @@ Before you start this second lab, make sure you close in your editor all the tab
 +
 {empty} +
 
-.. Select your _OpenShift_ project 
-+
-For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
-+
-[source,bash,subs="attributes+"]
-----
-oc project {namespace}
-----
-+
-{empty} +
-
-.. Create the skeleton
-+
-... Using the sources of _Stage1_ as a base, make a copy of your previous exercise, for example:
-+
-[subs=]
-```bash
-cd /projects/message-hub
-cp -r lab1 lab2
-cd lab2<br>
-```
-+
-{empty} +
-
 
 .. Find your new folder in the project tree
 +
@@ -333,7 +309,7 @@ image::images/crw-folder.png[align="left", width=30%]
 +
 {blank}
 +
-Ensure you're working on folder `lab2`
+NEEDS UPDATING IMAGES and CONTENT
 +
 {empty} +
 
@@ -411,7 +387,8 @@ Use the following command to run locally your _Camel_ route:
 --
 {copypaste}
 ----
-labrun m2r
+labrun m2r \
+--properties matrix.properties,rocketchat.properties
 ----
 --
 +
@@ -460,7 +437,9 @@ Use the command below:
 --
 {copypaste}
 ----
-labdeploy m2r
+labdeploy m2r \
+../rocketchat.properties ../matrix.properties \
+--property quarkus.config.locations=rocketchat.properties,matrix.properties
 ----
 --
 +

@@ -1,7 +1,7 @@
 // Attributes
 :walkthrough: Scenario Introduction
 :user-password: openshift
-:namespace: {user-username}
+:namespace: {user-username}-devspaces
 :url-element: https://element-matrix.{openshift-app-host}
 :url-rocketchat: https://rocketchat-rocketchat.{openshift-app-host}
 
@@ -233,8 +233,9 @@ image::images/matrix-login-credentials.jpg[align="left", width=50%]
 +
 --
 {copypaste}
+[subs=attributes]
 ----
-user3
+{user-username}
 ----
 --
 +
@@ -318,8 +319,9 @@ image::images/rchat-login-credentials.png[align="left", width=50%]
 +
 --
 {copypaste}
+[subs=attributes]
 ----
-user3
+{user-username}
 ----
 --
 +

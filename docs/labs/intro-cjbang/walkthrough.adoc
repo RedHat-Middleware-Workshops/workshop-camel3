@@ -1,6 +1,6 @@
 :walkthrough: Camel JBang first steps
 :user-password: openshift
-:namespace: {user-username}
+:namespace: {user-username}-devspaces
 
 // URLs
 :codeready-url: http://devspaces.{openshift-app-host}/

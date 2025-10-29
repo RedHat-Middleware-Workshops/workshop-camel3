@@ -1,7 +1,6 @@
 :walkthrough: Matrix to Rocket.Chat bridge ()
 :user-password: openshift
-:namespace: {user-username}
-
+:namespace: {user-username}-devspaces
 
 
 :url-element: https://app.element.io
@@ -248,7 +247,7 @@ For those resuming work from a previous day, ensure the _working_ project in _Op
 {copypaste}
 [subs=attributes]
 ----
-oc project {namespace}-devspaces
+oc project {namespace}
 ----
 --
 

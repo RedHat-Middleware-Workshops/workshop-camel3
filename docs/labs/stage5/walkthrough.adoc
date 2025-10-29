@@ -1,6 +1,6 @@
 :walkthrough: Storage
 :user-password: openshift
-:namespace: {user-username}
+:namespace: {user-username}-devspaces
 
 :url-codeready: http://devspaces.{openshift-app-host}/
 :url-devconsole: {openshift-host}/topology/ns/{namespace}

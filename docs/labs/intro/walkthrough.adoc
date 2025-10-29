@@ -1,6 +1,6 @@
 :walkthrough: Lab Introduction
 :user-password: openshift
-:namespace: {user-username}
+:namespace: {user-username}-devspaces
 
 // URLs
 :codeready-url: http://devspaces.{openshift-app-host}/
@@ -432,7 +432,7 @@ A terminal window should open at the bottom of the screen. This terminal is atta
 +
 [source,bash,subs=attributes]
 ----
-oc project {user-username}-devspaces
+oc project {namespace}
 ----
 +
 {blank}
@@ -447,7 +447,7 @@ oc project {user-username}-devspaces
 +
 [subs="attributes+"]
 ----
-message-hub (main) $ oc project {user-username}
+message-hub (main) $ oc project {namespace}
 Now using project "{user-username}" on server "https://172.30.0.1:443".
 message-hub (main) $ 
 ----
