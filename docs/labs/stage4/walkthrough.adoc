@@ -11,7 +11,7 @@
 
 
 :url-docserver: https://docserver-webapp.{openshift-app-host}
-
+//:url-docserver: https://docserver-webapp.apps.cluster-mqpjp.dynamic.redhatworkshops.io
 
 :experimental:
 
@@ -780,7 +780,7 @@ touch discord.properties
 . Open the file and add the following properties:
 +
 --
-{copypaste}configuration/discord/{user-username}
+{copypaste}/configuration/discord/{user-username}
 ----
 # Discord credentials
 discord.token=REPLACE
