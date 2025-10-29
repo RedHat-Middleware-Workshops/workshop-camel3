@@ -241,7 +241,7 @@ user3
 * `Password`
 +
 --
-{copypaste}credentials/im/user3
+{copypaste}credentials/im/{user-username}
 ----
 REPLACE
 ----
@@ -326,7 +326,7 @@ user3
 * `Password`
 +
 --
-{copypaste}credentials/im/user3
+{copypaste}credentials/im/{user-username}
 ----
 REPLACE
 ----

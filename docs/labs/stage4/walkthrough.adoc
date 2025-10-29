@@ -781,7 +781,7 @@ touch discord.properties
 . Open the file and add the following properties:
 +
 --
-{copypaste}configuration/discord/user3
+{copypaste}configuration/discord/{user-username}
 ----
 # Discord credentials
 discord.token=REPLACE
@@ -898,7 +898,7 @@ _Discord_ should have received the message and displayed it in the room, as show
 [IMPORTANT]
 ====
 Make sure you have selected in Discord the channel: +
-`# user3` {room}
+`# {user-username}` {room}
 ====
 +
 image::images/discord-room-hello.png[align="left", width=30%]
@@ -1284,7 +1284,7 @@ _Discord_ should have received the message and displayed it in the room, as show
 [IMPORTANT]
 ====
 Make sure you have selected in Discord the channel: +
-`# user3` {room}
+`# {user-username}` {room}
 ====
 +
 image::images/discord-room-hello.png[align="left", width=30%]
@@ -1392,7 +1392,7 @@ _Discord_ should have received the message and displayed it in the room, as show
 [IMPORTANT]
 ====
 Make sure you have selected in Discord the channel: +
-`# user3` {room}
+`# {user-username}` {room}
 ====
 +
 image::images/discord-room-hello.png[align="left", width=30%]
@@ -1907,7 +1907,7 @@ NOTE: the command above loads your code under the directory `d2k` (discord-to-ka
 [IMPORTANT]
 ====
 Make sure you have selected in _Discord_ the channel: +
-`# user3` {room}
+`# {user-username}` {room}
 ====
 +
 From your Discord browser tab, send a message, for example:
@@ -2231,7 +2231,7 @@ From _Discord_, send a message, for example:
 [IMPORTANT]
 ====
 Make sure you have selected in _Discord_ the channel: +
-`# user3` {room}
+`# {user-username}` {room}
 ====
 +
 --
@@ -2309,7 +2309,7 @@ From _Discord_, send a message, for example:
 [IMPORTANT]
 ====
 Make sure you have selected in _Discord_ the channel: +
-`# user3` {room}
+`# {user-username}` {room}
 ====
 +
 --
