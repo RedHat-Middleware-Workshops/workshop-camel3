@@ -430,9 +430,9 @@ A terminal window should open at the bottom of the screen. This terminal is atta
 
 . In the terminal tab, issue the following command:
 +
-[source,bash,subs="attributes+"]
+[source,bash,subs=attributes]
 ----
-oc project {namespace}
+oc project {user-username}-devspaces
 ----
 +
 {blank}

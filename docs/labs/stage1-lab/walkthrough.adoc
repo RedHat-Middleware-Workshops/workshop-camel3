@@ -781,7 +781,7 @@ oc project {namespace}
 <details>
 <summary><span class="triangle">Click for more information</span></summary>
 <p><pre>
-Epcot is a theme park at Walt Disney World Resort.
+Temporary deployment command (needs to be more tidy)
 </pre><p>
 </details>
 ====
@@ -789,7 +789,9 @@ Epcot is a theme park at Walt Disney World Resort.
 --
 {copypaste}
 ----
-labdeploy m2r
+labdeploy m2r \
+../rocketchat.properties ../matrix.properties \
+--property quarkus.config.locations=rocketchat.properties,matrix.properties
 ----
 --
 +
@@ -834,7 +836,7 @@ camel kubernetes logs m2r
 --
 {copypaste}
 ----
-oc logs deployment/m2r
+oc logs deployment/m2r -f
 ----
 --
 ====
