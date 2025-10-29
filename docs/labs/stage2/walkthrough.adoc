@@ -2,7 +2,7 @@
 :user-password: openshift
 :namespace: {user-username}-devspaces
 
-:url-element: https://app.element.io
+:url-element: https://element-matrix.{openshift-app-host}
 :url-rocketchat: https://rocketchat-rocketchat.{openshift-app-host}
 :url-codeready: http://devspaces.{openshift-app-host}/
 :url-devconsole: {openshift-host}/topology/ns/{namespace}
@@ -438,8 +438,8 @@ Use the command below:
 {copypaste}
 ----
 labdeploy m2r \
-../rocketchat.properties ../matrix.properties \
---property quarkus.config.locations=rocketchat.properties,matrix.properties
+../matrix.properties ../rocketchat.properties \
+--property quarkus.config.locations=matrix.properties,rocketchat.properties
 ----
 --
 +
@@ -849,7 +849,9 @@ oc project {namespace}
 --
 {copypaste}
 ----
-labdeploy r2m
+labdeploy r2m \
+../rocketchat.properties ../matrix.properties \
+--property quarkus.config.locations=rocketchat.properties,matrix.properties
 ----
 --
 +

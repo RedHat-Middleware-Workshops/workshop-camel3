@@ -3,7 +3,7 @@
 :namespace: {user-username}-devspaces
 
 
-:url-element: https://app.element.io
+:url-element: https://element-matrix.{openshift-app-host}
 :url-rocketchat: https://rocketchat-rocketchat.{openshift-app-host}
 :url-codeready: http://devspaces.{openshift-app-host}/
 :url-devconsole: {openshift-host}/topology/ns/{namespace}
