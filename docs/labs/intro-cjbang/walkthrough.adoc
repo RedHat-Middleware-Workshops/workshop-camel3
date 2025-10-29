@@ -203,7 +203,7 @@ cat <<EOF > player1.yaml
         delete: true
       steps:
         - log:
-            message: (ping)⋅⋅⋅━━━► 🎾
+            message: (ping)⋅⋅⋅━━━► 🥎
         - delay:
             constant: "{{pace:2000}}"
         - to:
@@ -242,7 +242,7 @@ Also, watching closely your folder structure, you'll see on which side `player1`
 
 === Throw a ball
 
-`player1` is ready, give him a 🎾.
+`player1` is ready, give him a 🥎.
 
 From the terminal's top right corner, click `+` to open a second terminal, as shown below:
 
@@ -257,7 +257,7 @@ TIP: The `send` command is very helpful to test the game, you can throw balls to
 --
 {copypaste}
 ----
-camel cmd send player1 --header CamelFileName=🎾
+camel cmd send player1 --header CamelFileName=🥎
 ----
 --
 
@@ -270,7 +270,7 @@ image::images/terminal-one.jpg[align="left", width=25%]
 Inspect the terminal's output, you should see `player1` hitting the ball to the other side of the court:
 
 ++++
-<pre style="line-height: 1;white-space: pre-wrap"><span style="color:grey;font-family: monospace;font-size: 12px;">2025-10-26 12:50:12.951 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">2243</span> --- [e://court/side1] <span style="color: cyan">player1.yaml:8</span><span style="color: white;">           : (ping)⋅⋅⋅━━━► 🎾</span></span></pre>
+<pre style="line-height: 1;white-space: pre-wrap"><span style="color:grey;font-family: monospace;font-size: 12px;">2025-10-26 12:50:12.951 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">2243</span> --- [e://court/side1] <span style="color: cyan">player1.yaml:8</span><span style="color: white;">           : (ping)⋅⋅⋅━━━► 🥎</span></span></pre>
 ++++
 
 {empty} +
@@ -305,7 +305,7 @@ cat <<EOF > the-ballboy.yaml
         - filter:
             groovy:
               expression: >-
-                def court = ['court/side1/🎾', 'court/side2/🎾'];
+                def court = ['court/side1/🥎', 'court/side2/🥎'];
                 def file = court.find { new File(it).exists() }?.with { new File(it) };
 
                 if (file?.exists() && (System.currentTimeMillis() - file.lastModified()) > {{wait:5000}} )
@@ -314,7 +314,7 @@ cat <<EOF > the-ballboy.yaml
                   return false;
             steps:
               - log:
-                  message: "🎾 cleared, court ready."
+                  message: "🥎 cleared, court ready."
 EOF
 ----
 --
@@ -351,7 +351,7 @@ Here's an (optional) example `game.properties` you could use:
 Inspect the terminal logs, you should see the ball boy already at work:
 
 ++++
-<pre style="line-height: 1;white-space: pre-wrap"><span style="color:grey;font-family: monospace;font-size: 12px;">2025-10-26 18:23:53.558 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">20299</span> --- [r://check-court] <span style="color: cyan">the-ballboy.yaml:17</span><span style="color: white;">           : 🎾 cleared, court ready.</span></span></pre>
+<pre style="line-height: 1;white-space: pre-wrap"><span style="color:grey;font-family: monospace;font-size: 12px;">2025-10-26 18:23:53.558 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">20299</span> --- [r://check-court] <span style="color: cyan">the-ballboy.yaml:17</span><span style="color: white;">           : 🥎 cleared, court ready.</span></span></pre>
 ++++
 
 {blank}
@@ -387,7 +387,7 @@ cat <<EOF > player2.yaml
         delete: true
       steps:
         - log:
-            message: "      🎾 ◄━━━⋅⋅⋅(pong)"
+            message: "      🥎 ◄━━━⋅⋅⋅(pong)"
         - delay:
             constant: "{{pace:2000}}"
         - to:
@@ -478,22 +478,22 @@ Ok, the ball boy is ready, the players are ready, and the public is anxious wait
 
 === Let the game begin
 
-`player1` starts serving, hand him a 🎾
+`player1` starts serving, hand him a 🥎
 
 --
 {copypaste}
 ----
-camel cmd send player1 --header CamelFileName=🎾
+camel cmd send player1 --header CamelFileName=🥎
 ----
 --
 
 Inspect your terminal output, you should see both players hitting the ball hard:
 
 ++++
-<pre style="line-height: 1;white-space: pre-wrap;"><span style="color:grey;font-family: monospace;font-size: 12px;"><span style="color: yellow;">player1    | </span>2025-10-26 19:01:36.006 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22363</span> --- [e://court/side1] <span style="color: cyan">player1.yaml:8</span><span style="color: white;">           : (ping)⋅⋅⋅━━━► 🎾</span>
-<span style="color: lightgreen;">player2    | </span>2025-10-26 19:01:38.106 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22578</span> --- [e://court/side2] <span style="color: cyan">player2.yaml:8</span><span style="color: white;">           :       🎾 ◄━━━⋅⋅⋅(pong)</span>
-<span style="color: yellow;">player1    | </span>2025-10-26 19:01:40.509 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22363</span> --- [e://court/side1] <span style="color: cyan">player1.yaml:8</span><span style="color: white;">           : (ping)⋅⋅⋅━━━► 🎾</span>
-<span style="color: lightgreen;">player2    | </span>2025-10-26 19:01:42.610 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22578</span> --- [e://court/side2] <span style="color: cyan">player2.yaml:8</span><span style="color: white;">           :       🎾 ◄━━━⋅⋅⋅(pong)</span>
+<pre style="line-height: 1;white-space: pre-wrap;"><span style="color:grey;font-family: monospace;font-size: 12px;"><span style="color: yellow;">player1    | </span>2025-10-26 19:01:36.006 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22363</span> --- [e://court/side1] <span style="color: cyan">player1.yaml:8</span><span style="color: white;">           : (ping)⋅⋅⋅━━━► 🥎</span>
+<span style="color: lightgreen;">player2    | </span>2025-10-26 19:01:38.106 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22578</span> --- [e://court/side2] <span style="color: cyan">player2.yaml:8</span><span style="color: white;">           :       🥎 ◄━━━⋅⋅⋅(pong)</span>
+<span style="color: yellow;">player1    | </span>2025-10-26 19:01:40.509 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22363</span> --- [e://court/side1] <span style="color: cyan">player1.yaml:8</span><span style="color: white;">           : (ping)⋅⋅⋅━━━► 🥎</span>
+<span style="color: lightgreen;">player2    | </span>2025-10-26 19:01:42.610 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22578</span> --- [e://court/side2] <span style="color: cyan">player2.yaml:8</span><span style="color: white;">           :       🥎 ◄━━━⋅⋅⋅(pong)</span>
 ...
 </pre>
 ++++
@@ -521,9 +521,9 @@ camel cmd stop-route --id player1
 Because `player1` stopped hitting the ball, spectators will see `player2` hitting last, `player1` tying up his shoe laces, and the ball boy retrieving the ball:
 
 ++++
-<pre style="line-height: 1;white-space: pre-wrap;"><span style="color:grey;font-family: monospace;font-size: 12px;"><span style="color: lightgreen;">player2    | </span>2025-10-26 19:32:24.401 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22578</span> --- [e://court/side2] <span style="color: cyan">player2.yaml:8</span><span style="color: white;">               :       🎾 ◄━━━⋅⋅⋅(pong)</span>
+<pre style="line-height: 1;white-space: pre-wrap;"><span style="color:grey;font-family: monospace;font-size: 12px;"><span style="color: lightgreen;">player2    | </span>2025-10-26 19:32:24.401 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22578</span> --- [e://court/side2] <span style="color: cyan">player2.yaml:8</span><span style="color: white;">               :       🥎 ◄━━━⋅⋅⋅(pong)</span>
 <span style="color: yellow;">player1    | </span>2025-10-26 19:32:25.327 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22363</span> --- [calCliConnector] <span style="color: cyan">.engine.AbstractCamelContext</span><span style="color: white;"> : Stopped player1 (file://court/side1)</span>
-<span style="color: orangered;">the-ballboy| </span>2025-10-26 19:01:42.610 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22140</span> --- [r://check-court] <span style="color: cyan">the-ballboy.yaml:17</span><span style="color: white;">          : 🎾 cleared, court ready.</span>
+<span style="color: orangered;">the-ballboy| </span>2025-10-26 19:01:42.610 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22140</span> --- [r://check-court] <span style="color: cyan">the-ballboy.yaml:17</span><span style="color: white;">          : 🥎 cleared, court ready.</span>
 </pre>
 ++++
 
@@ -566,12 +566,12 @@ camel cmd start-route --id player1
 ----
 --
 
-It's `player2` 's turn to serve, hand him a 🎾
+It's `player2` 's turn to serve, hand him a 🥎
 
 --
 {copypaste}
 ----
-camel cmd send player2 --header CamelFileName=🎾
+camel cmd send player2 --header CamelFileName=🥎
 ----
 --
 
@@ -588,8 +588,8 @@ The rain drops make the ball wetter and heavier, the hitting starts to sound fun
 
 While the intense rally keeps going (ping/pong), make these changes on the players:
 
-* In player 1, change the log message to `p1ng`, and the pace of the ball to `{{pace:3000}}` (slower) 
-* In player 2, change the log message to `p0ng`, and the pace of the ball to `{{pace:3000}}` (slower)
+* In **`player1.yaml`**, change the log message to `p1ng`, and the pace of the ball to `{{pace:3000}}` (slower) 
+* In **`player2.yaml`**, change the log message to `p0ng`, and the pace of the ball to `{{pace:3000}}` (slower)
 
 NOTE: _Camel JBang_ reacts to live code changes and ensures the new game behaviour takes inmediate effect.
 
@@ -615,10 +615,10 @@ You should see in the terminal _Camel_ reacting with reloads:
 Now you'll notice more clearly, the funny sound from the rackets, and the game slowing down:
 
 ++++
-<pre style="line-height: 1;white-space: pre-wrap;"><span style="color:grey;font-family: monospace;font-size: 12px;"><span style="color: lightgreen;">player2    | </span>2025-10-26 19:01:43.106 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22578</span> --- [e://court/side2] <span style="color: cyan">player2.yaml:8</span><span style="color: white;">             :       🎾 ◄━━━⋅⋅⋅(p0ng)</span>
-<span style="color: yellow;">player1    | </span>2025-10-26 19:01:46.509 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22363</span> --- [e://court/side1] <span style="color: cyan">player1.yaml:8</span><span style="color: white;">             : (p1ng)⋅⋅⋅━━━► 🎾</span>
-<span style="color: lightgreen;">player2    | </span>2025-10-26 19:01:49.610 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22578</span> --- [e://court/side2] <span style="color: cyan">player2.yaml:8</span><span style="color: white;">             :       🎾 ◄━━━⋅⋅⋅(p0ng)</span>
-<span style="color: yellow;">player1    | </span>2025-10-26 19:01:52.706 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22363</span> --- [e://court/side1] <span style="color: cyan">player1.yaml:8</span><span style="color: white;">             : (p1ng)⋅⋅⋅━━━► 🎾</span>
+<pre style="line-height: 1;white-space: pre-wrap;"><span style="color:grey;font-family: monospace;font-size: 12px;"><span style="color: lightgreen;">player2    | </span>2025-10-26 19:01:43.106 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22578</span> --- [e://court/side2] <span style="color: cyan">player2.yaml:8</span><span style="color: white;">             :       🥎 ◄━━━⋅⋅⋅(p0ng)</span>
+<span style="color: yellow;">player1    | </span>2025-10-26 19:01:46.509 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22363</span> --- [e://court/side1] <span style="color: cyan">player1.yaml:8</span><span style="color: white;">             : (p1ng)⋅⋅⋅━━━► 🥎</span>
+<span style="color: lightgreen;">player2    | </span>2025-10-26 19:01:49.610 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22578</span> --- [e://court/side2] <span style="color: cyan">player2.yaml:8</span><span style="color: white;">             :       🥎 ◄━━━⋅⋅⋅(p0ng)</span>
+<span style="color: yellow;">player1    | </span>2025-10-26 19:01:52.706 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22363</span> --- [e://court/side1] <span style="color: cyan">player1.yaml:8</span><span style="color: white;">             : (p1ng)⋅⋅⋅━━━► 🥎</span>
 ...
 </pre>
 ++++
@@ -655,9 +655,9 @@ NOTE: when no name is specified, _Camel JBang_ stops all.
 
 We're sorry it ended this way, but don't let it spoil your day, there are many other matches to watch!
 
-🎾🎾🎾
+🥎🥎🥎
 Keep exploring the workshop to see more.
-🎾🎾🎾
+🥎🥎🥎
 
 
 [type=taskResource]
