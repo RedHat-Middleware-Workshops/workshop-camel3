@@ -10,6 +10,8 @@
 :url-devconsole: {openshift-host}/topology/ns/{namespace}
 
 
+:url-docserver: https://docserver-webapp.{openshift-app-host}
+
 
 :experimental:
 
@@ -33,9 +35,6 @@
 :style-indent: .indent2 {padding-left: 2rem;}
 :style-all: pass:a[<style>{style-kbd}{style-preview}{style-indent}</style>]
 
-//:url-docserver: https://docserver-webapp.{openshift-app-host}
-:url-docserver: https://docserver-webapp.apps.cluster-p6cqz.dynamic.redhatworkshops.io/
-//:url-docserver: http://0.0.0.0:8080
 
 :docserver-status: pass:a[<img hidden="true" src="invalid-image.jpg" onerror=" \
         fetch('{url-docserver}/status') \
