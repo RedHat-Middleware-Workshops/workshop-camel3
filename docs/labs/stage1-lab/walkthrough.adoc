@@ -911,7 +911,89 @@ image::images/stage1-msg-gitter-slack.png[align="left", width=80%]
 Did you see the message going from _Matrix_ to _Rocket.Chat_?
 
 [type=verificationSuccess]
-You've successfully completed stage 1 !!
+Great! Jump to the next section to clean your namespace.
 
 [type=verificationFail]
 Inspect in the pod logs to investigate possible failure causes.
+
+
+
+
+
+[time=2]
+[id="clean"]
+== Undeploy from OpenShift
+{style-all}
+
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+[type=taskResource]
+.Matrix
+****
+* link:{url-element}[Matrix Web Client, window="_blank"]
+****
+[type=taskResource]
+.Rocket.Chat
+****
+* link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
+****
+
+You're almost done on this lab episode.
+In preparation for your next lab exercise, this last section helps you clean your _OpenShift_ project and, more importantly, shows you how to use _Camel JBang_ when it comes to undeploy integrations.
+
+{empty} +
+
+. Undeploy your _"Matrix to RocketChat"_ integration
++
+The _Kubernetes_ plugin in _Camel JBang_ makes it super simple to undeploy _Camel_. +
+Issue the command below to undeploy `m2r`:
++
+--
+{copypaste}
+----
+camel kubernetes delete --name m2r
+----
+--
++
+You'll see the following command output in your terminal:
++
+[subs=attributes]
+----
+Deleting resources in namespace '{user-username}-devspaces' with name: m2r
+Deleted: apps/Deployment 'm2r'
+Deleted: v1/Service 'm2r'
+Deleted: build.openshift.io/BuildConfig 'm2r-s2i'
+Deleted: image.openshift.io/ImageStream 'm2r'
+Deleted: route.openshift.io/Route 'm2r'
+----
++
+NOTE: The process is thorough when cleaning the deployment by removing all the artifacts originally created.
++
+{empty} +
+
+
+
+{empty} +
+
+[type=verification]
+Do you see your _Camel_ applications absent in your _OpenShift_ project?
+
+[type=verificationSuccess]
+You have now completed Stage 1 !!
+
+[type=verificationFail]
+Inspect in the pod logs to troubleshoot.
