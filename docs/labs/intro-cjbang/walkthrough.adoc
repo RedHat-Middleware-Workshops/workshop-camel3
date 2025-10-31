@@ -24,6 +24,8 @@
   border-radius:5px; \
 } \
 
+:cp-btn: pass:[<svg fill="currentColor" height="1em" width="1em" viewBox="0 0 448 512" aria-hidden="true" role="img" style="vertical-align: -0.125em;"> <path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"></path></svg>]
+
 :style-summary: summary {cursor: pointer; list-style: none;}
 :style-triangle: .triangle {margin-right: .5em;} summary:hover .sumtext {text-decoration: underline;}
 :style-details:  .triangle::before {content: "▶";} details[open] .triangle::before {content: "▼";}
@@ -179,6 +181,33 @@ This chapter is an introductory taste of _Camel JBang_ showing you a basic group
 
 {empty} +
 
+
+=== Find your terminal
+
+The first time, your `lab` directory is empty:
+
+--
+[.indent2]
+📁 message-hub +
+&nbsp;&nbsp;📁 *lab* +
+pass:[<mark style="padding-left: 1rem; background-color: white; color: grey"></mark>] [empty]
+--
+
+{empty}
+
+For this exercise, you will work from your _DevSpaces_ terminal. +
+Find it, as shown below...
+
+image::images/crw-terminal.png[align="left", width=100%]
+
+{blank}
+
+The instructions that follow will prompt you to execute commands. +
+Run them from your terminal.
+
+{empty} +
+
+
 === Playing a game with Camel JBang
 
 They say playing is a great way to learn, so let's play for a bit. While you're at it you'll discover a few tricks _Camel JBang_ has in the bag.
@@ -188,9 +217,9 @@ NOTE: Later, we'll get serious when diving into the core of the workshop.
 {empty} +
 
 Pretend we're about to organise a tennis tournament.
-Let us introduce to you `player1`:
+Let us introduce to you **player1**:
 
-TIP: Click the copy button and paste in your terminal to create the file
+TIP: Click the {cp-btn} button (Copy to clipboard), and paste in your terminal to create the `player1.yaml` file.
 --
 {copypaste}
 ----
@@ -242,7 +271,7 @@ Also, watching closely your folder structure, you'll see on which side `player1`
 
 === Throw a ball
 
-`player1` is ready, give him a 🥎.
+`player1` is ready. Give him a 🥎.
 
 From the terminal's top right corner, click `+` to open a second terminal, as shown below:
 
@@ -292,7 +321,7 @@ Stop the action with kbd:[Ctrl+C].
 
 We introduce to you the ball boy, he will ensure the court is always tidy.
 
-TIP: Click the copy button and paste in your terminal to create the file
+TIP: Click the {cp-btn} button (Copy to clipboard), and paste in your terminal to create the `the-ballboy.yaml` file.
 --
 {copypaste}
 ----
@@ -337,7 +366,7 @@ _Camel JBang_ makes things easy:
 
 * Use the `*` wildcard when you have multiple individuals on court. +
 * The wildcard also picks up property files where you can configure a different game behaviour. +
-Here's an (optional) example `game.properties` you could use:
+Here's a file (optional example) `game.properties` you could use:
 +
 ++++
 <pre style="line-height: 1;white-space: pre-wrap"><span style="color:forestgreen;font-family: monospace;font-size: 12px;"># Ball pace (millis) when players hit. Lower value is faster.
@@ -374,7 +403,7 @@ Ok, practice is over, let's organise a real game.
 For a proper game to take place, you need more than just one player. +
 We introduce to you `player2`:
 
-TIP: Click the copy button and paste in your terminal to create the file
+TIP: Click the {cp-btn} button (Copy to clipboard), and paste in your terminal to create the `player2.yaml` file.
 --
 {copypaste}
 ----
@@ -518,7 +547,7 @@ camel cmd stop-route --id player1
 ----
 --
 
-Because `player1` stopped hitting the ball, spectators will see `player2` hitting last, `player1` tying up his shoe laces, and the ball boy retrieving the ball:
+Because `player1` stopped hitting the ball, spectators will see `player2` hitting one last time, `player1` tying up his shoe laces, and the ball boy retrieving the ball:
 
 ++++
 <pre style="line-height: 1;white-space: pre-wrap;"><span style="color:grey;font-family: monospace;font-size: 12px;"><span style="color: lightgreen;">player2    | </span>2025-10-26 19:32:24.401 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">22578</span> --- [e://court/side2] <span style="color: cyan">player2.yaml:8</span><span style="color: white;">               :       🥎 ◄━━━⋅⋅⋅(pong)</span>
@@ -627,7 +656,7 @@ Now you'll notice more clearly, the funny sound from the rackets, and the game s
 
 === Abrupt end
 
-How unfortunate! +
+That's unfortunate... +
 `player1` slips in the wet court, were his laces well tied up? +
 We fear he got injured. After close inspection its confirmed, he needs to quit the game.
 
@@ -638,9 +667,9 @@ camel stop player1
 ----
 --
 
-NOTE: Run `camel ps` and you'll notice `player1` no longer takes part in the game.
+TIP: Run `camel ps` and you'll notice `player1` no longer takes part in the game.
 
-At this point, it makes no sense to continue the event, the announcement is made, and the game is stopped:
+At this point, it makes no sense to continue the event, the announcement is made, and the game is halted:
 
 --
 {copypaste}
@@ -734,3 +763,8 @@ This was only a taster on how to work fast with a few _Camel_ files.
 Continue with other chapters in the workshop to discover, not only what _Camel JBang_ can do for you beyond what you've just seen, but also other companion tools empowering the developer to work fast with _Apache Camel_.
 
 The rest of the workshop will guide you through the process of rapid prototyping using _Apache Camel_, starting with initial concepts, all the way to deploying on _OpenShift_.
+
+
+{empty} +
+
+MAYBE WORTH INCLUDING A RECAP OF ALL THE COMMANDS USED?

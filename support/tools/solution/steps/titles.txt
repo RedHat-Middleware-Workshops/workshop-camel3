@@ -14,3 +14,5 @@
 13 Test the Discord cosumer
 14 Define the 'd2k' flow: Discord to Kafka
 15 Test the 'd2k' flow: Discord to Kafka
+16 Create a Cron Job
+17 Add storage

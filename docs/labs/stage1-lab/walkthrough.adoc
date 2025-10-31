@@ -408,41 +408,19 @@ camel run \
 ----
 --
 +
-NOTE: Observe the simplicity of the command `camel run \*`. The wildcard `*` allows _Camel JBang_ to automatically scan the folder and recognise the type of each file found (code, properties, resource, etc.).
-+
-[WARNING]
-====
-If the command above failed with the following output:
-
-----
-[jbang] [ERROR] Could not download https://github.com/apache/camel/blob/HEAD/jbang-catalog.json
-[jbang] Run with --verbose for more details
-----
-
-{blank}
-
-Run the following command and try again:
-
---
-{copypaste}
-----
-jbang cache clear
-----
---
-
-
-====
+NOTE: The command above includes flags to tell _Camel JBang_ where to find the resources needed (code, properties, _Kamelets_).
 +
 {blank}
 +
 _Camel JBang_ will build a local runnable and start it. +
-In the output logs you should see _Camel_ connecting to _Matrix_, similar to the following:
+In your terminal logs, you should see _Camel_ connecting to _Matrix_, similar to the following:
 +
-----
-... : Apache Camel 4.14.0 (m2r) started in 128ms (build:0ms init:0ms start:128ms boot:1s312ms)
-... : Opening connection to Matrix...
-... : Matrix HTTP Streaming started
-----
+++++
+<pre style="line-height: 1;white-space: pre-wrap"><span style="color:grey;font-family: monospace;font-size: 12px;">2025-10-30 21:59:34.277 <span style="color: limegreen">INFO</span> <span style="color: deeppink">4330</span> --- [           main] <span style="color: cyan;">.impl.engine.AbstractCamelContext</span><span style="color: white;"> : Apache Camel 4.15.0 (m2r) started in 800ms (build:0ms ...)</span>
+2025-10-30 21:59:35.176 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">4330</span> --- [atrix-streaming] <span style="color: cyan">matrix-source.kamelet.yaml:58</span><span style="color: white;">     : Opening connection to Matrix...</span>
+2025-10-30 21:59:35.390 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">4330</span> --- [atrix-streaming] <span style="color: cyan">matrix-source.kamelet.yaml:67</span><span style="color: white;">     : Matrix HTTP Streaming started</span>
+</span></pre>
+++++
 +
 {empty} +
 +

@@ -1,0 +1,91 @@
+- route:
+    id: main-processor
+    from:
+      uri: kafka
+      parameters:
+        topic: "{{kafka.topic}}"
+        brokers: my-cluster-kafka-bootstrap:9092
+      # uri: kafka:roomx?{{camel.uri.kafka.parameters}}
+      # uri: direct
+      # parameters:
+      #   name: main-processor
+      steps:
+        - bean:
+            method: newMessage
+            ref: controller
+        - filter:
+            expression:
+              simple:
+                expression: "${bean:controller?method=isTimeWindowExpired}"
+            steps:
+              - log:
+                  message: "time window closed, ignoring event: ${body}"
+              - stop: {}
+        - log:
+            message: "got new message: ${body}"
+        - unmarshal:
+            json: {}
+        - marshal:
+            csv: {}
+        - aggregate:
+            steps:
+              - bean:
+                  method: aggregationDone
+                  ref: controller
+              - to:
+                  uri: direct
+                  parameters:
+                    name: store-data
+            aggregationStrategy: "msgStrategy"
+            completionTimeout: "{{message.aggregator.timeout}}"
+            correlationExpression:
+              constant:
+                expression: "true"
+- route:
+    id: keep-alive
+    from:
+      uri: direct
+      parameters:
+        name: wait-until-aggregation-done
+      steps:
+        - log:
+            message: waiting for aggregation to finish...
+        - bean:
+            method: waitUntilAggregationDone
+            ref: controller
+        - log:
+            message: Aggregation has completed.
+- route:
+    id: store-data
+    from:
+      uri: direct
+      parameters:
+        name: store-data
+      steps:
+        - log:
+            message: "ready to store aggregated data:\\n${body}"
+        - log:
+            message: storage done.
+
+
+
+# - route:
+#     id: timer-mock-1
+#     from:
+#       uri: timer
+#       parameters:
+#         timerName: mock-1
+#         repeatCount: 5
+#         period: 1000
+#         includeMetadata: true
+#       steps:
+#         - setBody:
+#             expression:
+#               simple:
+#                 expression: "{{producer.mock.body}}"
+#         - to:
+#             uri: kafka:roomx?{{camel.uri.kafka.parameters}}
+
+            # uri: direct
+            # parameters:
+            #   name: main-processor

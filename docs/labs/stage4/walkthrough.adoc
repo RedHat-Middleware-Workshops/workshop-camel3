@@ -590,7 +590,7 @@ Scroll down the panel and you'll find an area where to configure properties.
 +
 NOTE: The sink creation auto-generates two example properties.
 +
-... Reconfigure the first proterty as follows:
+... Reconfigure the first property as follows:
 +
 ====
 * Property Name:
@@ -607,7 +607,7 @@ token
 `string`
 ====
 +
-... Reconfigure the second proterty as follows:
+... Reconfigure the second property as follows:
 +
 ====
 * Property Name:
@@ -904,6 +904,9 @@ image::images/discord-room-hello.png[align="left", width=30%]
 +
 {empty} +
 
+
+MAKE SURE WE INCLUDE AN INSTRUCTION TO STOP THE BACKGROUND KAMELET
+
 {empty} +
 
 
@@ -921,6 +924,8 @@ Verify the snippet copy/paste actions were well followed.
 {empty} +
 
 Assuming all went well, you have now created your own _Discord Kamelet_, and used it in a _Camel_ route to push messages to _Discord_.
+
+MAKE SURE WE INCLUDE AN INSTRUCTION TO STOP THE BACKGROUND KAMELET
 
 Press `ctrl`+`c` to stop _Camel JBang_.
 
