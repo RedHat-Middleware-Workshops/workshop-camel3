@@ -450,8 +450,7 @@ For reference, here's _Discord_'s documentation on how to post messages:
 
 The diagram below illustrates the processing flow (Camel route) you're about to create:
 
-image::images/processing-flow-sink.png[align="center", width=90%]
-
+image::images/new/processing-flow-sink.jpg[align="center", width=80%]
 
 
 There are 4 key processing steps necessary:
@@ -964,25 +963,26 @@ Press `ctrl`+`c` to stop _Camel JBang_.
 * link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
 ****
 
-We have now the building block we were missing, we can now bind our _Discord_ _Kamelet_ to _Kafka_ to push chat conversations to _Discord_.
+Now that you have the key building block to push events to _Discord_, you can design the process that enables routing _Kafka_ events to _Discord_.
 
 === Process overview
 
 You should by now be very familiar with the necessary processing steps. The diagram below illustrates the _Kafka_ to _Discord_ data flow:
 
-image::images/processing-flow-kafka2discord.png[align="center", width=90%]
+image::images/new/processing-flow-kafka2discord.jpg[align="center", width=80%]
+//image::images/processing-flow-kafka2discord.png[align="center", width=90%]
 
-There are 4 Kamelets in use:
+There are 4 processing steps in use:
 
 ====
-* *1 source* +
+* *1 source consumer* +
 Consumes events from _Kafka_.
 
-* *2 actions* +
+* *2 mid-flow steps* +
 One filters messages to prevent death loops. +
 One transforms events from the standard data model to _Discord_.
 
-* *1 sink* +
+* *1 sink _Kamelet_* +
 Produces events to _Discord_.
 ====
 
@@ -1523,13 +1523,13 @@ The diagram below illustrates the _Discord -> Kafka_ data flow:
 
 image::images/processing-flow-discord2kafka.png[align="center", width=90%]
 
-There are 4 steps involved:
+There are 4 processing steps involved:
 
 ====
 * *1 websocket listener* +
 Consumes events from _Discord_.
 
-* *2 actions* +
+* *2 mid-flow steps* +
 One filters messages to prevent death loops. +
 One transforms events from _Discord_ to the standard data model.
 

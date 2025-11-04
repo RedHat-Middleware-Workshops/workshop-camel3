@@ -140,7 +140,7 @@ endif::[]
 
 // = [[kubernetes-user]] The Kubernetes user deployment flow
 
-Open the architecture by decoupling the chat systems using streaming capabilities with AMQ Streams.
+Open the architecture by decoupling the chat systems using streaming capabilities with Streams for Apache Kafka.
 
 
 Prerequisites: +
@@ -209,7 +209,7 @@ In terms of implementation effort for this lab, your main task is to split each 
 
 {empty} +
 
-One fundamental architecture consideration is that if we want an easy to plugin platform where other communication systems or services need to plugin with ease, we should adopt a standard data model. It would establish a common interface for systems willing to integrate with the platform.
+One fundamental architecture consideration is that if we want an easy to plugin platform where other communication systems or services need to plugin with ease, we should adopt a standard data model. It would establish a common interface for systems planning to integrate with the platform.
 
 This implies that instead of applying platform specific data transformations (eg. _Matrix_ data model to _Rocket.Chat_ data model), we apply the following data transformations:
 
@@ -241,15 +241,6 @@ image::images/standard-data-model.png[align="center", width=90%]
 * link:{url-codeready}[Console, window="_blank"]
 ****
 
-For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
-
---
-{copypaste}
-[subs=attributes]
-----
-oc project {namespace}
-----
---
 
 {empty} +
 
@@ -286,6 +277,8 @@ step 5
 . Check your lab folder
 +
 After executing the commands above, have a look in your editor's tree view to confirm it looks healthy. It should be similar to:
++
+IMAGE PENDING UPDATE
 +
 image::images/lab-setup.png[align="left", width=30%]
 +
@@ -352,28 +345,24 @@ For the processes from _Matrix_/_Rocket.Chat_ to _Kafka_, the steps remain the s
 
 The diagram below applies to the data flows (2 of them) from _Matrix_/_Rocket.Chat_ respectively to _Kafka_:
 
-image::images/processing-flow-chat2kafka.png[align="center", width=90%]
+image::images/new/processing-flow-chat2kafka.jpg[align="center", width=90%]
+//image::images/processing-flow-chat2kafka.png[align="center", width=90%]
 
 {empty} +
 
-There are 4 Kamelets in use:
+There are 4 processing steps in use:
 
 ====
-* *1 source* +
+* *1 source _Kamelet_* +
 Consumes events from _Matrix/Rocket.Chat_.
 
-* *2 actions* +
+* *2 mid-flow steps* +
 One filters messages to prevent death loops. +
 One transforms _Matrix/Rocket.Chat_ events to the standard data model.
 
-* *1 sink* +
+* *1 producer* +
 Produces events to _Kafka_.
 ====
-
-{empty} +
-
-[NOTE]
-As in lab 1 & 2, this one also fits the _Kubernetes_ user. We compose the definitions using Kamelets to enable the data flows between the different platforms.
 
 {empty} +
 
@@ -720,21 +709,22 @@ The main differences are that we are consuming events from _Kafka_ (step 1) and 
 
 The diagram below applies to the data flows (2 of them) from _Kafka_ to Matrix/Rocket.Chat respectively:
 
-image::images/processing-flow-kafka2chat.png[align="center", width=90%]
+image::images/new/processing-flow-kafka2chat.jpg[align="center", width=90%]
+//image::images/processing-flow-kafka2chat.png[align="center", width=90%]
 
 {empty} +
 
-There are 4 Kamelets in use:
+There are 4 processing steps in use:
 
 ====
-* *1 source* +
+* *1 consumer* +
 Consumes events from _Kafka_.
 
-* *2 actions* +
+* *2 mid-flow steps* +
 One filters messages to prevent death loops. +
 One transforms events from the standard data model to _Matrix/Rocket.Chat_.
 
-* *1 sink* +
+* *1 sink _Kamelet_* +
 Produces events to _Matrix/Rocket.Chat_.
 ====
 
@@ -1080,6 +1070,11 @@ Again, very simple updates, nothing else required for the _Kafka → Matrix_ pro
 ****
 * link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
 ****
+
+{empty} +
+
+THIS CHAPTER IS YET TO BE UPDATED
+IGNORE THE CONTENT BELOW. DEPLOY AS IN PREVIOUS CHAPTERS.
 
 We've covered a lot of ground. It would be normal to make mistakes. Hopefully the helper guide kept those to a minimum and, once deployed, you can see your integrations working in healthy state and delivering the expected outcome.
 

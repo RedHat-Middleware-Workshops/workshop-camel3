@@ -178,33 +178,46 @@ _Apache Camel_ keeps making major evolution steps improving its usability and re
 
 [time=1]
 [id="workshop-progression"]
-== Workshop progression
+== Tech and Workshop progression
 
-This workshop has been designed to start with the non-_Camel_ user in mind (the _Kubernetes_ user). All the initial data flows are delivered by the _Kubernetes_ user to showcase the no-code building blocks of _Camel_.
+This is a quick overview of the technologies included in the workshop and what to expect as you progress with the completion of the workshop.
 
-As the student progresses with the labs, the scenario builds up in a more sophisticated architecture. Gradually, each new use case requires increased level of control, an area where the experienced _Camel_ developer is better suited.
+{empty} +
 
-Every step you complete in the lab delivers value to the end platform under development. The further you go, the more fascinating power you uncover. It all starts, however, with the simplicity and easiness of no-code building blocks allowing anyone to define data flows from A to B.  
+=== Technology Stack
+
+Red Hat® OpenShift® Container Platform, Red Hat OpenShift Data Foundation, Red Hat Application Foundations, and other tools can help automate the workflow of data ingestion, preparation, and management building data pipelines for hybrid cloud deployments that automate data processing upon acquisition.
+
+* Red Hat Application Foundations
+
+** **Red Hat build of Apache Camel**: Utilize the integration capabilities of Apache Camel and its vast component library in the Quarkus runtime, optimizing for peak application performance with fast start up time.
+
+** **Red Hat streams for Apache Kafka**: Based on the Apache Kafka project, streams for Apache Kafka offers a distributed backbone that allows microservices and other applications to share data with extremely high throughput and extremely low latency.
+
+* Red Hat Dev Spaces
+
+* Red Hat OpenShift
+
+* Red Hat OpenShift Data Foundation
+
+{empty} +
+
+
+=== Workshop progression
+
+If you haven't used Apache Camel before, you'll see how lightweight and powerful it is. And now, easier than ever to get started.
+
+The latest improvements in developer experience and clean constructs bring two main benefits. They make it simpler to use and maintain over time (something seasoned Camel developers really value) while also making it easy for newcomers to jump in and discover its versatility and power.
+
+The workshop takes you on a journey. It starts with simple data flows to show how easy it is, then step by step introduces constructs for more complex scenarios.
+
+As you move through the hands-on labs, the examples grow and show you how to apply best-practice architectures. Each new case needs more control, an area where experienced *Camel* developers shine.
+
+Every lab step you finish adds real value to the platform being built. The further you go, the more powerful features you uncover. But it all starts with the clean simplicity of no-code building blocks that let anyone set up data flows from A to B.
+
+{empty} +
 
 image::images/workshop-progress-value.png[align="center", width=60%]
-
-
-
-[time=1]
-[id="workshop-user-profiles"]
-== User profiles
-
-The workshop has been designed to attend two different user profiles:
-
-
-* *The Kubernetes user* (no previous Camel experience) +
-The way this user consumes _Camel_ is by selecting _Kamelets_ (no-code building blocks) from a catalogue, and creating _Kamelet Bindings_ (concatenated _Kamelets_) in YAML definitions. The user creates local YAML files and then pushes them to _OpenShift_. The _Camel K_ operator automates the process of building, creating images and deploying the integrations.
-
-* *The Camel developer* +
-The traditional _Camel_ developer would typically, first, use his local environment for the inner loop development cycle. This strategy allows speeding up the process of prototyping and validating the code. Once the basics covered, it would follow the same deployment flow as the Kubernetes user.
-
-image::images/workshop-user-profiles.png[align="center", width=40%]
-
 
 
 [time=1]
@@ -213,16 +226,12 @@ image::images/workshop-user-profiles.png[align="center", width=40%]
 
 The list below summarises, among others, the main goals the workshop sets for you:
 
-* *Be the Kubernetes user* +
-Experience how to define and deploy integration flows connecting multiple _Kamelets_ (no-code building blocks) into _Kamelet Bindings_. +
+* *Get started with Camel* + 
+Understand the basics of Camel and take your first steps. +
 {empty} +
 
 * *Be the Camel developer* + 
 Experience first hand powerful _Camel_ tooling that accelerates the development process, and how the _Camel DSL_ (Domain Specific Language) can help you to implement advanced use cases. +
-{empty} +
-
-* *Extend/Amplify connectivity* +
-Learn how both personas (_Kubernetes/Camel_ users) can coordinate to maximise reusability by taking advantage of _Camel's_ open framework. +
 {empty} +
 
 * *Understand different levels of control* + 
@@ -237,22 +246,26 @@ Understand the justification behind certain design/architecture principles. Expe
 Get to know the architecture of a collaboration platform, an increasingly needed capability, strategic for any industry/organisation, to connect internally and externally with colleagues and customers. +
 {empty} +
 
-=== Use of Camel
+=== Building blocks in Camel
 
-In terms of _Camel_ constructs, the workshop covers the following building blocks, corresponding to `Entry` and `Integrator` levels (as per the diagram below):  
+_Apache Camel_ is unique in how you construct data flows and how you extend it by creating customized building blocks.
 
-- _Kamelet_ bindings
-- _Kamelets_
-- _Camel_ routes
+To help you get familiarized with the different constructs you can use in Camel, the figure below shows a simplified view of how they relate to each other.
 
-{blank}
+image::images/new/camel-abstraction-levels.jpg[align="center", width=60%]
 
-If you've never played with _Camel_ before, by the end of the workshop you're expected to be familiar with the constructs above listed.
-
-image::images/camel-abstraction-levels.png[align="center", width=80%]
-
+- A pipe is made out of Kamelets
+- A Kamelet is the encapsulation of a Camel route
+- A Camel route is made out of steps
+- A step is tipically a Camel component (but also includes the use of EIPs or calls to other routes or Kamelets).
 
 {empty} +
+
+The workshop will center its attention around those most commonly used: _Kamelets_ and _Camel_ routes.
+
+{empty} +
+
+
 
 [time=1]
 [id="scenario-intro"]

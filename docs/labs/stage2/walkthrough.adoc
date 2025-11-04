@@ -28,10 +28,14 @@
   border-radius:5px; \
 } \
 
+:style-summary: summary {cursor: pointer; list-style: none;}
+:style-triangle: .triangle {margin-right: .5em;} summary:hover .sumtext {text-decoration: underline;}
+:style-details:  .triangle::before {content: "▶";} details[open] .triangle::before {content: "▼";}
+:style-open-close: {style-summary}{style-triangle}{style-details} 
 
 :style-preview: pre {background-color: #272822; color: white; padding: 5px 15px; font-size: 15px}
 :style-indent: .indent2 {padding-left: 2rem;}
-:style-all: pass:a[<style>{style-kbd}{style-preview}{style-indent}</style>]
+:style-all: pass:a[<style>{style-kbd}{style-preview}{style-indent}{style-open-close}</style>]
 
 
 :url-docserver: https://docserver-webapp.{openshift-app-host}
@@ -262,26 +266,21 @@ A filtering mechanism needs to be put in place to prevent the interaction from e
 
 The diagram below illustrates the processing flow you're about to create:
 
-image::images/processing-flow-g2s.png[align="center", width=80%]
+image::images/new/processing-flow-m2r.jpg[align="center", width=80%]
 
-There are 4 Kamelets in use:
+There are 4 processing steps in use:
 
 ====
-* *1 source* +
+* *1 source _Kamelet_* +
 Consumes events from _Matrix_.
 
-* *2 actions* +
+* *2 mid-flow steps* +
 One filters messages to prevent death loops. +
 One transforms _Matrix_ events to _Rocket.Chat_ events (in JSON format).
 
-* *1 sink* +
+* *1 sink _Kamelet_* +
 Produces events to _Rocket.Chat_.
 ====
-
-{empty} +
-
-[NOTE]
-You can tell from the list above that this second lab suits very well the _Kubernetes_ user: all the integration process involves is defining a _Kamelet Binding_ with a sequence of _Kamelets_ in them.
 
 {empty} +
 
@@ -428,58 +427,6 @@ The expected behaviour from the system is to observe how the filter blocks the m
 +
 {empty} +
 
-. Deploy on OpenShift
-+
-Once you're happy with your local run, proceed to deploy this new version with filter on OpenShift.
-+
-Use the command below:
-+
---
-{copypaste}
-----
-labdeploy m2r \
-../matrix.properties ../rocketchat.properties \
---property quarkus.config.locations=matrix.properties,rocketchat.properties
-----
---
-+
-NOTE: Be patient, this action may take some time to complete (could take up to 10mn the first time).
-+
-You can monitor the state of the resource with the following command:
-+
---
-{copypaste}
-----
-oc get deployment/m2r
-----
---
-+
-When the deployment is ready, the command outputs something similar to:
-+
-----
-NAME   READY   UP-TO-DATE   AVAILABLE   AGE
-m2r    1/1     1            1           10m 
-----
-+
-{empty} +
-
-. Test your deployed application
-+
-* Use the samples below in _Matrix_ to validate your flow:
-+
---
-{copypaste}
-----
-go through
-----
-
-{copypaste}
-----
-<b>fakebot@rocketchat</b>: fake app message
-----
---
-+
-{empty} +
 
 [type=verification]
 In test 1, did you see the message going from _Matrix_ to _Rocket.Chat_?
@@ -543,20 +490,21 @@ It also requires a filtering mechanism to block events from _Rocket.Chat_, origi
 
 The diagram below illustrates the processing flow:
 
-image::images/processing-flow-s2g.png[align="center", width=80%]
+image::images/new/processing-flow-r2m.jpg[align="center", width=80%]
+//image::images/processing-flow-s2g.png[align="center", width=80%]
 
 
-There are 4 Kamelets in use:
+There are 4 processing steps in use:
 
 ====
-* *1 source* +
+* *1 source _Kamelet_* +
 Consumes events from _Rocket.Chat_.
 
-* *2 actions* +
+* *2 mid-flow steps* +
 One filters messages to prevent death loops. +
 One transforms _Rocket.Chat_ events to _Matrix_ events (in JSON format).
 
-* *1 sink* +
+* *1 sink _Kamelet_* +
 Produces events to _Matrix_.
 ====
 
@@ -755,19 +703,10 @@ If all goes well your message should show up in Matrix.
 +
 image::images/stage2-msg-slack-gitter.png[align="left", width=80%]
 
-. Test both directions
-+
-As a final step, ensure that _Matrix_-to-_Rocket.Chat_ messages do not circle back.
-+
-From your _Matrix_ chat room, send a message. +
-The expected outcome should be as follows:
-
-* You see the message in _Rocket.Chat_
-* You don't see a new message in _Matrix_
 
 {empty} +
 
-You finally have both flows in place:
+If all went well, you should end up with both flows completed:
 
 --
 * Matrix to Rocket.Chat
@@ -781,7 +720,7 @@ You finally have both flows in place:
 Did you see your message from _Rocket.Chat_ successfully reach _Matrix_ (and not come back)?
 
 [type=verificationSuccess]
-You have now completed Stage 2 !!
+Very good! Next, deploy the flows.
 
 [type=verificationFail]
 Inspect in the pod logs to troubleshoot.
@@ -790,7 +729,7 @@ Inspect in the pod logs to troubleshoot.
 
 [time=5]
 [id="openshift"]
-== Deployment in OpenShift
+== Deployment on OpenShift
 {style-all}
 
 [type=taskResource]
@@ -824,42 +763,117 @@ Now that you have validated your code locally, you can proceed to deploy and run
 
 {empty} +
 
+=== Matrix to Rocket.Chat
+
+{blank}
+
 . To start with, make sure you have stopped you local Camel instance. +
 If it is still running, press kbd:[Ctrl+C] to stop it.
 +
 {empty} +
 
-
-. Deploy your _RocketChat_ to _Matrix_ integration
+. Deploy your _Matrix_ to _RocketChat_ integration
 +
-.. For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
+Use the command below to deploy on _OpenShift_:
 +
 --
 {copypaste}
-[subs=attributes]
 ----
-oc project {namespace}
+labdeploy m2r \
+matrix.properties rocketchat.properties
 ----
 --
 +
+[pass]
+<details>
+  <summary>
+    <span class="triangle"></span>
+    <span class="sumtext">Click for more information</span>
+  </summary>
+<p style="margin-top: 1em;">We provide the script <code>labdeploy</code> to help you read the commands more clearly.</br>
+Under the hood the script calls <i>Camel JBang</i> as per the snippet below:
+<pre>
+camel kubernetes run m2r/* \
+matrix.properties rocketchat.properties \
+--name m2r \
+--property quarkus.config.locations=matrix.properties,rocketchat.properties \
+--local-kamelet-dir ../support/deploy/kamelets \
+--cluster-type openshift
+</pre></p>
+</details>
++
 {blank}
 +
-.. Use the command below to deploy your application:
+NOTE: Be patient, this action may take some time to complete (could take up to 10mn the first time).
++
+{empty} +
+
+
+. Inspect the deployment status
++
+You can monitor the state of the resource with the following command:
++
+--
+{copypaste}
+----
+oc get deployment/m2r
+----
+--
++
+When the deployment is ready, the command outputs something similar to:
++
+----
+NAME   READY   UP-TO-DATE   AVAILABLE   AGE
+m2r    1/1     1            1           10m 
+----
++
+{empty} +
+
+{empty} +
+
+=== Rocket.Chat to Matrix
+
+{blank}
+
+. Deploy your _RocketChat_ to _Matrix_ integration
++
+Use the command below to deploy your application:
 +
 --
 {copypaste}
 ----
 labdeploy r2m \
-../rocketchat.properties ../matrix.properties \
---property quarkus.config.locations=rocketchat.properties,matrix.properties
+rocketchat.properties matrix.properties
 ----
 --
++
+[pass]
+<details>
+  <summary>
+    <span class="triangle"></span>
+    <span class="sumtext">Click for more information</span>
+  </summary>
+<p style="margin-top: 1em;">We provide the script <code>labdeploy</code> to help you read the commands more clearly.</br>
+Under the hood the script calls <i>Camel JBang</i> as per the snippet below:
+<pre>
+camel kubernetes run r2m/* \
+rocketchat.properties matrix.properties \
+--name r2m \
+--property quarkus.config.locations=rocketchat.properties,matrix.properties \
+--local-kamelet-dir ../support/deploy/kamelets \
+--cluster-type openshift
+</pre></p>
+</details>
++
+{blank}
 +
 NOTE: Be patient, this action may take some time to complete (could take up to 10mn the first time).
 +
 {empty} +
+
+. Inspect the deployment status
 +
-You can monitor the state of the resource with the following command:
+Monitor the state of the deployment with the command below:
 +
 --
 {copypaste}
@@ -875,15 +889,51 @@ NAME   READY   UP-TO-DATE   AVAILABLE   AGE
 r2m    1/1     1            1           10m 
 ----
 +
-{blank}
-+
-Check the pod's deployment and logs to ensure all is in healthy state.
+{empty} +
+
+{empty} +
+
+=== Developer topology view
+
+
+Visually check the deployments and logs to ensure all is in healthy state.
+
+. Open your Developer Topology view in the OpenShift console
 +
 image::images/ocp-dev-pod-healthy-s2g.png[align="left", width=80%]
 +
 {empty} +
 
-. Test the integration from Rocket.Chat.
+{empty} +
+
+=== Test the flows
+
+{blank}
+
+Ensure messages flow in both directions to validate your deployments.
+
+WARNING: As you injected filters to prevent lookbacks, make sure you don't see messages circling back when you execute the tests below.
+
+{empty} +
+
+
+. Test your _Matrix to Rocket.Chat_ integration
++
+One more time, send a message from _Matrix_ (ensure you don't see loopbacks). +
+For example:
++
+--
+{copypaste}
+----
+Hello from Matrix
+----
+--
++
+image::images/stage1-msg-gitter-slack.png[align="left", width=80%]
++
+{empty} +
+
+. Test your _Rocket.Chat to Matrix_ integration.
 +
 Go to you Rocket.Chat's chat room and send a message. +
 +
@@ -896,26 +946,11 @@ Hello from Rocket.Chat
 ----
 --
 +
-If all goes well your message should show up in Matrix.
+If all goes well your message should show up in _Matrix_.
 +
 image::images/stage2-msg-slack-gitter.png[align="left", width=80%]
 +
 {empty} +
-
-
-. Test your Matrix to Rocket.Chat integration
-+
-One more time, send a message from Matrix, and ensure you don't see loopbacks. +
-For example:
-+
---
-{copypaste}
-----
-Hello from Matrix
-----
---
-+
-image::images/stage1-msg-gitter-slack.png[align="left", width=80%]
 
 
 **Well done!** you shoud now have both flows in place:

@@ -153,25 +153,11 @@ Estimated time: +
 
 {empty} +
 
-// === User profiles
-
-++++
-<h3>User Profiles</h3>
-++++
-
-{blank}
-
-* *The Camel developer* +
-The traditional _Camel_ developer would typically, first, use his local environment for the inner loop development cycle. This strategy allows speeding up the process of prototyping and validating the code. Once the basics covered, it would follow the same deployment flow as the Kubernetes user.
-
-* *The Kubernetes user* (no previous Camel experience) +
-The way this user consumes _Camel_ is by selecting catalog _Kamelets_ and creating _Kamelet Bindings_ in YAML definitions. The user creates local YAML files and then pushes them to _OpenShift_. The _Camel K_ operator automates the process of building, creating images and deploying the integrations.
-
 {empty} +
 
 [time=2]
 [id="scenario-intro"]
-== Scenario introduction
+== Data flow overview
 
 The picture below illustrates the data flow traversing our Camel instance:
 
@@ -192,7 +178,7 @@ The tasks to complete in this lab will guide you on how to onboard to both chat 
 {empty} +
 
 
-[time=3]
+[time=2]
 [id="matrix-chat"]
 == Matrix platform onboarding
 
@@ -284,7 +270,7 @@ Were you able to join the Matrix room successfully?
 {empty} +
 
 
-[time=3]
+[time=2]
 [id="rocketchat-chat"]
 == Rocket.Chat platform onboarding
 
@@ -364,21 +350,20 @@ Were you able to join the _Rocket.Chat_ room successfully?
 
 The diagram below illustrates the processing flow you're about to create:
 
-image::images/processing-flow.png[align="center", width=80%]
+image::images/new/processing-flow.jpg[align="center", width=80%]
 
-There are 3 Kamelets in use:
+There are 3 processing steps in use:
 
 ====
-* *A source* +
+* *A source _Kamelet_* +
 Consumes events from _Matrix_.
 
-* *An action* +
+* *A data mapping* +
 Transforms _Matrix_ events to _Rocket.Chat_ events (in JSON format).
 
-* *A sink* +
+* *A sink _Kamelet_* +
 Produces events to _Rocket.Chat_.
 ====
-
 
 {empty} +
 

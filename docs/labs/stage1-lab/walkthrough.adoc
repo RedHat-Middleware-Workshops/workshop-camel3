@@ -136,6 +136,7 @@
   let text = pre.textContent; \
   let lineCount = text.split('\n').length; \
   let tokens = this.nextSibling; \
+  tokens.data = tokens.data.replace('user','room'); \
   console.log('tokens: [' +tokens.data.trim()+']'); \
   console.log('before text: [' +text+']'); \
   text = replaceTokens(text, tokens.data.trim()); \
@@ -146,6 +147,7 @@
   block.remove(); \
 }"> \
 ]
+
 
 :room: pass:a[ \
 <img hidden="true" src="invalid-image.jpg" onerror="{ \
@@ -236,22 +238,20 @@ The instructions below are divided in two segments:
 * link:{url-rocketchat}[Rocket.Chat Web Client, window="_blank"]
 ****
 
-This workshop has been designed to attend two different user profiles:
-
 For reference, here's again the processing flow to implement:
 
-image::images/processing-flow.png[align="center", width=80%]
+image::images/new/processing-flow.jpg[align="center", width=80%]
 
-You will include 3 Kamelets:
+The Camel route will include 3 processing steps:
 
 ====
-* *A source* +
+* *A source _Kamelet_* +
 Consumes events from _Matrix_.
 
-* *An action* +
+* *A data mapping* +
 Transforms _Matrix_ events to _Rocket.Chat_ events (in JSON format).
 
-* *A sink* +
+* *A sink _Kamelet_* +
 Produces events to _Rocket.Chat_.
 ====
 
@@ -442,9 +442,12 @@ image::images/gitter-send-message.png[align="left", width=60%]
 Your terminal should show the arrival of a _Matrix_ event similar to the following JSON payload:
 +
 [subs="attributes+"]
-----
-{"fromUser":{"username":"{user-username}","displayName":"{user-username}"},"text":"Hello Camel","sent":"2023-06-19T10:10:20.000Z"}
-----
+++++
+<pre style="line-height: 1;white-space: pre-wrap"><span style="color:grey;font-family: monospace;font-size: 12px;">2025-10-30 21:59:55.672 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">4330</span> --- [ad #7 - WireTap] <span style="color: cyan">m2r.camel.yaml:12</span><span style="color: white;">     : {"fromUser":{"username":"{user-username}","displayName":"{user-username}"},"text":"<span style="background-color: #ffff00; color: #000000; padding: 0px 0px;">Hello Camel</span>","sent":"2025-10-30T21:59:55.000Z"}</span>
+</span></pre>
+++++
++
+NOTE: Find the message content highlighted in yellow.
 +
 {blank}
 +
@@ -722,13 +725,11 @@ image::images/workflow-camel-user.png[align="center", width=80%]
 
 Now that you have validated your code locally, you can proceed to deploy and run in _OpenShift_.
 
-The definitions that you have implemented can practically be taken 'as-is' into _OpenShift_. 
+The definitions that you have implemented can be taken as-is into _OpenShift_. +
 
-The only additional actions really to do are:
---
-* Ensure we keep tokens secured with Secrets
-* Ensure the Kamelet Binding can load the JSLT file as a resource. 
---
+NOTE: We have configured _Camel JBang_ to include its _Kubernetes_ plugin that allows users to easily deploy into _OpenShift_. +
+Below you'll see how it's used.
+
 
 {empty} +
 
@@ -751,25 +752,28 @@ oc project {namespace}
 +
 {blank}
 +
-.. Use the command below to deploy your application:
+.. Use the _Kubernetes_ plugin to deploy your application, as shown below:
 +
-[TIP]
-====
-[pass]
-<details>
-<summary><span class="triangle">Click for more information</span></summary>
-<p><pre>
-Temporary deployment command (needs to be more tidy)
-</pre><p>
-</details>
-====
+--
+{copypaste}
+----
+camel kubernetes run m2r/* \
+./matrix.properties \
+./rocketchat.properties \
+--name m2r \
+--property quarkus.config.locations=rocketchat.properties,matrix.properties \
+--local-kamelet-dir ../support/deploy/kamelets \
+--cluster-type openshift
+----
+--
++
+NOTE: Deployment actions like the one above will be integrated in future releases _Kaoto_.
 +
 --
 {copypaste}
 ----
 labdeploy m2r \
-../rocketchat.properties ../matrix.properties \
---property quarkus.config.locations=rocketchat.properties,matrix.properties
+matrix.properties rocketchat.properties
 ----
 --
 +
