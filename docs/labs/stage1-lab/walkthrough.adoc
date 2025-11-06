@@ -31,13 +31,6 @@
 :style-details:  .triangle::before {content: "▶";} details[open] .triangle::before {content: "▼";}
 :style-open-close: {style-summary}{style-triangle}{style-details} 
 
-
-
-//:style-summary: summary {cursor: pointer; list-style: none;}
-//:style-triangle: .triangle::before {content: "▶"; margin-right: .5em;}
-//:style-details: details[open] .triangle::before {content: "▼";} details[open] p {margin-top: 1em;}
-//:style-open-close: {style-summary}{style-triangle}{style-details} 
-
 :style-preview: pre {background-color: #272822; color: white; padding: 5px 15px; font-size: 15px}
 :style-indent: .indent2 {padding-left: 2rem;}
 :style-all: pass:a[<style>{style-kbd}{style-preview}{style-indent}{style-open-close}</style>]
@@ -740,16 +733,6 @@ If it is still running, press kbd:[Ctrl+C] to stop it.
 
 . Deploy your _Matrix_ to _RocketChat_ integration
 +
-.. For those resuming work from a previous day, ensure the _working_ project in _OpenShift_ is selected by executing the following command:
-+
---
-{copypaste}
-[subs=attributes]
-----
-oc project {namespace}
-----
---
-+
 {blank}
 +
 .. Use the _Kubernetes_ plugin to deploy your application, as shown below:
@@ -758,8 +741,7 @@ oc project {namespace}
 {copypaste}
 ----
 camel kubernetes run m2r/* \
-./matrix.properties \
-./rocketchat.properties \
+matrix.properties rocketchat.properties \
 --name m2r \
 --property quarkus.config.locations=rocketchat.properties,matrix.properties \
 --local-kamelet-dir ../support/deploy/kamelets \
@@ -769,19 +751,11 @@ camel kubernetes run m2r/* \
 +
 NOTE: Deployment actions like the one above will be integrated in future releases _Kaoto_.
 +
---
-{copypaste}
-----
-labdeploy m2r \
-matrix.properties rocketchat.properties
-----
---
-+
 NOTE: Be patient, this action may take some time to complete (could take up to 10mn the first time).
 +
 {empty} +
 +
-You can monitor the state of the resource with the following command:
+.. You can monitor the state of the resource with the following command:
 +
 --
 {copypaste}
@@ -843,11 +817,12 @@ Inspect in your link:{openshift-host}/topology/ns/{namespace}[OpenShift Develope
 +
 image::images/ocp-dev-pod-healthy.png[align="left", width=80%]
 +
+{blank}
++
 TIP: You can zoom in/out the canvas by using your mouse scrolling function, and move it around by clicking and dragging the background.
 +
-{empty} +
-+
-NOTE: You will observe your project also includes a pre-deployed _AMQ Streams (Kafka)_ cluster. Later in the workshop, you will use this dedicated _Kafka_ cluster to stream data in and out.
+NOTE: You will observe your project also includes a pre-deployed _Kafka_ cluster. +
+Later in the workshop, you will use this dedicated _Kafka_ cluster to stream data in and out.
 +
 {empty} +
 

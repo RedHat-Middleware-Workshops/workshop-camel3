@@ -28,6 +28,8 @@
   border-radius:5px; \
 } \
 
+:cp-btn: pass:[<svg fill="currentColor" height="1em" width="1em" viewBox="0 0 448 512" aria-hidden="true" role="img" style="vertical-align: -0.125em;"> <path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"></path></svg>]
+
 :style-preview: pre {background-color: #272822; color: white; padding: 5px 15px; font-size: 15px}
 :style-indent: .indent2 {padding-left: 2rem;}
 :style-all: pass:a[<style>{style-kbd}{style-preview}{style-indent}</style>]
@@ -213,15 +215,17 @@ Technical goals and milestones:
 == Understand the end-to-end process
 
 
-The process to implement is not a trivial one, it requires to perform a series of well coordinated actions. To start with, the scheduler mechanism is based on _Kubernetes_ cronjobs, which _Camel K_ leverages and that we can take advantage of.
+The process to implement is not a trivial one, it requires to perform a series of well coordinated actions. To start with, the scheduler mechanism is based on _Kubernetes_ cronjobs, which can be leveraged with _Camel_ and _Quarkus_.
 
-_Camel K_ includes the concept of _'Traits'_. These are capabilities that can be enabled/disabled or configured to customise the behaviour of the final integration. The `Cron` trait allows us to program scheduled runs of the integration, _OpenShift_ will automatically fire off an instance that will start processing _Kafka_ events. When the end of the data stream is reached, the process shuts down.
+The _Kubernetes_ plugin (in _Camel JBang_) includes the concept of _'Traits'_. These are capabilities that can be enabled/disabled or configured to customise the behaviour of the final deployed integration. The `Cron` trait allows us to program scheduled runs of the integration, _OpenShift_ will automatically fire off an instance that will start processing _Kafka_ events. When the end of the data stream is reached, the process shuts down.
+
+NOTE: The `cron` trait is pending to be finalised in the Kubernetes plugin. For now it needs to be manually activated.
 
 {empty} +
 
 === Process overview
 
-The diagram below describes the _Camel_ process to be implemented. This integration involves multiple EIPs (_Enterprise Integration Patterns_) and therefore belongs to the _Camel_ developer who will use the _Camel DSL_ to define it.
+The diagram below describes the _Camel_ process to be implemented. This integration involves multiple EIPs (_Enterprise Integration Patterns_) in combination with _Java_ code to fully deliver the expected behaviour.
 
 image::images/processing-flow-storage.png[align="center", width=100%]
 
@@ -249,7 +253,7 @@ Uploads the daily digest into an S3 bucket.
 
 === The custom controller
 
-One tricky scenario we must handle with care is how to prevent the cronjob from killing the _Camel_ instance too early. Let's explain it in more detail.
+One tricky scenario you must handle with care is how to prevent the cronjob from killing the _Camel_ instance too early. Let's explain it in more detail.
 
 The cronjob knows when to kill a running instance once _Camel_ reports the number of _Exchanges_ in-flight (still executing) is nil.
 
@@ -376,10 +380,10 @@ After initialisation, under the `lab` directory, you'll find the following sourc
 [.indent2]
 📁 message-hub +
 &nbsp;&nbsp;📁 lab +
-&nbsp;&nbsp;&nbsp;&nbsp;📁 store +
-pass:[<mark style="padding-left: 2rem; background-color: white; color: grey"><b>⚙</b></mark>] application.properties +
-pass:[<mark style="padding-left: 2rem; background-color: white; color: red"><b>J</b></mark>] *helper.java* +
-pass:[<mark style="padding-left: 2rem; background-color: white; color: purple"><b><i>&nbsp;!&nbsp;&nbsp;</i></b></mark>]*store.camel.yaml*
+&nbsp;&nbsp;&nbsp;&nbsp;📁 archive +
+pass:[<mark style="padding-left: 2rem; background-color: white; color: grey"><b>⚙</b></mark>] application-dev.properties +
+pass:[<mark style="padding-left: 2rem; background-color: white; color: purple"><b><i>&nbsp;!&nbsp;&nbsp;</i></b></mark>]*archive.camel.yaml* +
+pass:[<mark style="padding-left: 2rem; background-color: white; color: red"><b>J</b></mark>] *helper.java*
 --
 
 {blank}
@@ -400,148 +404,67 @@ Feel free to inspect the files in your editor. +
 
 
 
-=== OLD DOCUMENTATION
-
-The first step is to create a little prototype that will validate our _Camel_ route implementation.
-
-. Close tabs
-+
-image::images/crw-close-tabs.png[align="left", width=100%]
-+
-{blank}
-+
-Before you start this second lab, make sure you close in your editor all the tabs (source files) from the previous exercise.
-+
-1) Click on the file explorer's `...` button +
-2) Ensure your `Open Editors` is ticked [√] +
-3) Click the `Close all Editors` button.
-+
-{empty} +
-
-. Setup your lab folder
-.. Create your working folder:
-+
-[subs=]
-```bash
-cd /projects/message-hub
-mkdir lab5
-cd lab5
-cp ../support/labs/stage5/HelperStage5.java .<br>
-```
-+
-{empty} +
-+
-.. Find your new folder in the project tree
-+
-image::images/crw-folder.png[align="left", width=30%]
-+
-{blank}
-+
-Ensure you're working on folder `lab5`
-+
-{empty} +
-.. Create a configuration file
-+
-```bash
-touch stage5.properties
-```
-+
-{empty} +
-+
-Include in your configuration the following properties:
-+
-```properties
-# Test JSON payload to simulate Kafka events
-producer.mock.body= {"user":"${exchangeProperty.CamelTimerName}","text":"message ${exchangeProperty.CamelTimerCounter}"}
-
-# Time the aggregator will wait for messages before the data storage process is triggered
-message.aggregator.timeout = 10000
-
-# Cut-off time the controller uses to allow messages to be aggregated.
-# Messages arriving after cut-off time will be aggregated in the next cron run
-# Attention: cut-off time should be less than aggregator timeout
-messege.controller.cutoff.time = 5000
-
-# AMQ Strams connectivity
-camel.uri.kafka.parameters=\
-brokers=my-cluster-kafka-bootstrap:9092\
-&clientId=lab\
-&groupId=lab\
-&autoOffsetReset=earliest\
-&autoCommitEnable=false\
-&allowManualCommit=true
-
-# S3 connectivity
-camel.uri.s3.parameters=\
-accessKey=YOUR_ACCESS_KEY\
-&secretKey=RAW(YOUR_SECRET_KEY)\
-&region=us-east-1\
-&uriEndpointOverride=http://s3.openshift-storage.svc:80\
-&overrideEndpoint=true\
-&useDefaultCredentialsProvider=false\
-&autoCreateBucket=true
-```
-+
-NOTE: The above properties will be explained as we make progress with the implementation in chapters to follow.
 {empty} +
 
 [time=2]
 [id="inspect-controller"]
 == Inspect the Controller implementation
+{style-all}
 
-This lab provides the Java class `HelperStage5.java` containing the _Controller_ logic and the _Aggregation_ strategy. For now let's focus on the _Controller_ functionality.
+This lab provides the Java class `helper.java` containing the _Controller_ logic and the _Aggregation_ strategy. For now let's focus on the _Controller_ functionality.
 
 In your Java file you will find the following code that implements the _Controller_ logic. +
-Inspect carefully the code below to familiarise yourself with the _Controller_:
+Familiarise yourself with the *_Controller_*, inspect carefully the code below:
 
-----
-        //Controller implementation
-        return new Controller(){
-
-            // Helper variables
-            boolean expiredTimeWindow = false;
-            CountDownLatch latch      = null;
-            long lastMessageTime      = 0;
-
-
-            public synchronized void newMessage(CamelContext context) {
-
-                //initialise when first message comes in
-                if(latch == null){
-                    lastMessageTime = System.currentTimeMillis();
-                    latch = new CountDownLatch(1);
-                    context.createProducerTemplate().asyncSendBody("direct:wait-until-aggregation-done", null);
-                }
-
-                //calculate time split between last 2 messages
-                long now = System.currentTimeMillis();
-                long elapsed = now - lastMessageTime;
-
-                //if message not in the time window, we stop processing messages.
-                if(elapsed > cutoffTime){
-                    expiredTimeWindow = true;
-                }
-
-                //reset time
-                lastMessageTime = now;
-            }
-
-            public void waitUntilAggregationDone() throws Exception {
-                if(latch != null){
-                    latch.await();
-                }
-            }
-
-            public void aggregationDone() throws Exception{
-                latch.countDown();
-            }
-
-            public boolean isTimeWindowExpired() {
-                return expiredTimeWindow;
-            }
-
-        };
-----
+++++
+<code style="font-family:Consolas,Monaco,'Courier New',monospace;font-size:14px;line-height:0.6;background:#1e1e1e;color:#d4d4d4;padding:12px;border-radius:6px;display:inline-block;overflow:auto;white-space:pre">
+<span style="color:#808080;font-style:italic">//Controller implementation</span><br>
+<span style="color:#569cd6">return</span> <span style="color:#569cd6">new</span> <span style="color:#4ec9b0">Controller</span>(){<br>
+<br>
+    <span style="color:#808080;font-style:italic">// Helper variables</span><br>
+    <span style="color:#569cd6">boolean</span> expiredTimeWindow = <span style="color:#569cd6">false</span>;<br>
+    <span style="color:#4ec9b0">CountDownLatch</span> latch      = <span style="color:#569cd6">null</span>;<br>
+    <span style="color:#569cd6">long</span> lastMessageTime      = <span style="color:#b5cea8">0</span>;<br>
+<br>
+<br>
+    <span style="color:#569cd6">public</span> <span style="color:#569cd6">synchronized</span> <span style="color:#569cd6">void</span> <span style="color:#dcdcaa">newMessage</span>(<span style="color:#4ec9b0">CamelContext</span> context) {<br>
+<br>
+        <span style="color:#808080;font-style:italic">//initialise when first message comes in</span><br>
+        <span style="color:#c586c0">if</span>(latch == <span style="color:#569cd6">null</span>){<br>
+            lastMessageTime = <span style="color:#4ec9b0">System</span>.<span style="color:#4ec9b0">currentTimeMillis</span>();<br>
+            latch = <span style="color:#569cd6">new</span> <span style="color:#4ec9b0">CountDownLatch</span>(<span style="color:#b5cea8">1</span>);<br>
+            context.<span style="color:#dcdcaa">createProducerTemplate</span>().<span style="color:#dcdcaa">asyncSendBody</span>(<span style="color:#ce9178">"direct:wait-until-aggregation-done"</span>, <span style="color:#569cd6">null</span>);<br>
+        }<br>
+<br>
+        <span style="color:#808080;font-style:italic">//calculate time split between last 2 messages</span><br>
+        <span style="color:#569cd6">long</span> now = <span style="color:#4ec9b0">System</span>.<span style="color:#4ec9b0">currentTimeMillis</span>();<br>
+        <span style="color:#569cd6">long</span> elapsed = now - lastMessageTime;<br>
+<br>
+        <span style="color:#808080;font-style:italic">//if message not in the time window, we stop processing messages.</span><br>
+        <span style="color:#c586c0">if</span>(elapsed &gt; cutoffTime){<br>
+            expiredTimeWindow = <span style="color:#569cd6">true</span>;<br>
+        }<br>
+<br>
+        <span style="color:#808080;font-style:italic">//reset time</span><br>
+        lastMessageTime = now;<br>
+    }<br>
+<br>
+    <span style="color:#569cd6">public</span> <span style="color:#569cd6">void</span> <span style="color:#dcdcaa">waitUntilAggregationDone</span>() <span style="color:#569cd6">throws</span> <span style="color:#4ec9b0">Exception</span> {<br>
+        <span style="color:#c586c0">if</span>(latch != <span style="color:#569cd6">null</span>){<br>
+            latch.<span style="color:#dcdcaa">await</span>();<br>
+        }<br>
+    }<br>
+<br>
+    <span style="color:#569cd6">public</span> <span style="color:#569cd6">void</span> <span style="color:#dcdcaa">aggregationDone</span>() <span style="color:#569cd6">throws</span> <span style="color:#4ec9b0">Exception</span>{<br>
+        latch.<span style="color:#dcdcaa">countDown</span>();<br>
+    }<br>
+<br>
+    <span style="color:#569cd6">public</span> <span style="color:#569cd6">boolean</span> <span style="color:#dcdcaa">isTimeWindowExpired</span>() {<br>
+        <span style="color:#569cd6">return</span> expiredTimeWindow;<br>
+    }<br>
+};<br>
+</code>
+++++
 
 {empty} +
 
@@ -591,44 +514,39 @@ To customise the _Aggregation EIP_, _Camel_ allows you to define your own _Aggre
 
 TIP: If you want to know more about the inner workings of this EIP, take a look at Camel's https://camel.apache.org/components/3.18.x/eips/aggregate-eip.html[_Aggregate EIP_] documentation.
 
-In the same Java class `HelperStage5.java` you will find the _Aggregation_ strategy used by the _EIP_ in the _Camel_ route.
+In the same Java class `helper.java` you will find the _Aggregation_ strategy used by the _EIP_ in the _Camel_ route.
 
 Inspect carefully the code below to familiarise yourself with it:
-----
-    @BindToRegistry
-    public static AggregationStrategy msgStrategy(){
-
-        return new AggregationStrategy() {
-
-            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-
-                // Manual Kafka commit
-                // Messages not commited will be retried on subsequent Cronjob runs
-                newExchange
-                    .getIn()
-                    .getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class)
-                    .commitSync();
-
-                if (oldExchange == null) {
-                    return newExchange;
-                }
-
-                String oldBody = oldExchange.getIn().getBody(String.class);
-                String newBody = newExchange.getIn().getBody(String.class);
-                
-                oldExchange.getIn().setBody(oldBody + newBody);
-                return oldExchange;
-            }
-
-        };
-    }
-----
-
-[NOTE] 
---
-In your source file you may find the manual Kafka commit commented out to perform local testing without a _Kafka_ instance. +
-When deploying in OpenShift it will be uncommented.
---
+++++
+<code style="font-family:Consolas,Monaco,'Courier New',monospace;font-size:14px;line-height:0.6;background:#1e1e1e;color:#d4d4d4;padding:12px;border-radius:6px;display:inline-block;overflow:auto;white-space:pre">
+<span style="color:#c586c0">@BindToRegistry</span><br>
+<span style="color:#569cd6">public</span> <span style="color:#569cd6">static</span> <span style="color:#4ec9b0">AggregationStrategy</span> <span style="color:#dcdcaa">msgStrategy</span>(){<br>
+<br>
+    <span style="color:#569cd6">return</span> <span style="color:#569cd6">new</span> <span style="color:#4ec9b0">AggregationStrategy</span>() {<br>
+<br>
+        <span style="color:#569cd6">public</span> <span style="color:#4ec9b0">Exchange</span> <span style="color:#dcdcaa">aggregate</span>(<span style="color:#4ec9b0">Exchange</span> oldExchange, <span style="color:#4ec9b0">Exchange</span> newExchange) {<br>
+<br>
+            <span style="color:#808080;font-style:italic">// Manual Kafka commit</span><br>
+            <span style="color:#808080;font-style:italic">// Messages not commited will be retried and subsequent Cron runs</span><br>
+            newExchange<br>
+                .<span style="color:#dcdcaa">getIn</span>()<br>
+                .<span style="color:#dcdcaa">getHeader</span>(<span style="color:#4ec9b0">KafkaConstants</span>.<span style="color:#dcdcaa">MANUAL_COMMIT</span>, <span style="color:#4ec9b0">KafkaManualCommit</span>.<span style="color:#569cd6">class</span>)<br>
+                .<span style="color:#dcdcaa">commit</span>();<br>
+<br>
+            <span style="color:#c586c0">if</span> (oldExchange == <span style="color:#569cd6">null</span>) {<br>
+                <span style="color:#569cd6">return</span> newExchange;<br>
+            }<br>
+<br>
+            <span style="color:#4ec9b0">String</span> oldBody = oldExchange.<span style="color:#dcdcaa">getIn</span>().<span style="color:#dcdcaa">getBody</span>(<span style="color:#4ec9b0">String</span>.<span style="color:#569cd6">class</span>);<br>
+            <span style="color:#4ec9b0">String</span> newBody = newExchange.<span style="color:#dcdcaa">getIn</span>().<span style="color:#dcdcaa">getBody</span>(<span style="color:#4ec9b0">String</span>.<span style="color:#569cd6">class</span>);<br>
+<br>
+            oldExchange.<span style="color:#dcdcaa">getIn</span>().<span style="color:#dcdcaa">setBody</span>(oldBody + newBody);<br>
+            <span style="color:#569cd6">return</span> oldExchange;<br>
+        }<br>
+    };<br>
+}<br>
+</code>
+++++
 
 {empty} +
 
@@ -644,7 +562,7 @@ In the code you'll find the following highlights:
 
 [time=5]
 [id="create-camel-routes"]
-== Prototype the Camel routes
+== Define the Camel routes
 
 Let's recap how the _Camel_ process workflow should shape up:
 
@@ -694,30 +612,18 @@ NOTE: Do not hesitate to navigate back to previous chapters to have a second loo
 * link:{url-devconsole}[Topology View, window="_blank"]
 ****
 
-Although the code required is little, the end-to-end process is not a trivial one, it has various parts at play that need to be well coordinated. To accelerate the development phase, a good developer would want to prototype and test locally, iterating over the code until its implementation is fully validated.
+Although the code required is small, the end-to-end process is not trivial, it has various parts at play that need to be well coordinated. To accelerate the development phase, a good developer would want to prototype and test locally, iterating over the code until its implementation is fully validated.
 
-Another very useful technique to simplify the development cycle, is to bypass (or mock) the endpoints the process integrates with: in this case _Kafka_ as the source of events, and _S3_ as the storage layer.
-
-image::images/processing-flow-with-mocks.png[align="center", width=60%]
-
-You will first build your integration bypassing the endpoints, and when you're confident the process does what is intended to do, then you'll replace the mocks with real endpoints, and deploy in _OpenShift_.
 
 {empty} +
 
 === Process definition
 
-Time to get started.
-
-{empty} +
-
-
-
-==== Create your Discord consumer
-
-Follow the steps below to create your base _Discord_ sink _Kamelet_
+Time to get started. +
+Follow the steps below to create the route definitions.
 
 [TIP]
-====
+======
 ⏩ *Fast-Forward*
 
 [.underline]#*Only*# if you want to skip (fast-forward) this section, execute in your terminal the commands below:
@@ -728,14 +634,14 @@ Follow the steps below to create your base _Discord_ sink _Kamelet_
 ff
 ----
 --
-====
+======
 
 For a manual creation process:
 
 . Find in your directory tree the following resource:
 +
 --
-* `store.camel.yaml`
+* `archive.camel.yaml`
 +
 Click to open it in _Kaoto_. +
 It will present a banner informing you no routes are defined.
@@ -745,27 +651,6 @@ It will present a banner informing you no routes are defined.
 
 [start=2]
 . Create the Camel routes
-+
-Because creating the Discord listener is not trivial, the lab provides the routes pre-defined for you, just copy and paste the given snippets to complete the work.
-+
-[NOTE]
-====
-The following list summarizes the Camel routes you're about to include:
-
-. One route as the **main-processor** _Camel_ as a registered bot.
-. One route to wait until aggregations are fished.
-. One route to store data to S3.
-====
-+
-[NOTE]
-====
-image::images/discord-websocket-management.png[align="left", width=30%]
-====
-+
-Kaoto has the ability to provide bi-directional mode of code edition: visual and text based. +
-You will use the text based edition to append the snippets (routes) given below.
-+
-NOTE: Kaoto will automatically synchronize your canvas in the visual mode.
 +
 Open the file in source code view (text mode). +
 In your editor (upper-right corner), find and click the button pass:[<code style="background-color: black; color: white; padding: 10px; border-radius: 5px; font-family: console;"><b>&lt; / &gt;</b></code>]
@@ -777,18 +662,20 @@ The action above should open the empty source code file in text mode.
 [start=1]
 1. Include the main _Camel_ route 
 +
-Append in your `store.camel.yaml` the main _Camel_ route. +
-Copy/paste the snippet, click the `Copy to clipboard` button and paste the code in your editor:
+Append in your `archive.camel.yaml` the main _Camel_ route.
++
+TIP: Click the {cp-btn} button (Copy to clipboard), and paste the code in the text editor.
 +
 --
 {copypaste}
 ----
 - route:
-    id: main-processor
+    id: main
     from:
-      uri: direct
+      uri: kafka
       parameters:
-        name: main-processor
+        topic: "{{kafka.topic:dev}}"
+        brokers: my-cluster-kafka-bootstrap:9092
       steps:
         - bean:
             method: newMessage
@@ -815,7 +702,7 @@ Copy/paste the snippet, click the `Copy to clipboard` button and paste the code 
               - to:
                   uri: direct
                   parameters:
-                    name: store-data
+                    name: archive-data
             aggregationStrategy: "msgStrategy"
             completionTimeout: "{{message.aggregator.timeout}}"
             correlationExpression:
@@ -827,6 +714,8 @@ Copy/paste the snippet, click the `Copy to clipboard` button and paste the code 
 [NOTE] 
 --
 In the Camel route above:
+
+* The Kafka consumer pulls messages (from your Kafka cluster).
 
 * The controller gets notified for every message that comes in.
 
@@ -845,8 +734,9 @@ In the Camel route above:
 +
 The following route is triggered by the _Controller_ to ensure the _Camel_ instance is kept alive, preventing the cronjob from terminating it too early.
 +
-Append in your `store.camel.yaml` the following _Camel_ route. +
-Copy the snippet below and paste it below your last route.
+Append in your `archive.camel.yaml` the following _Camel_ route.
++
+TIP: Click the {cp-btn} button (Copy to clipboard), and paste the code in the text editor.
 +
 --
 {copypaste}
@@ -879,40 +769,37 @@ NOTE: Keeping at least one exchange alive ensures the condition `in-flight = 0` 
 +
 {empty} +
 
-1. Include the _Camel_ route that stores the data. 
+1. Include the _Camel_ route responsible to archive the data. 
 +
-NOTE: Remember, for simplicity, the route will bypass the action of pushing data to the storage layer. Later the real connector for S3 will be put in place.
+NOTE: Remember, for simplicity, the route will bypass the action of pushing data to the storage layer. +
+Later, before deploying on OpenShift, the S3 connector will be added.
 +
 The following route is triggered by the _Aggregator_ when the aggregation is closed.
 +
-Append in your `store.camel.yaml` the following _Camel_ route. +
-Copy the snippet below and paste it below your last route.
+Append in your `archive.camel.yaml` the following _Camel_ route.
++
+TIP: Click the {cp-btn} button (Copy to clipboard), and paste the code in the text editor.
 +
 --
 {copypaste}
 ----
 - route:
-    id: store-data
+    id: archive-data
     from:
       uri: direct
       parameters:
-        name: store-data
+        name: archive-data
       steps:
         - log:
-            message: "ready to store aggregated data:\\n${body}"
+            message: "ready to archive aggregated data:\\n${body}"
         - log:
-            message: storage done.
+            message: archiving done.
 ----
 --
 +
-[NOTE] 
---
-In the Camel route above:
-
-* A placeholder indicates where the S3 integration logic will be placed in a later phase.
---
+NOTE: The actual S3 endpoint is missing to archive the data. This is on purpose to simplify testing in the next section.
 +
-NOTE: When the latch is released, by the aggregator, the retained _Exchange_ from the 'keep-alive' route completes and gets disposed. +
+NOTE: When the aggregator releases the latch, the retained _Exchange_ from the 'keep-alive' route completes and gets disposed. +
 The condition `in-flight = 0` is however still `false` because a new _Exchange_ is in-flight to push the data to storage.
 +
 {empty} +
@@ -922,179 +809,393 @@ Make sure you save all the changes done (automatic by default in _OpenShift Dev 
 {empty} +
 
 
-1. Include a mock _Kafka_ producer
-+
-Now add a route that will permit you to test the behaviour of the system.
-+
-Append in your `store.camel.yaml` the following _Camel_ route. +
-Copy the snippet below and paste it below your last route.
-+
---
-{copypaste}
-----
-- route:
-    id: timer-mock-1
-    from:
-      uri: timer
-      parameters:
-        timerName: mock-1
-        repeatCount: 5
-        period: 1000
-        includeMetadata: true
-      steps:
-        - setBody:
-            expression:
-              simple:
-                expression: "{{producer.mock.body}}"
-        - to:
-            uri: direct
-            parameters:
-              name: main-processor
-----
---
-+
-[NOTE] 
---
-In the Camel route above:
+You should find in the Kaoto canvas all the routes rendered as follows:
 
-* A timer generates 5 exchanges (`repeatCount: 5`), one every second (`period: 1000`)
-
-* A JSON body is configured to simulate an incoming chat message.
-
-* Exchanges are sent to the main event processor (main _Camel_ route).
---
-+
-{empty} +
-
-. Test locally your integration process.
-+
-.. Start your local instance with _Camel JBang_:
-+
-```bash
-camel run *
-```
-+
-{empty} +
-+
-You should see in your terminal an output similar to:
-+
-----
-... 09:02:40.283 ...: Apache Camel 3.18.0 (CamelJBang) started in 1s35ms (build:153ms init:502ms start:380ms JVM-uptime:4s)
-... 09:02:41.315 ...: got new message: {"user":"mock-1","text":"message 1"}
-... 09:02:41.316 ...: waiting for aggregation to finish...
-... 09:02:42.285 ...: got new message: {"user":"mock-1","text":"message 2"}
-... 09:02:43.286 ...: got new message: {"user":"mock-1","text":"message 3"}
-... 09:02:44.288 ...: got new message: {"user":"mock-1","text":"message 4"}
-... 09:02:45.290 ...: got new message: {"user":"mock-1","text":"message 5"}
-... 09:02:56.252 ...: Aggregation has completed.
-... 09:02:56.252 ...: ready to store aggregated data:
-mock-1,message 1
-mock-1,message 2
-mock-1,message 3
-mock-1,message 4
-mock-1,message 5
-
-...  09:02:56.252 ...: storage done.
-----
-+
-[NOTE] 
---
-In the logs above:
-
-* The 5 simulated messages from user `mock-1` are accepted.
-* The aggregation finishes 10 seconds (approx.) after last message was accepted.
-* The aggregated data is in CSV format.
-* The data gets stored (simulated).  
---
-+
-If your execution behaved as above, you are progressing well, but you would still want to validate how the system reacts on late event arrivals. 
-+
-{empty} +
-
-. Test your system with late arrivals.
-+
-In this test, your expectation would be to see the acceptance of early events, and when the time window expires, to see late arrivals excluded.
-
-.. Include a second mock _Kafka_ producer
-+
-Add in your `store.xml` the following _Camel_ route. +
-Copy the snippet below and paste it below the other mock producer.
-+
-```xml
-    <!-- Temporary route. To be removed when integrating with Kafka -->
-    <route id="timer-mock-2">
-        <from uri="timer:mock-2?repeatCount=5&amp;period=1000&amp;delay=13000"/>
-        <setBody>
-            <simple>{{producer.mock.body}}</simple>
-        </setBody>
-        <to uri="direct:main-processor"/>
-    </route>
-```
-+
-[NOTE] 
---
-The route above is equivalent to the first one, except the timer `mock-2` uses the parameter `delay` (13s) to simulate late events arriving when the time window has expired (gap > 5s).
---
-+
-{empty} +
-
-.. Stop and restart your local instance with _Camel JBang_:
-+
-```bash
-camel run *
-```
-+
-{empty} +
-+
-You should see in your terminal an output similar to:
-+
-----
-... 09:08:23.818 ...: Apache Camel 3.18.0 (CamelJBang) started in 1s31ms (build:155ms init:523ms start:353ms JVM-uptime:4s)
-... 09:08:24.851 ...: got new message: {"user":"mock-1","text":"message 1"}
-... 09:08:24.852 ...: waiting for aggregation to finish...
-... 09:08:25.818 ...: got new message: {"user":"mock-1","text":"message 2"}
-... 09:08:26.820 ...: got new message: {"user":"mock-1","text":"message 3"}
-... 09:08:27.822 ...: got new message: {"user":"mock-1","text":"message 4"}
-... 09:08:28.822 ...: got new message: {"user":"mock-1","text":"message 5"}
-... 09:08:36.816 ...: time window closed, ignoring event: {"user":"mock-2","text":"message 1"}
-... 09:08:37.816 ...: time window closed, ignoring event: {"user":"mock-2","text":"message 2"}
-... 09:08:38.818 ...: time window closed, ignoring event: {"user":"mock-2","text":"message 3"}
-... 09:08:39.794 ...: Aggregation has completed.
-... 09:08:39.794 ...: ready to store aggregated data:
-mock-1,message 1
-mock-1,message 2
-mock-1,message 3
-mock-1,message 4
-mock-1,message 5
-
-... 09:08:39.794 ...: storage done.
-... 09:08:39.820 ...: time window closed, ignoring event: {"user":"mock-2","text":"message 4"}
-... 09:08:40.821 ...: time window closed, ignoring event: {"user":"mock-2","text":"message 5"}
-----
-+
-[NOTE] 
---
-In the logs above:
-
-* The 5 simulated messages from user `mock-1` are accepted.
-* The gap (12s approx.) between the last `mock-1` event and first `mock-2` event is greater than the configured controller time window `5000ms`.
-* The 5 simulated messages from user `mock-2` are ignored.
-* The aggregated data only includes `mock-1` messages.
---
-+
-You can consider your code to be validated if your execution behaved as above.
+PENDING IMAGE TO BE ADDED.
 
 {empty} +
+
 
 
 [type=verification]
-Did you see in your executions the same behaviour?
+Do you see all the routes rendered in the Kaoto canvas?
 
 [type=verificationSuccess]
 Excellent !
 
 [type=verificationFail]
 Review the steps and try again.
+
+
+
+[time=5]
+[id="run-test-locally"]
+== Run and test locally
+{style-all}
+
+The technique you'll employ to simplify the development and testing cycle, will be to mock messages coming in and going out of the process: in this case _Kafka_ source events, and files created in _S3_ (storage layer).
+
+image::images/processing-flow-with-mocks.png[align="center", width=60%]
+
+The strategy to confidently validate the process will be to run it locally. +
+You'll manually emit Kafka events and observe the behaviour of the system, bypassing the push to _S3_.
+
+Follow the instructions below to recreate different execution scenarios which will allow you understand how the process works and validate its implementation.
+
+{empty} +
+
+[type=taskResource]
+.Credentials
+****
+* *username:* `{user-username}`
+* *password:* `{user-password}`
+****
+[type=taskResource]
+.Red Hat OpenShift Dev Spaces
+****
+* link:{url-codeready}[Console, window="_blank"]
+****
+[type=taskResource]
+.Red Hat OpenShift Developer Console
+****
+* link:{url-devconsole}[Topology View, window="_blank"]
+****
+
+=== Check the configuration
+
+Before you put the wheels in motion, inspect the configuration file provided:
+
+++++
+<code style="font-family:Consolas,Monaco,'Courier New',monospace;font-size:14px;line-height:0.6;background:#1e1e1e;color:#d4d4d4;padding:12px;border-radius:6px;display:inline-block;overflow:auto;white-space:pre">
+<span style="color:#6a9955"># When idle, time Camel will wait before shutting down</span><br>
+<span style="color:#9cdcfe">camel.main.duration-max-idle-seconds</span>=<span style="color:#ffffff">5</span><br>
+<br>
+<span style="color:#6a9955"># Time the aggregator will wait for messages before the archiving process is triggered</span><br>
+<span style="color:#9cdcfe">message.aggregator.timeout</span> = <span style="color:#ffffff">30000</span><br>
+<br>
+<span style="color:#6a9955"># Cut-off time the controller uses to allow messages to be aggregated.</span><br>
+<span style="color:#6a9955"># Messages arriving after cut-off time will be aggregated in the next cron run</span><br>
+<span style="color:#6a9955"># Attention: cut-off time should be less than aggregator timeout</span><br>
+<span style="color:#9cdcfe">messege.controller.cutoff.time</span> = <span style="color:#ffffff">2000</span><br>
+<br>
+<span style="color:#6a9955"># Kafka configuration</span><br>
+<span style="color:#9cdcfe">camel.component.kafka.clientId</span>=<span style="color:#ce9178">archiver</span><br>
+<span style="color:#9cdcfe">camel.component.kafka.groupId</span>=<span style="color:#ce9178">archiver</span><br>
+<span style="color:#9cdcfe">camel.component.kafka.autoOffsetReset</span>=<span style="color:#ce9178">earliest</span><br>
+<span style="color:#9cdcfe">camel.component.kafka.autoCommitEnable</span>=<span style="color:#569cd6">false</span><br>
+<span style="color:#9cdcfe">camel.component.kafka.allowManualCommit</span>=<span style="color:#569cd6">true</span><br>
+</code>
+++++
+
+NOTE: The property `duration-max-idle-seconds` indicates Camel to shutdown when idle (needed for cron job executions).
+
+[NOTE]
+====
+The values (millis) `30000` and `2000` are greatly exagerated for learning purposes. +
+They've been purposefully chosen to allow you understand the execution.
+
+* The property `message.aggregator.timeout` sets the time limit to wrap up the aggregation process.
+* The property `messege.controller.cutoff.time` defines the time window to accept Kafka events.
+====
+
+{empty} +
+
+=== First run: no Kafka events
+
+In this first run, no _Kafka_ events are available, the _Kafka_ topic is empty. +
+When _Camel_ starts, it connects to _Kafka_, initiates consumption and stays idle for a few seconds.
+
+Because the configuration includes `duration-max-idle-seconds`, _Camel_ will stop and shutdown.
+
+. Run the process by issuing the following command:
++
+--
+{copypaste}
+----
+camel run archive/*
+----
+--
++
+Observe in the logs Camel connecting to Kafka. Because no events are consumed Camel decides to shutdown.
++
+Somewhere in the logs you should find following lines:
++
+++++
+<pre style="line-height: 1;"><span style="color:grey;font-family: monospace;font-size: 12px;">2025-11-05 20:21:36.489 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">11569</span> --- [pool-4-thread-1] <span style="color: cyan">camel.main.MainDurationEventNotifier </span><span style="color: white;">: Duration max idle triggering shutdown of the JVM</span>
+2025-11-05 20:21:36.492 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">11569</span> --- [ownCamelContext] <span style="color: cyan">mel.impl.engine.AbstractCamelContext </span><span style="color: white;">: Apache Camel 4.15.0 (archive) is shutting down (timeout:10s)</span>
+...
+2025-11-05 20:21:41.624 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">11569</span> --- [ownCamelContext] <span style="color: cyan">mel.impl.engine.AbstractCamelContext </span><span style="color: white;">: Apache Camel 4.15.0 (archive) shutdown in 5s331ms (uptime:10s)</span>
+2025-11-05 20:21:41.624 <span style="color: limegreen;">INFO</span> <span style="color: deeppink">11569</span> --- [           main] <span style="color: cyan">org.apache.camel.main.MainSupport    </span><span style="color: white;">: Apache Camel (JBang) 4.15.0 shutdown</span>
+</pre>
+++++
++
+{empty} +
+
+
+=== Second run: consume and aggregate
+
+This time, you want to recreate a scenario where _Camel_ consumes events from _Kafka_ and reacts.
+
+. First, use _Camel JBang_ to push sample events to _Kafka_. +
+The following command sends several messages to _Kafka_:
++
+--
+{copypaste}
+----
+for i in {1..3}; do \
+camel cmd send \
+--body '{"user":"tester","text":"message '$i'"}' \
+--uri kafka:dev?brokers=my-cluster-kafka-bootstrap:9092; \
+done
+----
+--
++
+You should see an output similar to:
++
+++++
+<pre style="line-height: 1;"><span style="color:grey;font-family: monospace;font-size: 12px;">2025-11-05 21:30:23.853  <span style="color: deeppink">11812</span> --- <span style="color: cyan">kafka://dev?brokers=my-cluster-kafka-boo<span></span><span style="color: white;"> : </span><span style="color: limegreen;">Sent (success)</span><span style="color: white;"> (695ms)</span></span>
+2025-11-05 21:30:28.975  <span style="color: deeppink">11912</span> --- <span style="color: cyan">kafka://dev?brokers=my-cluster-kafka-boo<span></span><span style="color: white;"> : </span><span style="color: limegreen;">Sent (success)</span><span style="color: white;"> (701ms)</span></span>
+2025-11-05 21:30:34.180  <span style="color: deeppink">12019</span> --- <span style="color: cyan">kafka://dev?brokers=my-cluster-kafka-boo<span></span><span style="color: white;"> : </span><span style="color: limegreen;">Sent (success)</span><span style="color: white;"> (729ms)</span>
+</pre>
+++++
++
+{empty} +
+
+
+. Now, run Camel and observe its behaviour.
++
+--
+{copypaste}
+----
+camel run archive/*
+----
+--
++
+NOTE: Be patient, Camel will consume the messages and will wait `30` seconds before closing the aggregation.
++
+Somewhere in the logs you should find following lines:
++
+++++
+<pre style="line-height: 1;"><span style="color:grey;font-family: monospace;font-size: 12px;">2025-11-05 21:46:23.839  <span style="color:limegreen">INFO</span> <span style="color:deeppink">12160</span> --- <span style="color:cyan">[kaConsumer[dev]]</span> <span style="color:white">archive.yaml:20           : got new message: <span style="color:black;background-color:yellow">{"user":"tester","text":"message 1"}</span></span>
+2025-11-05 21:46:23.842  <span style="color:limegreen">INFO</span> <span style="color:deeppink">12160</span> --- <span style="color:cyan">[roducerTemplate]</span> <span style="color:white">archive.yaml:48           : waiting for aggregation to finish...</span>
+2025-11-05 21:46:23.895  <span style="color:limegreen">INFO</span> <span style="color:deeppink">12160</span> --- <span style="color:cyan">[kaConsumer[dev]]</span> <span style="color:white">archive.yaml:20           : got new message: <span style="color:black;background-color:yellow">{"user":"tester","text":"message 2"}</span></span>
+2025-11-05 21:46:23.907  <span style="color:limegreen">INFO</span> <span style="color:deeppink">12160</span> --- <span style="color:cyan">[kaConsumer[dev]]</span> <span style="color:white">archive.yaml:20           : got new message: <span style="color:black;background-color:yellow">{"user":"tester","text":"message 3"}</span></span>
+2025-11-05 21:46:54.064  <span style="color:limegreen">INFO</span> <span style="color:deeppink">12160</span> --- <span style="color:cyan">[roducerTemplate]</span> <span style="color:white">archive.yaml:53           : Aggregation has completed.</span>
+2025-11-05 21:46:54.065  <span style="color:limegreen">INFO</span> <span style="color:deeppink">12160</span> --- <span style="color:cyan">[#8 - Aggregator]</span> <span style="color:white">archive.yaml:63           : ready to archive aggregated data:</span>
+<span style="color:black;background-color:yellow">tester,message 1</span>
+<span style="color:black;background-color:yellow">tester,message 2</span>
+<span style="color:black;background-color:yellow">tester,message 3</span>
+
+2025-11-05 21:46:54.065  <span style="color:limegreen">INFO</span> <span style="color:deeppink">12160</span> --- <span style="color:cyan">[#8 - Aggregator]</span> <span style="color:white">archive.yaml:65           : archiving done.</span>
+2025-11-05 21:46:59.359  <span style="color:limegreen">INFO</span> <span style="color:deeppink">12160</span> --- <span style="color:cyan">[pool-4-thread-1]</span> <span style="color:white">MainDurationEventNotifier : Duration max idle triggering shutdown of the JVM</span>
+2025-11-05 21:46:59.361  <span style="color:limegreen">INFO</span> <span style="color:deeppink">12160</span> --- <span style="color:cyan">[ownCamelContext]</span> <span style="color:white">AbstractCamelContext      : Apache Camel 4.15.0 (archive) is shutting down (timeout:10s)</span>
+</span></pre>
+++++
++
+[NOTE]
+====
+Observe the following facts:
+
+* All Kafka messages are consumed almost instantly.
+* Camel waits approximately 30 seconds to close the aggregation process.
+* The data to be archived has been transformed from CSV to JSON (yellow highlights).
+====
++
+Camel finishes this round and shutsdown.
++
+{empty} +
+
+
+
+=== Third run: events out of time window discarded
+
+For this last local run, you want to see how the time window operates. +
+You'll recreate a scenario where some events are consumed whithin the accepted time window, and others are consumed too late and get discarded.
+
+It's important to remember how these configuration properties affect the system:
+
+++++
+<code style="font-family:Consolas,Monaco,'Courier New',monospace;font-size:14px;line-height:0.6;background:#1e1e1e;color:#d4d4d4;padding:12px;border-radius:6px;display:inline-block;overflow:auto;white-space:pre">
+<span style="color:#6a9955"># Time the aggregator will wait for messages before the archiving process is triggered</span><br>
+<span style="color:#9cdcfe">message.aggregator.timeout</span> = <span style="color:#ffffff">30000</span><br>
+<br>
+<span style="color:#6a9955"># Cut-off time the controller uses to allow messages to be aggregated.</span><br>
+<span style="color:#6a9955"># Messages arriving after cut-off time will be aggregated in the next cron run</span><br>
+<span style="color:#6a9955"># Attention: cut-off time should be less than aggregator timeout</span><br>
+<span style="color:#9cdcfe">messege.controller.cutoff.time</span> = <span style="color:#ffffff">2000</span><br>
+</code>
+++++
+
+{blank}
+
+Why the settings above?
+
+* The value `2000` (2 seconds) is low to ensure the time window is closed early. 
+* The value `30000` (30 seconds) is high to ensure you can send messages out of the time window before _Camel_ shutsdown.
+
+{empty} +
+
+==== Begin your test
+
+{blank}
+
+. One more time, use _Camel JBang_ to push sample events to _Kafka_. +
+The following command sends several messages to _Kafka_:
++
+--
+{copypaste}
+----
+for i in {1..3}; do \
+camel cmd send \
+--body '{"user":"tester","text":"message '$i'"}' \
+--uri kafka:dev?brokers=my-cluster-kafka-bootstrap:9092; \
+done
+----
+--
++
+NOTE: This first batch sends messages 1, 2 and 3.
++
+You should see an output similar to:
++
+++++
+<pre style="line-height: 1;"><span style="color:grey;font-family: monospace;font-size: 12px;">2025-11-06 09:20:07.853  <span style="color: deeppink">11812</span> --- <span style="color: cyan">kafka://dev?brokers=my-cluster-kafka-boo<span></span><span style="color: white;"> : </span><span style="color: limegreen;">Sent (success)</span><span style="color: white;"> (695ms)</span></span>
+2025-11-06 09:20:07.975  <span style="color: deeppink">11912</span> --- <span style="color: cyan">kafka://dev?brokers=my-cluster-kafka-boo<span></span><span style="color: white;"> : </span><span style="color: limegreen;">Sent (success)</span><span style="color: white;"> (701ms)</span></span>
+2025-11-06 09:20:07.180  <span style="color: deeppink">12019</span> --- <span style="color: cyan">kafka://dev?brokers=my-cluster-kafka-boo<span></span><span style="color: white;"> : </span><span style="color: limegreen;">Sent (success)</span><span style="color: white;"> (729ms)</span>
+</pre>
+++++
++
+{empty} +
+
+. Prepare a second terminal.
++
+If you don't already have one, open a second terminal. +
+You'll use one terminal to run _Camel_, and another terminal to push more messages while Camel runs.
++
+Be ready to run Camel on terminal 1, see the Kafka messages coming in, then switch to terminal 2 and send extra messages out of the time window.
++
+{empty} +
+
+. Run Camel to start consuming Kafka messages.
++
+NOTE: When Camel starts it'll start consuming messages, be ready to switch to terminal 2.
++
+--
+{copypaste}
+----
+camel run archive/*
+----
+--
++
+Wait to see the Kafka messages being consumed.
++
+{empty} +
+
+
+. Send another batch of messages
++
+NOTE: By now, the time window (2 seconds) should have closed. +
+New messages consumed from Kafka will get discarded.
++
+Switch to the other terminal and run:
++
+--
+{copypaste}
+----
+for i in {4..6}; do \
+camel cmd send \
+--body '{"user":"tester","text":"message '$i'"}' \
+--uri kafka:dev?brokers=my-cluster-kafka-bootstrap:9092; \
+done
+----
+--
++
+NOTE: The second batch sends messages 4, 5 and 6.
++
+Terminal 1 should show an output similar to the following logs:
++
+++++
+<pre style="line-height: 1;"><span style="color:grey;font-family: monospace;font-size: 12px;">2025-11-06 09:21:07.839  <span style="color:limegreen">INFO</span> <span style="color:deeppink">2123</span> --- <span style="color:cyan">[kaConsumer[dev]]</span> <span style="color:white">archive.yaml:20           : got new message: {"user":"tester","text":"<span style="color:black;background-color:yellow">message 1</span>"}</span>
+2025-11-06 09:21:07.842  <span style="color:limegreen">INFO</span> <span style="color:deeppink">2123</span> --- <span style="color:cyan">[roducerTemplate]</span> <span style="color:white">archive.yaml:48           : waiting for aggregation to finish...</span>
+2025-11-06 09:21:07.895  <span style="color:limegreen">INFO</span> <span style="color:deeppink">2123</span> --- <span style="color:cyan">[kaConsumer[dev]]</span> <span style="color:white">archive.yaml:20           : got new message: {"user":"tester","text":"<span style="color:black;background-color:yellow">message 2</span>"}</span>
+2025-11-06 09:21:07.907  <span style="color:limegreen">INFO</span> <span style="color:deeppink">2123</span> --- <span style="color:cyan">[kaConsumer[dev]]</span> <span style="color:white">archive.yaml:20           : got new message: {"user":"tester","text":"<span style="color:black;background-color:yellow">message 3</span>"}</span>
+2025-11-06 09:21:17.828  <span style="color:limegreen">INFO</span> <span style="color:deeppink">2123</span> --- <span style="color:cyan">[kaConsumer[dev]]</span> <span style="color:white">archive.yaml:17           : time window closed, <span style="color:black;background-color:yellow">ignoring event</span>: {"user":"tester","text":"<span style="color:black;background-color:yellow">message 4</span>"}</span>
+2025-11-06 09:21:22.438  <span style="color:limegreen">INFO</span> <span style="color:deeppink">2123</span> --- <span style="color:cyan">[kaConsumer[dev]]</span> <span style="color:white">archive.yaml:17           : time window closed, <span style="color:black;background-color:yellow">ignoring event</span>: {"user":"tester","text":"<span style="color:black;background-color:yellow">message 5</span>"}</span>
+2025-11-06 09:21:27.063  <span style="color:limegreen">INFO</span> <span style="color:deeppink">2123</span> --- <span style="color:cyan">[kaConsumer[dev]]</span> <span style="color:white">archive.yaml:17           : time window closed, <span style="color:black;background-color:yellow">ignoring event</span>: {"user":"tester","text":"<span style="color:black;background-color:yellow">message 6</span>"}</span>
+2025-11-06 09:21:37.726  <span style="color:limegreen">INFO</span> <span style="color:deeppink">2123</span> --- <span style="color:cyan">[roducerTemplate]</span> <span style="color:white">archive.yaml:53           : Aggregation has completed.</span>
+2025-11-06 09:21:37.727  <span style="color:limegreen">INFO</span> <span style="color:deeppink">2123</span> --- <span style="color:cyan">[#8 - Aggregator]</span> <span style="color:white">archive.yaml:63           : ready to archive aggregated data:</span>
+<span style="color:white">tester,<span style="color:black;background-color:yellow">message 1</span></span>
+<span style="color:white">tester,<span style="color:black;background-color:yellow">message 2</span></span>
+<span style="color:white">tester,<span style="color:black;background-color:yellow">message 3</span></span>
+
+2025-11-06 09:21:37.727  <span style="color:limegreen">INFO</span> <span style="color:deeppink">2123</span> --- <span style="color:cyan">[#8 - Aggregator]</span> <span style="color:white">archive.yaml:65           : archiving done.</span>
+2025-11-06 09:21:43.084  <span style="color:limegreen">INFO</span> <span style="color:deeppink">2123</span> --- <span style="color:cyan">[pool-4-thread-1]</span> <span style="color:white">MainDurationEventNotifier : Duration max idle triggering shutdown of the JVM</span>
+2025-11-06 09:21:43.086  <span style="color:limegreen">INFO</span> <span style="color:deeppink">2123</span> --- <span style="color:cyan">[ownCamelContext]</span> <span style="color:white">AbstractCamelContext      : Apache Camel 4.15.0 (archive) is shutting down (timeout:10s)</span>
+</span></pre>
+++++
++
+[NOTE]
+====
+Observe the following facts:
+
+* The first batch of messages (1,2,3) is accepted (committed in Kafka).
+* The second batch of messages (4,5,6) is ignored (not committed in Kafka).
+* Only accepted messages (1,2,3) are transformed to CSV and sent for archiving.
+====
++
+Camel finishes this round and shutsdown.
++
+{empty} +
+
+
+. Consume and commit the second batch.
++
+In the previous round, Camel ignored messages late outside the time window. They were consumed but were not committed in Kafka. Those messages are yet to be processed. In this last round you want to simulate another cron job run where pending messages are committed and sent for archiving.
++
+Run Camel again with:
++
+--
+{copypaste}
+----
+camel run archive/*
+----
+--
++
+NOTE: Be patient, Camel will consume the messages and will wait `30` seconds before closing the aggregation.
++
+Somewhere in the logs you should find following lines:
++
+++++
+<pre style="line-height: 1;"><span style="color:grey;font-family: monospace;font-size: 12px;">2025-11-06 09:22:43.839  <span style="color:limegreen">INFO</span> <span style="color:deeppink">3277</span> --- <span style="color:cyan">[kaConsumer[dev]]</span> <span style="color:white">archive.yaml:20           : got new message: {"user":"tester","text":"<span style="color:black;background-color:yellow">message 4</span>"}</span>
+2025-11-06 09:22:43.842  <span style="color:limegreen">INFO</span> <span style="color:deeppink">3277</span> --- <span style="color:cyan">[roducerTemplate]</span> <span style="color:white">archive.yaml:48           : waiting for aggregation to finish...</span>
+2025-11-06 09:22:43.895  <span style="color:limegreen">INFO</span> <span style="color:deeppink">3277</span> --- <span style="color:cyan">[kaConsumer[dev]]</span> <span style="color:white">archive.yaml:20           : got new message: {"user":"tester","text":"<span style="color:black;background-color:yellow">message 5</span>"}</span>
+2025-11-06 09:22:43.907  <span style="color:limegreen">INFO</span> <span style="color:deeppink">3277</span> --- <span style="color:cyan">[kaConsumer[dev]]</span> <span style="color:white">archive.yaml:20           : got new message: {"user":"tester","text":"<span style="color:black;background-color:yellow">message 6</span>"}</span>
+2025-11-06 09:23:14.064  <span style="color:limegreen">INFO</span> <span style="color:deeppink">3277</span> --- <span style="color:cyan">[roducerTemplate]</span> <span style="color:white">archive.yaml:53           : Aggregation has completed.</span>
+2025-11-06 09:23:14.065  <span style="color:limegreen">INFO</span> <span style="color:deeppink">3277</span> --- <span style="color:cyan">[#8 - Aggregator]</span> <span style="color:white">archive.yaml:63           : ready to archive aggregated data:</span>
+<span style="color:black;background-color:yellow">tester,message 4</span>
+<span style="color:black;background-color:yellow">tester,message 5</span>
+<span style="color:black;background-color:yellow">tester,message 6</span>
+
+2025-11-06 09:23:14.065  <span style="color:limegreen">INFO</span> <span style="color:deeppink">3277</span> --- <span style="color:cyan">[#8 - Aggregator]</span> <span style="color:white">archive.yaml:65           : archiving done.</span>
+2025-11-06 09:23:19.359  <span style="color:limegreen">INFO</span> <span style="color:deeppink">3277</span> --- <span style="color:cyan">[pool-4-thread-1]</span> <span style="color:white">MainDurationEventNotifier : Duration max idle triggering shutdown of the JVM</span>
+2025-11-06 09:23:19.361  <span style="color:limegreen">INFO</span> <span style="color:deeppink">3277</span> --- <span style="color:cyan">[ownCamelContext]</span> <span style="color:white">AbstractCamelContext      : Apache Camel 4.15.0 (archive) is shutting down (timeout:10s)</span>
+</span></pre>
+++++
++
+[NOTE]
+====
+Observe the following facts:
+
+* The second batch of messages (4,5,6) are consumed one more time (this time Camel commits them).
+* The messages are processed, coverted to CSV and sent to be archived.
+====
++
+Camel finishes this round and shutsdown.
++
+{empty} +
+
+Stop the action with kbd:[Ctrl+C].
+
+The first time you run the process, 
 
 
 

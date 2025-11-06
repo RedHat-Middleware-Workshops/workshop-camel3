@@ -1,0 +1,66 @@
+- route:
+    id: main
+    from:
+      uri: kafka
+      parameters:
+        topic: "{{kafka.topic:dev}}"
+        brokers: my-cluster-kafka-bootstrap:9092
+      steps:
+        - bean:
+            method: newMessage
+            ref: controller
+        - filter:
+            expression:
+              simple:
+                expression: "${bean:controller?method=isTimeWindowExpired}"
+            steps:
+              - log:
+                  message: "time window closed, ignoring event: ${body}"
+              - stop: {}
+        - log:
+            message: "got new message: ${body}"
+        - unmarshal:
+            json: {}
+        - marshal:
+            csv: {}
+        - aggregate:
+            steps:
+              - bean:
+                  method: aggregationDone
+                  ref: controller
+              - to:
+                  uri: direct
+                  parameters:
+                    name: archive-data
+            aggregationStrategy: "msgStrategy"
+            completionTimeout: "{{message.aggregator.timeout}}"
+            correlationExpression:
+              constant:
+                expression: "true"
+
+- route:
+    id: keep-alive
+    from:
+      uri: direct
+      parameters:
+        name: wait-until-aggregation-done
+      steps:
+        - log:
+            message: waiting for aggregation to finish...
+        - bean:
+            method: waitUntilAggregationDone
+            ref: controller
+        - log:
+            message: Aggregation has completed.
+
+- route:
+    id: archive-data
+    from:
+      uri: direct
+      parameters:
+        name: archive-data
+      steps:
+        - log:
+            message: "ready to archive aggregated data:\\n${body}"
+        - log:
+            message: archiving done.
